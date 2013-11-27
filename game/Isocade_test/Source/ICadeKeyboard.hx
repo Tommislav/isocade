@@ -15,15 +15,15 @@ class ICadeKeyboard
 	private var _enabled:Bool;
 	private var _useICade:Bool;
 	
-	private var _iCadeButton_down:haxe.ds.HashMap<Int,Int>;
-	private var _iCadeButton_up:haxe.ds.HashMap<Int, Int>;
+	private var _iCadeButton_down:haxe.ds.IntMap<Int>;
+	private var _iCadeButton_up:haxe.ds.IntMap<Int>;
 	
 	
 	public function new() 
 	{
 		_eventDispatcher = new EventDispatcher();
-		_iCadeButton_down = new haxe.ds.HashMap<Int, Int>();
-		_iCadeButton_up = new haxe.ds.HashMap<Int, Int>();
+		_iCadeButton_down = new haxe.ds.IntMap<Int>();
+		_iCadeButton_up = new haxe.ds.IntMap<Int>();
 		
 		mapIcadeButton(ICadeKeyCode.UP, 87, 69);
 		mapIcadeButton(ICadeKeyCode.DOWN, 88, 90);
@@ -44,8 +44,8 @@ class ICadeKeyboard
 	}
 	
 	private function mapIcadeButton(icadeState:Int, keyboardDownState:Int, keyboardUpState:Int) {
-		_iCadeButton_down[keboardDownState] = icadeState;
-		_iCadeButton_up[keyboardUpState] = icadeState;
+		_iCadeButton_down.set(keyboardDownState, icadeState);
+		_iCadeButton_up.set(keyboardUpState, icadeState);
 	}
 
 	public function enable() {
@@ -71,10 +71,10 @@ class ICadeKeyboard
 	
 	private function onKeyDown(e:KeyboardEvent):Void {
 		if (_useICade) {
-			if (_iCadeButton_down[e.keyCode] != null) {
-				dispatch(new KeyboardEvent(e.type, e.bubbles, e.cancelable, 0, _iCadeButton_down[e.keyCode] ));
-			} else if (_iCadeButton_up[e.keyCode] != null) {
-				_eventDispatcher.dispatchEvent(new KeyboardEvent(e.type, e.bubbles, e.cancelable, 0, _iCadeButton_up[e.keyCode] ));
+			if (_iCadeButton_down.exists(e.keyCode)) {
+				dispatch(new KeyboardEvent(e.type, e.bubbles, e.cancelable, 0, _iCadeButton_down.get(e.keyCode) ));
+			} else if (_iCadeButton_up.exists(e.keyCode)) {
+				dispatch(new KeyboardEvent(e.type, e.bubbles, e.cancelable, 0, _iCadeButton_up.get(e.keyCode) ));
 			}
 		} else {
 			dispatch(e.clone());
@@ -83,9 +83,9 @@ class ICadeKeyboard
 	
 	private function onKeyUp(e:KeyboardEvent):Void {
 		if (_useICade) {
-			
+			// ignore key up if icade
 		} else {
-			dispatch(e.clone);
+			dispatch(e);
 		}
 	}
 	
@@ -95,11 +95,11 @@ class ICadeKeyboard
 		_eventDispatcher.dispatchEvent(e);
 	}
 	
-	public function addListener(type, listener) {
+	public function addEventListener(type, listener) {
 		_eventDispatcher.addEventListener(type, listener);
 	}
 	
-	public function removeListener(type, listener) {
+	public function removeEventListener(type, listener) {
 		_eventDispatcher.removeEventListener(type, listener);
 	}
 	
