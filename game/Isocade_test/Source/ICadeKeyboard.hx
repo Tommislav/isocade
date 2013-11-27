@@ -77,7 +77,7 @@ class ICadeKeyboard
 				dispatch(new KeyboardEvent(e.type, e.bubbles, e.cancelable, 0, _iCadeButton_up.get(e.keyCode) ));
 			}
 		} else {
-			dispatch(e.clone());
+			dispatch(e);
 		}
 	}
 	
