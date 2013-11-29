@@ -20,10 +20,10 @@ class ICadeKeyCode
 	
 	
 	
-	public inline static var UP = Keyboard.W;
-	public inline static var DOWN = Keyboard.S;
-	public inline static var LEFT = Keyboard.A;
-	public inline static var RIGHT = Keyboard.D;
+	public static var UP = Keyboard.W;
+	public static var DOWN = Keyboard.S;
+	public static var LEFT = Keyboard.A;
+	public static var RIGHT = Keyboard.D;
 	
 	// Top row, left to right
 	public inline static var BUTTON_A = KEY_J;
@@ -36,10 +36,44 @@ class ICadeKeyCode
 	public inline static var BUTTON_3 = KEY_DOT;
 	
 	// The two white buttons, top is enter, lower is back
-	public inline static var BUTTON_START = Keyboard.ENTER;
-	public inline static var BUTTON_BACK = Keyboard.ESCAPE;
+	public static var BUTTON_START = Keyboard.ENTER;
+	public static var BUTTON_BACK = Keyboard.ESCAPE;
 	
 	
+  
+  
+  public static function getKeyLabel(keyCode:Int):String {
+    switch (keyCode){
+    		case ICadeKeyCode.UP:
+          		return "Up";
+      		case ICadeKeyCode.DOWN:
+          		return "Down";
+          	case ICadeKeyCode.LEFT:
+            	return "Left";
+     		case ICadeKeyCode.RIGHT:
+            	return "Right";
+          
+        	case ICadeKeyCode.BUTTON_A:
+        		return "Button A";
+        	case ICadeKeyCode.BUTTON_B:
+        		return "Button B";
+        	case ICadeKeyCode.BUTTON_C:
+        		return "Button C";
+        
+        	case ICadeKeyCode.BUTTON_1:
+        		return "Button 1";
+        	case ICadeKeyCode.BUTTON_2:
+        		return "Button 2";
+        	case ICadeKeyCode.BUTTON_3:
+        		return "Button 3";
+        
+        	case ICadeKeyCode.BUTTON_START:
+        		return "Start Button";
+        	case ICadeKeyCode.BUTTON_BACK:
+        		return "Back Button";
+  	}
+    return "Unknown key ("+keyCode+")";
+  }
 	
 	
 	

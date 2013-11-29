@@ -13,7 +13,7 @@ class ICadeKeyboard
 {
 	private var _eventDispatcher:EventDispatcher;
 	private var _enabled:Bool;
-	private var _useICade:Bool;
+	private var _useKeyboard:Bool;
 	
 	private var _iCadeButton_down:haxe.ds.IntMap<Int>;
 	private var _iCadeButton_up:haxe.ds.IntMap<Int>;
@@ -40,7 +40,6 @@ class ICadeKeyboard
 		
 		
 		enable();
-		useICade();
 	}
 	
 	private function mapIcadeButton(icadeState:Int, keyboardDownState:Int, keyboardUpState:Int) {
@@ -60,34 +59,42 @@ class ICadeKeyboard
 		Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp); 
 	}
 	
-	public function useICade() {
-		_useICade = true;
-	}
-	
-	public function useKeyboard() {
-		_useICade = false;
-	}
+  public function setKeyboardMode(flag:Bool) {
+    _useKeyboard = flag;
+  }
+  
+  
+  public function getKeyboardMode():Bool {
+    return _useKeyboard;
+  }
 	
 	
 	private function onKeyDown(e:KeyboardEvent):Void {
-		if (_useICade) {
-			if (_iCadeButton_down.exists(e.keyCode)) {
-				dispatch(new KeyboardEvent(e.type, e.bubbles, e.cancelable, 0, _iCadeButton_down.get(e.keyCode) ));
-			} else if (_iCadeButton_up.exists(e.keyCode)) {
-				dispatch(new KeyboardEvent(e.type, e.bubbles, e.cancelable, 0, _iCadeButton_up.get(e.keyCode) ));
-			}
-		} else {
-			dispatch(e);
-		}
+		if (!_useKeyboard) {
+          // ignore key down if icade
+        } else {
+          dispatch(e);
+        }
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void {
-		if (_useICade) {
-			// ignore key up if icade
+		if (!_useKeyboard) {
+			if (_iCadeButton_down.exists(e.keyCode)) {
+              dispatchKeyboardEvent(KeyboardEvent.KEY_DOWN, _iCadeButton_down.get(e.keyCode));
+			} else if (_iCadeButton_up.exists(e.keyCode)) {
+              dispatchKeyboardEvent(KeyboardEvent.KEY_UP, _iCadeButton_up.get(e.keyCode));
+            } else {
+              dispatchKeyboardEvent(KeyboardEvent.KEY_UP, e.keyCode);
+            }
 		} else {
 			dispatch(e);
 		}
 	}
+  
+  private function dispatchKeyboardEvent(eventType:String, keyCode:Int){
+    var event = new KeyboardEvent(eventType, false, false, 0, keyCode );
+    dispatch(event);
+  }
 	
 	
 	
