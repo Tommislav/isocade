@@ -21,7 +21,7 @@ import haxe.ds.IntMap.IntMap;
  * Then check the keyboardEvent.keyCode against the defined keycodes in the ICadeKeyCode class
  * @author Tommislav
  */
-class ICadeKeyboard
+class ICadeKeyboard implements IReadInput
 {
 	private var _eventDispatcher:EventDispatcher;
 	private var _enabled:Bool;
@@ -30,6 +30,8 @@ class ICadeKeyboard
 	private var _iCadeButton_down:IntMap<Int>;
 	private var _iCadeButton_up:IntMap<Int>;
 	private var _buttonsPressed:IntMap<Bool>;
+	
+	private var _debugToggleKey:Int = -1;
 	
 	
 	public function new() 
@@ -53,6 +55,10 @@ class ICadeKeyboard
 		mapIcadeButton(ICadeKeyCode.BUTTON_BACK, 76, 86);
 		
 		enable();
+	}
+	
+	public function setDebugToggleKey(toggleKey:Int) {
+		_debugToggleKey = toggleKey;
 	}
 	
 	private function mapIcadeButton(icadeState:Int, keyboardDownState:Int, keyboardUpState:Int) {
@@ -81,12 +87,16 @@ class ICadeKeyboard
 		return _useKeyboard;
 	}
 	
+	private function debugToggle() {
+		setKeyboardMode(!_useKeyboard);
+	}
+	
 	/**
 	 * Will return angle of joystick currently being pressed - in degrees.
 	 * 0 degrees is full right. 90 degrees is down.
 	 * Will return -1 if no direction.
 	 */
-	public function getDegrees() {
+	public function getDegrees():Float {
 		var E = 0, SE = 45, S = 90, SW = 135, W = 180, NW = 225, N = 270, NE = 315;
 		
 		var bitField = 0;
@@ -95,10 +105,13 @@ class ICadeKeyboard
 		bitField += _buttonsPressed.get(ICadeKeyCode.DOWN)	? 2:0;
 		bitField += _buttonsPressed.get(ICadeKeyCode.LEFT)	? 4:0;
 		bitField += _buttonsPressed.get(ICadeKeyCode.UP)	? 8:0;
-		trace(bitField);
 		
 		var bitMap = [ -1, E, S, SE, W, -1, SW, -1, N, NE, -1, -1, NW];
 		return bitMap[bitField];
+	}
+	
+	public function getKeyIsDown(keyCode:Int):Bool {
+		return _buttonsPressed.get(keyCode);
 	}
 	
 	
@@ -112,6 +125,10 @@ class ICadeKeyboard
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void {
+		if (_debugToggleKey == e.keyCode) {
+			debugToggle();
+		}
+		
 		if (!_useKeyboard) {
 			if (_iCadeButton_down.exists(e.keyCode)) {
 				_buttonsPressed.set(e.keyCode, true);

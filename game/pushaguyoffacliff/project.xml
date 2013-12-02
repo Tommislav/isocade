@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="Pushaguyoffacliff" package="com.example.pushaguyoffacliff" version="1.0.0" company="Company Name" />
+	<meta title="Pushaguyoffacliff" package="se.isotop.cliffpusher" version="1.0.0" company="IsoTomNils" />
 	<app main="Main" path="Export" file="Pushaguyoffacliff" />
 	
 	<source path="Source" />
+	<source path="../lib" />
 	
 	<haxelib name="openfl" />
+	<haxelib name="haxepunk" />
 	
 	<assets path="Assets" rename="assets" exclude="openfl.svg" />
 	<icon path="Assets/openfl.svg" />
+	
+	<window orientation="portrait" fps="60" />
 	
 </project>
