@@ -5,6 +5,8 @@
 	<app main="Main" path="Export" file="Isocade_test" />
 	
 	<source path="Source" />
+	<source path="../lib" />
+	
 	
 	<haxelib name="openfl" />
 	
