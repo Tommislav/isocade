@@ -1,4 +1,4 @@
-package ;
+package se.salomonsson.icade;
 import flash.ui.Keyboard;
 
 /**

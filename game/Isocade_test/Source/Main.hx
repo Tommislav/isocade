@@ -8,6 +8,8 @@ import flash.Lib;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+import se.salomonsson.icade.ICadeKeyboard;
+import se.salomonsson.icade.ICadeKeyCode;
 
 
 class Main extends Sprite {
@@ -44,12 +46,14 @@ class Main extends Sprite {
 	
 	private function onKeyDown(e:KeyboardEvent):Void 
 	{
-		_tf.text = "dn:" + ICadeKeyCode.getKeyLabel(e.keyCode);
+		var mode = _keyListener.getKeyboardMode() ? "(Keyboard mode) " : "(ICade mode) ";
+		_tf.text = mode + "button press:" + ICadeKeyCode.getKeyLabel(e.keyCode);
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void 
 	{
-		_tf.text = "up:" + ICadeKeyCode.getKeyLabel(e.keyCode);
+		var mode = _keyListener.getKeyboardMode() ? "(Keyboard mode) " : "(ICade mode) ";
+		_tf.text = mode + "button release:" + ICadeKeyCode.getKeyLabel(e.keyCode);
 		
 		if (e.keyCode == Keyboard.F2) {
 			toggleKeyboardICadeMode();

@@ -1,4 +1,4 @@
-package ;
+package se.salomonsson.icade;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.KeyboardEvent;
@@ -6,7 +6,18 @@ import flash.Lib;
 import flash.ui.Keyboard;
 
 /**
- * ...
+ * Helper class to map the controls from the ICade bluetooth arcade joystick.
+ * Dispatches flash.event.KeyboardEvents but re-maps the event.keyCode to match the constants
+ * in the class ICadeKeyCode.
+ * 
+ * To use without a connected ICade, turn on the keyboardMode using setKeyboardMode(true) to
+ * get the same keyboard events with a regular keyboard (WASD for arrows, JKLNM, for the 6 buttons,
+ * Enter for select and Escape for back).
+ * 
+ * By default this class will always start in ICade-mode (i.e. keyboardMode=false)
+ * 
+ * Add KeyboardListeners to an instance of ICadeKeyboard, just as you would on the stage.
+ * Then check the keyboardEvent.keyCode against the defined keycodes in the ICadeKeyCode class
  * @author Tommislav
  */
 class ICadeKeyboard
@@ -37,7 +48,6 @@ class ICadeKeyboard
 		mapIcadeButton(ICadeKeyCode.BUTTON_3, 75, 80);
 		mapIcadeButton(ICadeKeyCode.BUTTON_START, 79, 71);
 		mapIcadeButton(ICadeKeyCode.BUTTON_BACK, 76, 86);
-		
 		
 		enable();
 	}
