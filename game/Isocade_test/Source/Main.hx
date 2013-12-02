@@ -19,16 +19,13 @@ class Main extends Sprite {
 	public function new () {
 		
 		super ();
-		
-		
+		setScale(1);
 		
 		_tf = new TextField();
-		_tf.text = "Press a key\nF1 toggles mode\n" + Keyboard.W + ", " + Keyboard.A + ", " + Keyboard.S + ", " + Keyboard.D;
+		_tf.text = "Press a key\nF2 toggles mode";
 		_tf.autoSize = TextFieldAutoSize.LEFT;
 		_tf.defaultTextFormat = new TextFormat("arial", 24);
 		addChild(_tf);
-		
-		setScale(1);
 		
 		_keyListener = new ICadeKeyboard();
 		_keyListener.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -47,25 +44,27 @@ class Main extends Sprite {
 	
 	private function onKeyDown(e:KeyboardEvent):Void 
 	{
-      _tf.text = "dn:" + ICadeKeyCode.getKeyLabel(e.keyCode);
+		_tf.text = "dn:" + ICadeKeyCode.getKeyLabel(e.keyCode);
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void 
 	{
-      _tf.text = "up:" + ICadeKeyCode.getKeyLabel(e.keyCode);
-      
-      if (e.keyCode == Keyboard.F1) {
-        var isKeyboardMode = _keyListener.getKeyboardMode();
-        isKeyboardMode = !isKeyboardMode;
-        _keyListener.setKeyboardMode(isKeyboardMode);
-        if(isKeyboardMode) {
-          _tf.text = "WASD MODE";
-        } else {
-          _tf.text = "ICADE MODE";
-        }
-      }
+		_tf.text = "up:" + ICadeKeyCode.getKeyLabel(e.keyCode);
+		
+		if (e.keyCode == Keyboard.F2) {
+			toggleKeyboardICadeMode();
+		}
 	}
-  
-  
-  
-  }
+	
+	function toggleKeyboardICadeMode() 
+	{
+		var isKeyboardMode = _keyListener.getKeyboardMode();
+			isKeyboardMode = !isKeyboardMode;
+			_keyListener.setKeyboardMode(isKeyboardMode);
+			if(isKeyboardMode) {
+				_tf.text = "WASD MODE";
+			} else {
+				_tf.text = "ICADE MODE";
+			}
+	}
+}

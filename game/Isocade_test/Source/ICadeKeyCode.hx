@@ -40,45 +40,40 @@ class ICadeKeyCode
 	public static var BUTTON_BACK = Keyboard.ESCAPE;
 	
 	
-  
-  
-  public static function getKeyLabel(keyCode:Int):String {
-    switch (keyCode){
-    		case ICadeKeyCode.UP:
-          		return "Up";
-      		case ICadeKeyCode.DOWN:
-          		return "Down";
-          	case ICadeKeyCode.LEFT:
-            	return "Left";
-     		case ICadeKeyCode.RIGHT:
-            	return "Right";
-          
-        	case ICadeKeyCode.BUTTON_A:
-        		return "Button A";
-        	case ICadeKeyCode.BUTTON_B:
-        		return "Button B";
-        	case ICadeKeyCode.BUTTON_C:
-        		return "Button C";
-        
-        	case ICadeKeyCode.BUTTON_1:
-        		return "Button 1";
-        	case ICadeKeyCode.BUTTON_2:
-        		return "Button 2";
-        	case ICadeKeyCode.BUTTON_3:
-        		return "Button 3";
-        
-        	case ICadeKeyCode.BUTTON_START:
-        		return "Start Button";
-        	case ICadeKeyCode.BUTTON_BACK:
-        		return "Back Button";
-  	}
-    return "Unknown key ("+keyCode+")";
-  }
 	
 	
-	
-	
-	
+	public static function getKeyLabel(keyCode:Int):String {
+		switch (keyCode){
+			case ICadeKeyCode.UP:
+				return "Up";
+			case ICadeKeyCode.DOWN:
+				return "Down";
+			case ICadeKeyCode.LEFT:
+				return "Left";
+			case ICadeKeyCode.RIGHT:
+				return "Right";
+			
+			case ICadeKeyCode.BUTTON_A:
+				return "Button A";
+			case ICadeKeyCode.BUTTON_B:
+				return "Button B";
+			case ICadeKeyCode.BUTTON_C:
+				return "Button C";
+			
+			case ICadeKeyCode.BUTTON_1:
+				return "Button 1";
+			case ICadeKeyCode.BUTTON_2:
+				return "Button 2";
+			case ICadeKeyCode.BUTTON_3:
+				return "Button 3";
+			
+			case ICadeKeyCode.BUTTON_START:
+				return "Start Button";
+			case ICadeKeyCode.BUTTON_BACK:
+				return "Back Button";
+	}
+	return "Unknown key (" + keyCode + ")";
+	}
 	
 	public function new() 
 	{

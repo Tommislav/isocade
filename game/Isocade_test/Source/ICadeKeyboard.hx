@@ -46,7 +46,7 @@ class ICadeKeyboard
 		_iCadeButton_down.set(keyboardDownState, icadeState);
 		_iCadeButton_up.set(keyboardUpState, icadeState);
 	}
-
+	
 	public function enable() {
 		_enabled = true;
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -59,44 +59,40 @@ class ICadeKeyboard
 		Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp); 
 	}
 	
-  public function setKeyboardMode(flag:Bool) {
-    _useKeyboard = flag;
-  }
-  
-  
-  public function getKeyboardMode():Bool {
-    return _useKeyboard;
-  }
+	public function setKeyboardMode(flag:Bool) {
+		_useKeyboard = flag;
+	}
 	
+	public function getKeyboardMode():Bool {
+		return _useKeyboard;
+	}
 	
 	private function onKeyDown(e:KeyboardEvent):Void {
 		if (!_useKeyboard) {
-          // ignore key down if icade
-        } else {
-          dispatch(e);
-        }
+			// ignore key down if icade
+		} else {
+			dispatch(e);
+		}
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void {
 		if (!_useKeyboard) {
 			if (_iCadeButton_down.exists(e.keyCode)) {
-              dispatchKeyboardEvent(KeyboardEvent.KEY_DOWN, _iCadeButton_down.get(e.keyCode));
+				dispatchKeyboardEvent(KeyboardEvent.KEY_DOWN, _iCadeButton_down.get(e.keyCode));
 			} else if (_iCadeButton_up.exists(e.keyCode)) {
-              dispatchKeyboardEvent(KeyboardEvent.KEY_UP, _iCadeButton_up.get(e.keyCode));
-            } else {
-              dispatchKeyboardEvent(KeyboardEvent.KEY_UP, e.keyCode);
-            }
+				dispatchKeyboardEvent(KeyboardEvent.KEY_UP, _iCadeButton_up.get(e.keyCode));
+			} else {
+				dispatchKeyboardEvent(KeyboardEvent.KEY_UP, e.keyCode);
+			}
 		} else {
 			dispatch(e);
 		}
 	}
-  
-  private function dispatchKeyboardEvent(eventType:String, keyCode:Int){
-    var event = new KeyboardEvent(eventType, false, false, 0, keyCode );
-    dispatch(event);
-  }
 	
-	
+	private function dispatchKeyboardEvent(eventType:String, keyCode:Int) {
+		var event = new KeyboardEvent(eventType, false, false, 0, keyCode );
+		dispatch(event);
+	}
 	
 	public function dispatch(e:Event) {
 		_eventDispatcher.dispatchEvent(e);
@@ -109,7 +105,4 @@ class ICadeKeyboard
 	public function removeEventListener(type, listener) {
 		_eventDispatcher.removeEventListener(type, listener);
 	}
-	
-	
-	
 }
