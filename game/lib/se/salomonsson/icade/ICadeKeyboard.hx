@@ -4,6 +4,7 @@ import flash.events.EventDispatcher;
 import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.ui.Keyboard;
+import haxe.ds.IntMap.IntMap;
 
 /**
  * Helper class to map the controls from the ICade bluetooth arcade joystick.
@@ -26,15 +27,17 @@ class ICadeKeyboard
 	private var _enabled:Bool;
 	private var _useKeyboard:Bool;
 	
-	private var _iCadeButton_down:haxe.ds.IntMap<Int>;
-	private var _iCadeButton_up:haxe.ds.IntMap<Int>;
+	private var _iCadeButton_down:IntMap<Int>;
+	private var _iCadeButton_up:IntMap<Int>;
+	private var _buttonsPressed:IntMap<Bool>;
 	
 	
 	public function new() 
 	{
 		_eventDispatcher = new EventDispatcher();
-		_iCadeButton_down = new haxe.ds.IntMap<Int>();
-		_iCadeButton_up = new haxe.ds.IntMap<Int>();
+		_iCadeButton_down = new IntMap<Int>();
+		_iCadeButton_up = new IntMap<Int>();
+		_buttonsPressed = new IntMap<Bool>();
 		
 		mapIcadeButton(ICadeKeyCode.UP, 87, 69);
 		mapIcadeButton(ICadeKeyCode.DOWN, 88, 90);
@@ -70,6 +73,7 @@ class ICadeKeyboard
 	}
 	
 	public function setKeyboardMode(flag:Bool) {
+		_buttonsPressed = new IntMap<Bool>(); // reset pressed state
 		_useKeyboard = flag;
 	}
 	
@@ -77,10 +81,32 @@ class ICadeKeyboard
 		return _useKeyboard;
 	}
 	
+	/**
+	 * Will return angle of joystick currently being pressed - in degrees.
+	 * 0 degrees is full right. 90 degrees is down.
+	 * Will return -1 if no direction.
+	 */
+	public function getDegrees() {
+		var E = 0, SE = 45, S = 90, SW = 135, W = 180, NW = 225, N = 270, NE = 315;
+		
+		var bitField = 0;
+		
+		bitField += _buttonsPressed.get(ICadeKeyCode.RIGHT) ? 1:0;
+		bitField += _buttonsPressed.get(ICadeKeyCode.DOWN)	? 2:0;
+		bitField += _buttonsPressed.get(ICadeKeyCode.LEFT)	? 4:0;
+		bitField += _buttonsPressed.get(ICadeKeyCode.UP)	? 8:0;
+		trace(bitField);
+		
+		var bitMap = [ -1, E, S, SE, W, -1, SW, -1, N, NE, -1, -1, NW];
+		return bitMap[bitField];
+	}
+	
+	
 	private function onKeyDown(e:KeyboardEvent):Void {
 		if (!_useKeyboard) {
 			// ignore key down if icade
 		} else {
+			_buttonsPressed.set(e.keyCode, true);
 			dispatch(e);
 		}
 	}
@@ -88,13 +114,16 @@ class ICadeKeyboard
 	private function onKeyUp(e:KeyboardEvent):Void {
 		if (!_useKeyboard) {
 			if (_iCadeButton_down.exists(e.keyCode)) {
+				_buttonsPressed.set(e.keyCode, true);
 				dispatchKeyboardEvent(KeyboardEvent.KEY_DOWN, _iCadeButton_down.get(e.keyCode));
 			} else if (_iCadeButton_up.exists(e.keyCode)) {
+				_buttonsPressed.set(e.keyCode, false);
 				dispatchKeyboardEvent(KeyboardEvent.KEY_UP, _iCadeButton_up.get(e.keyCode));
 			} else {
 				dispatchKeyboardEvent(KeyboardEvent.KEY_UP, e.keyCode);
 			}
 		} else {
+			_buttonsPressed.set(e.keyCode, false);
 			dispatch(e);
 		}
 	}
