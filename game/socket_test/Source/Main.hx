@@ -2,7 +2,7 @@ import flash.display.Sprite;
 import flash.net.Socket;
 import flash.events.*;
 import flash.events.DataEvent;
-import flash.text.TextField;
+import flash.text.*;
 
 class Main extends Sprite
 {
@@ -11,6 +11,7 @@ class Main extends Sprite
 	{
 		super ();
         debugText = new TextField();
+		debugText.autoSize = TextFieldAutoSize.LEFT;
         this.addChild(debugText);
 
         var socket = new flash.net.Socket();
