@@ -3,7 +3,7 @@ import socket,sys
 from threading import *
 
 HOST = '' #all available interfaces
-PORT = 8889
+PORT = 8888
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('socket created')
@@ -18,12 +18,9 @@ clients = []
 
 # client connection
 def client_thread(conn):
-    #serve client id
-    conn.send(("player:"+str(clients.index(conn))).encode())
-
-    #game on if we have two players
-    if len(clients)==2:
-        conn.send(("play!").encode())
+    # send the client id to the connecting client
+    id = str(clients.index(conn))
+    conn.send(("+"+id+":0:0").encode())
 
     #receive data
     while True:
@@ -33,8 +30,8 @@ def client_thread(conn):
             break
 
         #debug purposes only
-        encodedData = (data.decode('UTF-8'))
-        print(encodedData)
+        #encodedData = (data.decode('UTF-8'))
+        #print(encodedData)
 
         #broadcast message to all clients
         for c in clients:
@@ -42,6 +39,10 @@ def client_thread(conn):
     #clean up
     conn.close()
     clients.remove(conn)
+    # tell all other clients that this player has ended his connection and can be removed
+    print("removing client " + id)
+    for c in clients:
+        c.sendall((id+":-1:-1").encode())
 
 # accept loop
 while 1:

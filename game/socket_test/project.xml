@@ -2,7 +2,10 @@
 <project>
 	<meta title="Socket" package="com.example.socket" version="1.0.0" company="Company Name" />
 	<app main="Main" path="Export" file="Socket" />
+
 	<source path="Source" />
+	<source path="../lib" />
+	
 	<haxelib name="openfl" />
 	<assets path="Assets" rename="assets" exclude="openfl.svg" />
 	<icon path="Assets/openfl.svg" />
