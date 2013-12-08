@@ -1,3 +1,4 @@
 Export
 *.hide
 .DS_Store
+.idea
