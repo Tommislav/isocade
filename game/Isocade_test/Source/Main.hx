@@ -42,7 +42,7 @@ class Main extends Sprite {
 		
 		
 		_tf = new TextField();
-		_tf.text = "Press a key\nF2 toggles mode";
+		_tf.text = "Press a key\nPress SPACE to toggle ICade and Keyboard-WASD";
 		_tf.autoSize = TextFieldAutoSize.LEFT;
 		_tf.defaultTextFormat = new TextFormat("arial", 24);
 		addChild(_tf);
@@ -50,6 +50,7 @@ class Main extends Sprite {
 		_keyListener = new ICadeKeyboard();
 		_keyListener.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		_keyListener.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+		
 	}
 	
 	
@@ -75,7 +76,7 @@ class Main extends Sprite {
 		rotateArrowToDegrees(_keyListener.getDegrees());
 		
 		var mode = _keyListener.getKeyboardMode() ? "(Keyboard mode) " : "(ICade mode) ";
-		_tf.text = mode + "button press:" + ICadeKeyCode.getKeyLabel(e.keyCode);
+		_tf.text = mode + "button press:" + ICadeKeyCode.getKeyLabel(e.keyCode) + " " + _keyListener.getDegrees();
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void 
@@ -83,9 +84,9 @@ class Main extends Sprite {
 		rotateArrowToDegrees(_keyListener.getDegrees());
 		
 		var mode = _keyListener.getKeyboardMode() ? "(Keyboard mode) " : "(ICade mode) ";
-		_tf.text = mode + "button release:" + ICadeKeyCode.getKeyLabel(e.keyCode);
+		_tf.text = mode + "button release:" + ICadeKeyCode.getKeyLabel(e.keyCode) + " " + _keyListener.getDegrees();
 		
-		if (e.keyCode == Keyboard.F2) {
+		if (e.keyCode == Keyboard.SPACE) {
 			toggleKeyboardICadeMode();
 		}
 	}
