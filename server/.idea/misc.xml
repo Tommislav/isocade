@@ -3,15 +3,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.2.3 (/usr/local/Cellar/python3/3.2.3/Frameworks/Python.framework/Versions/3.2/bin/python3)" project-jdk-type="Python SDK" />
-  <component name="PyConsoleOptionsProvider">
-    <option name="myPythonConsoleState">
-      <PyConsoleSettings />
-    </option>
-    <option name="myDjangoConsoleState">
-      <PyConsoleSettings />
-    </option>
-  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.3.3 (C:/Python33/python.exe)" project-jdk-type="Python SDK" />
   <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
