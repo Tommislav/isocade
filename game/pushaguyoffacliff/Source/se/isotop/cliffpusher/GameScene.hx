@@ -19,7 +19,7 @@ class GameScene extends Scene
 	override public function begin() 
 	{
 		var keyboard = new ICadeKeyboard();
-		keyboard.setDebugToggleKey(Keyboard.F2);
+		keyboard.setDebugToggleKey(Keyboard.SPACE);
 		
 		add(new Player(HXP.halfWidth, HXP.halfHeight, keyboard));
 	}

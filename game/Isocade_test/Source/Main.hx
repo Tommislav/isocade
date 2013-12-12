@@ -24,7 +24,7 @@ class Main extends Sprite {
 	public function new () {
 		
 		super ();
-		setScale(1);
+		setScale(2);
 		
 		// create bitmap, add and center in holder for easy rotation
 		var bmp = new Bitmap(Assets.getBitmapData("assets/arrow.png"));
