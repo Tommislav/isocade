@@ -27,9 +27,9 @@ class ICadeKeyboard implements IReadInput
 	private var _enabled:Bool;
 	private var _useKeyboard:Bool;
 	
-	private var _iCadeButton_down:IntMap<Int>;
-	private var _iCadeButton_up:IntMap<Int>;
-	private var _buttonsPressed:IntMap<Bool>;
+	private var _iCadeButton_down:Map<Int,Int>;
+	private var _iCadeButton_up:Map<Int,Int>;
+	private var _buttonsPressed:Map<Int,Bool>;
 	
 	private var _debugToggleKey:Int = -1;
 	
@@ -37,10 +37,10 @@ class ICadeKeyboard implements IReadInput
 	public function new() 
 	{
 		_eventDispatcher = new EventDispatcher();
-		_iCadeButton_down = new IntMap<Int>();
-		_iCadeButton_up = new IntMap<Int>();
-		_buttonsPressed = new IntMap<Bool>();
 		
+		_iCadeButton_down = new Map<Int,Int>();
+		_iCadeButton_up = new Map<Int,Int>();
+		_buttonsPressed = new Map<Int,Bool>();
 		mapIcadeButton(ICadeKeyCode.UP, 87, 69);
 		mapIcadeButton(ICadeKeyCode.DOWN, 88, 90);
 		mapIcadeButton(ICadeKeyCode.LEFT, 65, 81);
@@ -130,12 +130,15 @@ class ICadeKeyboard implements IReadInput
 		}
 		
 		if (!_useKeyboard) {
+			var mappedKey;
 			if (_iCadeButton_down.exists(e.keyCode)) {
-				_buttonsPressed.set(e.keyCode, true);
-				dispatchKeyboardEvent(KeyboardEvent.KEY_DOWN, _iCadeButton_down.get(e.keyCode));
+				mappedKey = _iCadeButton_down.get(e.keyCode);
+				_buttonsPressed.set(mappedKey, true);
+				dispatchKeyboardEvent(KeyboardEvent.KEY_DOWN, mappedKey);
 			} else if (_iCadeButton_up.exists(e.keyCode)) {
-				_buttonsPressed.set(e.keyCode, false);
-				dispatchKeyboardEvent(KeyboardEvent.KEY_UP, _iCadeButton_up.get(e.keyCode));
+				mappedKey = _iCadeButton_up.get(e.keyCode);
+				_buttonsPressed.set(mappedKey, false);
+				dispatchKeyboardEvent(KeyboardEvent.KEY_UP, mappedKey);
 			} else {
 				dispatchKeyboardEvent(KeyboardEvent.KEY_UP, e.keyCode);
 			}
