@@ -30,7 +30,7 @@ class GameSocket extends Socket
 	public function Send(gp:GamePacket)
 	{
 		Sys.println("sending");
-		this.writeUTFBytes(GamePacketParser.Serialize(gp));
+		this.writeUTFBytes(GamePacket.Serialize(gp));
 		LastSend = gp;
 	}
 
@@ -39,7 +39,7 @@ class GameSocket extends Socket
 		if(this.bytesAvailable!=0)
         { 
 			var raw = this.readUTFBytes(this.bytesAvailable);
-			var packet = GamePacketParser.Parse(raw);
+			var packet = GamePacket.Parse(raw);
 			this.dispatchEvent(new GameSocketEvent(GameSocketEvent.GS_DATA,packet,raw));
 		}
 	}
