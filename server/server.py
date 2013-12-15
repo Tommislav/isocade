@@ -17,10 +17,13 @@ print('listening')
 clients = []
 
 # removes client and sends a message to all connected clients
+def send_all(data):
+    for c in clients:
+        c.sendall(data)
+
 def remove_client(connection, client_id):
     del(clients[int(client_id)])
-    for c in clients:
-        c.sendall((client_id+":-1|").encode())
+    send_all((client_id+":-1:-1:-1|").encode())
 
 def debug_output(data):
     encoded_data = (data.decode('UTF-8'))
@@ -28,10 +31,11 @@ def debug_output(data):
     print(len(clients))
 
 # client connection handler
+# packet format id:keycode:x:y|
 def client_thread(connection):
     # send the client id to the connecting client
     client_id = str(clients.index(connection))
-    connection.send((client_id+":0|").encode())
+    connection.send((client_id+":-1:-1:-1|").encode())
 
     #receive data
     while True:
@@ -41,11 +45,10 @@ def client_thread(connection):
             if not data:
                 break
 
-            debug_output(data)
+            #debug_output(data)
 
-            #broadcast message to all clients
-            for c in clients:
-                c.sendall(data)
+            send_all(data)
+
         except:
             break
 

@@ -9,24 +9,30 @@ class Game extends Sprite
 	{
 		super();
 		players = new Array<Player>();
+		playerByID = new Map<Int,Player>();
 		this.addEventListener(Event.ENTER_FRAME, Update);
-		
-		// debug
-		AddPlayer();
-		AddPlayer(100);
-		AddPlayer(0,100);
 	}
 	
+	public var playerId:Int = -1;
 	public var players:Array<Player>;
-	public function AddPlayer(x:Float = 0,y:Float = 0)
+	public var playerByID:Map<Int,Player>;
+	
+	public function AddPlayer(id:Int, x:Float = 0,y:Float = 0)
 	{
-		players.push(new Player(x,y));
-		this.addChild(players[players.length-1]);
+		var player = new Player(x, y);
+		players.push(player);
+		playerByID.set(id,player); // nödlösning tills vidare
+		this.addChild(player);
 	}
 	
-	public function SetPlayerInput(id:Int,keycode:Int):Void 
+	public function GetPlayer(id:Int):Player 
 	{
-		players[id].Input(keycode);
+		return playerByID[id];
+	}
+	
+	public function PlayerExists(id:Int)
+	{
+		return playerByID.exists(id);
 	}
 	
 	var tmpbitmap:Bitmap;
@@ -45,7 +51,10 @@ class Game extends Sprite
 		for (p in 0...players.length)
 			players[p].Move(players[p].dx * delta, players[p].dy * delta);			
 		
-		Physics();	
+		Physics();
+		
+		if (f%60==0)
+			SendPlayerPosition();
 		
 		oldTime = currentTime;
 		f++;
@@ -53,10 +62,57 @@ class Game extends Sprite
 	
 	private function Physics():Void 
 	{
-		for (p in 0...players.length)
-			players[p].Move(0, 1);	
+		// "floor"
 		for (p in 0...players.length)
 			if (players[p].y > 400)
 				players[p].y = 400;
+		
+		// players
+		if(players.length>1)
+			for (i in 0...players.length)
+				for (ii in i...players.length)
+					if (PlayerCollision(players[i], players[ii], 64))
+					{
+						if (players[i].dx != 0)
+						{
+							players[i].Move(-players[i].dx, 0);
+						}
+						if (players[ii].dx != 0)
+						{
+							players[ii].Move(-players[ii].dx, 0);
+						}
+						players[i].collided = true;
+						players[ii].collided = true;
+					}
+		
+		// "gravity"
+			for (p in 0...players.length)
+				if(!players[p].collided)
+					players[p].Move(0, 1);
+					
+			for (p in 0...players.length)
+				players[p].collided = false;
+	}
+	
+	private function PlayerCollision(playerA:Player,playerB:Player,rad:Int)
+	{
+		if (playerA == playerB)
+			return false;
+		
+		var dx=playerB.x-playerA.x;
+		var dy=playerB.y-playerA.y;
+		var distance = Math.sqrt(dx * dx + dy * dy);
+
+		return distance < rad;
+	}
+	
+	private function SendPlayerPosition()
+	{
+		if (playerId < 0)
+			return;
+			
+		var player = GetPlayer(playerId);
+		var packet = new GamePacket(playerId, -1, player.x, player.y);
+		this.dispatchEvent(new GameSocketEvent(GameSocketEvent.GS_SEND,packet,""));
 	}
 }

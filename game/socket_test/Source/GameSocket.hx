@@ -29,7 +29,6 @@ class GameSocket extends Socket
 	
 	public function Send(gp:GamePacket)
 	{
-		Sys.println("sending");
 		this.writeUTFBytes(GamePacket.Serialize(gp));
 		LastSend = gp;
 	}
@@ -46,7 +45,7 @@ class GameSocket extends Socket
 
 	public function OnClose(e:Event)
 	{
-		_eventDispatcher.dispatchEvent(new GameSocketEvent(GameSocketEvent.GS_CLOSED,null,"closed"));
+		this.dispatchEvent(new GameSocketEvent(GameSocketEvent.GS_CLOSED,null,"closed"));
 	}
 }
 
