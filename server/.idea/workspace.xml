@@ -26,7 +26,7 @@
       <file leaf-file-name="server.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="0" selection-start="885" selection-end="885" vertical-scroll-proportion="0.2717873" vertical-offset="479" max-vertical-offset="1156">
+            <state line="44" column="24" selection-start="995" selection-end="995" vertical-scroll-proportion="0.82570165" vertical-offset="189" max-vertical-offset="1207">
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
               </folding>
@@ -80,7 +80,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -101,16 +100,17 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
     <property name="recentsLimit" value="5" />
+    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
     <property name="FullScreen" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -343,6 +343,15 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="31" selection-start="697" selection-end="697" vertical-scroll-proportion="0.0" vertical-offset="313" max-vertical-offset="1207">
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state line="29" column="29" selection-start="683" selection-end="683" vertical-scroll-proportion="0.0" vertical-offset="368" max-vertical-offset="1122">
           <folding>
             <element signature="e#0#36#0" expanded="true" />
@@ -411,14 +420,12 @@
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="222" column="0" selection-start="7866" selection-end="7866" vertical-scroll-proportion="0.29542097" vertical-offset="2452" max-vertical-offset="25024">
-          <folding />
-        </state>
+        <state line="222" column="0" selection-start="7866" selection-end="7866" vertical-scroll-proportion="0.29542097" vertical-offset="2452" max-vertical-offset="25024" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="885" selection-end="885" vertical-scroll-proportion="0.2717873" vertical-offset="479" max-vertical-offset="1156">
+        <state line="44" column="24" selection-start="995" selection-end="995" vertical-scroll-proportion="0.82570165" vertical-offset="189" max-vertical-offset="1207">
           <folding>
             <element signature="e#0#36#0" expanded="true" />
           </folding>

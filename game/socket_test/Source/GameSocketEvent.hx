@@ -12,4 +12,6 @@ class GameSocketEvent extends Event
 	}
 	public inline static var GS_DATA = "GS_DATA";
 	public inline static var GS_CLOSED = "GS_CLOSED";
+	public inline static var GS_SEND = "GS_SEND";
+	
 }
