@@ -1,6 +1,5 @@
 import flash.display.Sprite;
 import flash.display.Bitmap;
-
 import flash.events.KeyboardEvent;
 import flash.utils.Timer;
 import se.salomonsson.icade.ICadeKeyboard;
@@ -33,7 +32,7 @@ class Main extends Sprite
 		// lite evenst tmptmpt
 		_pressedKeys = new Map<Int,Bool>();
 		_keyListener = new ICadeKeyboard();
-        _keyListener.setKeyboardMode(true);
+        _keyListener.setKeyboardMode(false);
         _keyListener.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent) { 
 			if (playerId>=0 && !_pressedKeys.exists(e.keyCode))
 			{
