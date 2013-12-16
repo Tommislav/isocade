@@ -1,6 +1,7 @@
 import flash.display.Sprite;
 import flash.display.Bitmap;
 import openfl.Assets;
+import se.salomonsson.icade.ICadeKeyCode;
 class Player extends Sprite
 {
 	public var dx:Float;
@@ -31,10 +32,10 @@ class Player extends Sprite
 	{
 		switch(Math.abs(keycode))
         {
-            case 68: this.dx=keycode>0 ? 1 : 0; // -> RIGHT
-            case 65: this.dx=keycode>0 ? -1 : 0; // <- LEFT
-            case 87: this.dy=keycode>0 ? -10 : 0; // ^ UP
-            case 83: this.dy=keycode>0 ? 1 : 0; // v DOWN
+            case ICadeKeyCode.RIGHT: this.dx=keycode>0 ? 1 : 0; // -> RIGHT
+            case ICadeKeyCode.LEFT: this.dx=keycode>0 ? -1 : 0; // <- LEFT
+            case ICadeKeyCode.UP: this.dy=keycode>0 ? -10 : 0; // ^ UP
+            case ICadeKeyCode.DOWN: this.dy=keycode>0 ? 1 : 0; // v DOWN
         }
 	}
 }

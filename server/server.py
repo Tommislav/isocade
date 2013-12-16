@@ -45,7 +45,7 @@ def client_thread(connection):
             if not data:
                 break
 
-            #debug_output(data)
+            debug_output(data)
 
             send_all(data)
 
