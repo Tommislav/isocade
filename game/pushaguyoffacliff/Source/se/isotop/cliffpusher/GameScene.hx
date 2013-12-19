@@ -26,13 +26,13 @@ class GameScene extends Scene
 		var factory = new GraphicsFactory();
 		
 		//add(new Level(factory));
-		for (i in 0...100) {
+		for (i in 0...60) {
 			add(new Block(factory, Math.random() * 1024 - 32, Math.random() * 768 - 32));
 		}
 		
 		add(new Player(HXP.halfWidth, HXP.halfHeight, keyboard, factory, 0xffff0000));
-		add(new Player(10, 10, keyboard, factory, 0xff0000ff));
-		add(new Player(100, 60, keyboard, factory, 0xff00ff00));
+		//add(new Player(10, 10, keyboard, factory, 0xff0000ff));
+		//add(new Player(100, 60, keyboard, factory, 0xff00ff00));
 	}
 	
 }
