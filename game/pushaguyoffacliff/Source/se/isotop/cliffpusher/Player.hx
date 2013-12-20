@@ -48,11 +48,23 @@ class Player extends Entity
 		
 		setHitbox(32, 64);
 		type = "player";
+		
+		init();
+	}
+	
+	public function init():Void {
+		do {
+			this.x = Math.random() * 768 - 32;
+			this.y = Math.random() * 1024 - 64;
+		} while (collide("solid", x, y) != null);
 	}
 	
 	
 	override public function update():Void 
 	{
+		if (this.y > 1024)
+			this.y = -64;
+		
 		var mX = 0.0;
 		var mY = 0.0;
 		
