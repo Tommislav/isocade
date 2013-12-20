@@ -103,7 +103,7 @@ class Player extends Entity
 		//vY = Math.max(_maxFall, vY);
 		
 		moveBy(vX + mX, vY + mY, "solid");
-		HXP.setCamera(this.x, this.y);
+		HXP.setCamera(this.x - HXP.halfWidth, this.y - HXP.halfHeight);
 		super.update();
 	}
 }
