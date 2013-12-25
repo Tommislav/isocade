@@ -21,21 +21,23 @@ class Player extends Entity
 	private var _jumping:Bool;
 	private var _onGround:Bool;
 	
-	private var _keyInput:IReadInput;
 	private var _playerColor:Int;
 	private var _gfx:Graphiclist;
 	private var _gfxFactory:GraphicsFactory;
 	private var _canJump:Bool;
 	private var _jumpCnt:Int;
 	
+	public var id:Int = -1;
+	public var keyInput:IReadInput;
 	public var vX:Float = 0.0;
 	public var vY:Float = 0.0;
 	
 
-	public function new(x:Float, y:Float, keyInput:IReadInput, gfx:GraphicsFactory, color:Int) 
+	public function new(id:Int, x:Float, y:Float, keyInput:IReadInput, gfx:GraphicsFactory, color:Int) 
 	{
 		super(x, y);
-		_keyInput = keyInput;
+		this.id = id;
+		this.keyInput = keyInput;
 		_gfxFactory = gfx;
 		
 		_gfx = new Graphiclist();
@@ -75,7 +77,7 @@ class Player extends Entity
 		if (_onGround && _jumping)
 			_jumping = false;
 		
-		var deg = _keyInput.getDegrees();
+		var deg = this.keyInput.getDegrees();
 		if (deg != -1) {
 			var spd = 4.0;
 			var rad = deg / 180 * Math.PI;
@@ -88,7 +90,7 @@ class Player extends Entity
 			_jumpCnt = 99;
 		}
 		
-		if (_keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_A)) {
+		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_A)) {
 			if (_onGround) {
 				_onGround = false;
 				_jumping = true;
