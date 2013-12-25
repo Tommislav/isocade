@@ -8,26 +8,30 @@ class GameSocket extends Socket
 	private var _eventDispatcher = new EventDispatcher();
 	private var _serverIP:String;
 	private var _serverPort:Int;
-	public function new(serverIP:String, serverPort:Int)
+	public function new(?host:String, port:Int=0)
 	{
-		super();
+		super(host, port);
+		
+	}
+
+	override public function connect(host:String, port:Int):Void 
+	{
 		_serverIP = serverIP;
 		_serverPort = serverPort;
+		
+		this.addEventListener(ProgressEvent.SOCKET_DATA,onBroadcast);
+		this.addEventListener(Event.CLOSE, onClose);
+		
+		super.connect(host, port);
 	}
+	
 
-	public function Connect()
-	{
-		this.addEventListener(ProgressEvent.SOCKET_DATA,OnBroadcast);
-		this.addEventListener(Event.CLOSE,OnClose);
-		this.connect(_serverIP,_serverPort);
-	}
-
-	public function OnBroadcast()
+	public function onBroadcast()
 	{
 		_eventDispatcher.dispatchEvent(new GameSocketEvent("GS_DATA"));
 	}
 
-	public function OnClose()
+	public function onClose()
 	{
 		_eventDispatcher.dispatchEvent(new GameSocketEvent("GS_CLOSED"));
 	}

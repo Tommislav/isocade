@@ -1,3 +1,4 @@
+package se.isotop.gamesocket;
 import flash.events.Event;
 
 class GameSocketEvent extends Event

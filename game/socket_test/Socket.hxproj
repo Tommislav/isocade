@@ -22,9 +22,8 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="tools=1.1.6&#xA;openfl=1.1&#xA;display&#xA;windows&#xA;desktop&#xA;no-compilation" />
+    <option directives="tools=1.2.1&#xA;lime_native&#xA;no-compilation&#xA;openfl=1.2&#xA;display&#xA;windows&#xA;desktop&#xA;no-compilation" />
     <option flashStrict="False" />
-    <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
     <option additional="--no-output&#xA;--macro allowPackage(&quot;flash&quot;)&#xA;--macro keep(&quot;Main&quot;)" />
@@ -32,6 +31,7 @@
   <!-- haxelib libraries -->
   <haxelib>
     <library name="openfl" />
+    <library name="lime" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
