@@ -1,3 +1,5 @@
+package se.isotop.gamesocket;
+
 import flash.net.Socket;
 import flash.events.EventDispatcher;
 import flash.events.Event;
@@ -9,41 +11,42 @@ class GameSocket extends Socket
 	private var _eventDispatcher:EventDispatcher;
 	private var _serverIP:String;
 	private var _serverPort:Int;
-	public var LastSend:GamePacket;
+	public var lastSend:String;
 	private var id:Int;
-	public function new(serverIP:String, serverPort:Int)
+	public function new(?host : String, ?port : Int = 0)
 	{
 		super();
-		_serverIP = serverIP;
-		_serverPort = serverPort;
+		_serverIP = host;
+		_serverPort = port;
 		_eventDispatcher = new EventDispatcher();
-		LastSend = new GamePacket( -1);
+		lastSend = "";
 	}
 
-	public function Connect()
+	override public function connect(?host:String, ?port:Int):Void 
 	{
-		this.addEventListener(ProgressEvent.SOCKET_DATA,OnData);
-		this.addEventListener(Event.CLOSE,OnClose);
-		this.connect(_serverIP,_serverPort);
+		this.addEventListener(ProgressEvent.SOCKET_DATA, onData);
+		this.addEventListener(Event.CLOSE,onClose);
+		super.connect(host, port);
 	}
 	
-	public function Send(gp:GamePacket)
+	
+	public function send(data:String)
 	{
-		this.writeUTFBytes(GamePacket.Serialize(gp));
-		LastSend = gp;
+		this.writeUTFBytes(data);
+		lastSend = data;
 	}
 
-	public function OnData(e:ProgressEvent)
+	public function onData(e:ProgressEvent)
 	{
 		if(this.bytesAvailable!=0)
         { 
 			var raw = this.readUTFBytes(this.bytesAvailable);
-			var packet = GamePacket.Parse(raw);
+			var packet = GamePacket.parse(raw);
 			this.dispatchEvent(new GameSocketEvent(GameSocketEvent.GS_DATA,packet,raw));
 		}
 	}
 
-	public function OnClose(e:Event)
+	public function onClose(e:Event)
 	{
 		this.dispatchEvent(new GameSocketEvent(GameSocketEvent.GS_CLOSED,null,"closed"));
 	}

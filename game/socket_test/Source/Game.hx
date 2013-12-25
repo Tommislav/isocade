@@ -1,6 +1,8 @@
 import flash.display.Sprite;
 import flash.display.Bitmap;
 import flash.events.Event;
+import se.isotop.gamesocket.GameSocket;
+import se.isotop.gamesocket.GameSocketEvent;
 import flash.Lib;
 
 class Game extends Sprite
@@ -112,7 +114,7 @@ class Game extends Sprite
 			return;
 			
 		var player = GetPlayer(playerId);
-		var packet = new GamePacket(playerId, -1, player.x, player.y);
+		var packet = new NilsGamePacket(playerId, -1, player.x, player.y);
 		this.dispatchEvent(new GameSocketEvent(GameSocketEvent.GS_SEND,packet,""));
 	}
 }
