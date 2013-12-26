@@ -41,7 +41,8 @@ class GameSocket extends Socket
 		if(this.bytesAvailable!=0)
         { 
 			var raw = this.readUTFBytes(this.bytesAvailable);
-			var packet = GamePacket.parse(raw);
+			var packet = new GamePacket();
+			packet.parse(raw);
 			this.dispatchEvent(new GameSocketEvent(GameSocketEvent.GS_DATA,packet,raw));
 		}
 	}
