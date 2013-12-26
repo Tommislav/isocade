@@ -32,7 +32,7 @@ class Main extends Sprite
 		// lite evenst tmptmpt
 		_pressedKeys = new Map<Int,Bool>();
 		_keyListener = new ICadeKeyboard();
-        _keyListener.setKeyboardMode(false);
+        _keyListener.setKeyboardMode(true);
         _keyListener.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent) { 
 			if (playerId>=0 && !_pressedKeys.exists(e.keyCode))
 			{
@@ -46,7 +46,7 @@ class Main extends Sprite
 		{ 
 			if (playerId >= 0)
 			{
-				var gp = new NilsGamePacket(playerId,-e.keyCode);
+				var gp:NilsGamePacket = new NilsGamePacket(playerId,-e.keyCode);
 				gs.send(gp.serialize());
 				_pressedKeys.remove(e.keyCode);
 			}
@@ -70,7 +70,9 @@ class Main extends Sprite
 			if (!game.PlayerExists(id))
 				game.AddPlayer(id,0, 0);
 
-			var nilsPacket:NilsGamePacket = NilsGamePacket.Parse(e.raw);
+			var nilsPacket:NilsGamePacket = new  NilsGamePacket(0,0,0,0); 
+			nilsPacket.parse(e.raw);
+			Util.Print("id: " + nilsPacket.id + ", xy: " + nilsPacket.x + "/" + nilsPacket.y + ", key: " + nilsPacket.keycode);
 			var player = game.GetPlayer(id);
 			if (player == null)
 				return;

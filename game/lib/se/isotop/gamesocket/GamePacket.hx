@@ -28,7 +28,7 @@ class GamePacket
 		return str;
 	}
 	
-	public function parseRaw(data:String):GamePacket {
+	public function parse(data:String):GamePacket {
 		var packetSegments = data.split('|');
 		var dataSegments = packetSegments[0].split(':');
 	
@@ -43,13 +43,6 @@ class GamePacket
 		gp.id = id;
 		gp.type = type;
 		gp.values = data;
-		return gp;
-	}
-	
-	public static function parse( data:String ):GamePacket
-	{
-		var gp:GamePacket = new GamePacket();
-		gp.parseRaw(data);
 		return gp;
 	}
 }

@@ -21,11 +21,13 @@ class NilsGamePacket extends GamePacket
 		this.y = y;
 	}
 	
-	public static function Parse(data:String):NilsGamePacket
+	override public function parse(data:String):GamePacket 
 	{
-		var nils = new NilsGamePacket(0, 0, 0, 0);
-		nils.parseRaw(data);
-		return nils;
+		super.parse(data);
+		this.keycode = Std.parseInt(values[0]);
+		this.x = Std.parseFloat(values[1]);
+		this.y = Std.parseFloat(values[2]);
+		return this;
 	}
 	
 }
