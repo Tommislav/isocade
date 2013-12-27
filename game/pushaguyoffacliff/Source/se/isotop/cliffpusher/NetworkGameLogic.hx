@@ -20,27 +20,15 @@ class NetworkGameLogic extends Entity
 	
 	private var _playerId:Int = -1;
 	private var _players:Array<Player>;
-	private var _allPlayerIds:Array<Int>;
 
 	private var _gameSocket:GameSocket;
-	private var _dataToProcess:Array<GamePacket>;
 	private var _connected:Bool;
+	private var _playerUpdates:Map<Int, GamePacket>;
 	
 	public function new() 
 	{
 		super(0, 0, null, null);
-		
-		_colors = [
-			0xff0000,
-			0x00ff00,
-			0x0000ff
-		];
-		
-		
-		// debug, swap players
-		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onDebug);
-		_allPlayerIds = new Array<Int>();
-		_dataToProcess = new Array<GamePacket>();
+		_playerUpdates = new Map<Int, GamePacket>(); // store the last recieved update for each player id
 		
 		trace("connecting...");
 		_gameSocket = new GameSocket();
@@ -63,25 +51,16 @@ class NetworkGameLogic extends Entity
 	
 	private function onSocketData(e:GameSocketEvent):Void 
 	{
-		var exists:Bool = false;
-		for (i in 0..._allPlayerIds.length) {
-			if (_allPlayerIds[i] == e.packet.id) {
-				exists = true;
-				continue;
-			}
+		var id = e.packet.id;
+		if (!_playerUpdates.exists(id)) {
+			trace("we have a new player with id " + id);
+			newPlayer(id, false);
 		}
-		if (!exists) {
-			_allPlayerIds.push(e.packet.id);
-			trace("WE HAVE A NEW PLAYER with id " + e.packet.id);
-			newPlayer(e.packet.id, false);
-		}
-		
-		_dataToProcess.push(e.packet);
-		
+		_playerUpdates.set(id, e.packet);
 	}
 	
 	private function newPlayer(id:Int, isItMe:Bool):Player {
-		_allPlayerIds.push(id);
+		_playerUpdates.set(id, null);
 		
 		var input = new ICadeKeyboard();
 		input.setKeyboardMode(true);
@@ -90,20 +69,11 @@ class NetworkGameLogic extends Entity
 		
 		var xPos = (2 + id) * 32;
 		var yPos = 25 * 32;
+		var colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff];
 		
-		var p:Player = new Player(id, xPos, yPos, input, _colors[id]);
+		var p:Player = new Player(id, xPos, yPos, input, colors[id]);
 		scene.add(p);
 		return p;
-	}
-	
-	private function onDebug(e:KeyboardEvent):Void 
-	{
-		if (e.keyCode == Keyboard.NUMBER_1)
-			_playerId = 0;
-		else if (e.keyCode == Keyboard.NUMBER_2)
-			_playerId = 1;
-		else if (e.keyCode == Keyboard.NUMBER_3)
-			_playerId = 2;
 	}
 	
 	
@@ -115,10 +85,10 @@ class NetworkGameLogic extends Entity
 		_players = new Array<Player>();
 		this.scene.getClass(Player, _players);
 		
-		trace("numPl: " + _players.length + ", dataLen: " + _dataToProcess.length);
-		
 		for (pl in _players) {
-			if (pl.id == _playerId) { /* this is me */
+			var id = pl.id;
+			
+			if (id == _playerId) { /* this is me */
 				myInfo.id = _playerId;
 				myInfo.values = new Array<String>();
 				myInfo.values.push(Std.string(Math.round(pl.x)));
@@ -126,17 +96,12 @@ class NetworkGameLogic extends Entity
 				continue;
 			}
 			
-			var id = pl.id;
-			for (i in 0..._dataToProcess.length) {
-				if (_dataToProcess[i].id == id) {
-					pl.x = Std.parseFloat(_dataToProcess[i].values[0]);
-					pl.y = Std.parseFloat(_dataToProcess[i].values[1]);
-					trace("update other with id " + id + ", to " + _dataToProcess[i].values[0] + "/" +_dataToProcess[i].values[1]);
-				}
+			var gp = _playerUpdates.get(id);
+			if (gp != null) {
+				pl.x = Std.parseFloat(gp.values[0]);
+				pl.y = Std.parseFloat(gp.values[1]);
 			}
 		}
-		
-		_dataToProcess = new Array<GamePacket>();
 		
 		if (_connected)
 			_gameSocket.send(myInfo.serialize());
