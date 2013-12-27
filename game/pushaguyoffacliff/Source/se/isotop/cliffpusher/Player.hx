@@ -5,7 +5,9 @@ import com.haxepunk.graphics.Image;
 import com.haxepunk.HXP;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
+import flash.events.KeyboardEvent;
 import flash.Lib;
+import flash.ui.Keyboard;
 import se.salomonsson.icade.ICadeKeyCode;
 import se.salomonsson.icade.IReadInput;
 
@@ -41,10 +43,11 @@ class Player extends Entity
 		_gfxFactory = new GraphicsFactory();
 		_gfx = new Graphiclist();
 		
-		_gfx.add(Image.createRect(32, 64, color));
-		_gfx.add(new Image(_gfxFactory.getShade()));
-		_gfx.add(new Image(_gfxFactory.getEyes()));
-		graphic = _gfx;
+		//_gfx.add(Image.createRect(32, 64, color, 0.5));
+		//_gfx.add(new Image(_gfxFactory.getShade()));
+		//_gfx.add(new Image(_gfxFactory.getEyes()));
+		//graphic = _gfx;
+		graphic = Image.createRect(32, 64, color);
 		
 		
 		setHitbox(32, 64);
@@ -54,17 +57,22 @@ class Player extends Entity
 	}
 	
 	public function init():Void {
-		do {
+		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, moveDebug);
+	}
+	
+	private function moveDebug(e:KeyboardEvent):Void 
+	{
+		if (e.keyCode == Keyboard.SPACE) {
 			this.x = Math.random() * 768 - 32;
 			this.y = Math.random() * 1024 - 64;
-		} while (collide("solid", x, y) != null);
+		}
 	}
 	
 	
 	override public function update():Void 
 	{
 		if (this.y > 1024)
-			this.y = -64;
+			this.y = -256;
 		
 		var mX = 0.0;
 		var mY = 0.0;
