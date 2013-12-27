@@ -25,7 +25,7 @@ class GameScene extends Scene
 		keyboard.setKeyboardMode(true);
 		keyboard.setDebugToggleKey(Keyboard.SPACE);
 		
-		_networkHandler = new NetworkGameLogic(0);
+		_networkHandler = new NetworkGameLogic();
 		add(_networkHandler);
 		
 		
@@ -36,7 +36,9 @@ class GameScene extends Scene
 			add(new Block(factory, Math.random() * 1024 - 32, Math.random() * 768 - 32));
 		}
 		
-		add(new Player(0, HXP.halfWidth, HXP.halfHeight, keyboard, factory, 0xffff0000));
+		// Player is added by networkGameLogic on connection
+		
+		//add(new Player(-1, HXP.halfWidth, HXP.halfHeight, keyboard, 0xffff0000));
 		//add(new Player(10, 10, keyboard, factory, 0xff0000ff));
 		//add(new Player(100, 60, keyboard, factory, 0xff00ff00));
 	}

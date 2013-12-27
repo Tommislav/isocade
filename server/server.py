@@ -5,6 +5,10 @@ import socket
 HOST = ''
 PORT = 8888
 
+TYPE_CONNECTION_HANDSHAKE = "1";
+TYPE_NEW_PLAYER_CONNECTED = "2";
+TYPE_PLAYER_DISCONNECTED = "3";
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('socket created')
 
@@ -23,7 +27,8 @@ def send_all(data):
 
 def remove_client(connection, client_id):
     del(clients[int(client_id)])
-    send_all((client_id+":-1:-1:-1|").encode())
+    send_all((client_id + ":" + TYPE_PLAYER_DISCONNECTED + "|").encode())
+    
 
 def debug_output(data):
     encoded_data = (data.decode('UTF-8'))
@@ -35,7 +40,9 @@ def debug_output(data):
 def client_thread(connection):
     # send the client id to the connecting client
     client_id = str(clients.index(connection))
-    connection.send((client_id+":-1:-1:-1|").encode())
+    connection.send((client_id + ":" + TYPE_CONNECTION_HANDSHAKE + ":R|").encode());
+    send_all((client_id + ":" + TYPE_NEW_PLAYER_CONNECTED + "|").encode());
+    #connection.send((client_id+":-1:-1:-1|").encode())
 
     #receive data
     while True:

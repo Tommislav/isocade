@@ -16,7 +16,7 @@ import se.salomonsson.icade.IReadInput;
 class Player extends Entity
 {
 	private var _jumpStr:Float = 12;
-	private var _maxFall:Float = 6;
+	private var _maxFall:Float = 16;
 	private var _gravity:Float = 1;
 	private var _jumping:Bool;
 	private var _onGround:Bool;
@@ -31,15 +31,14 @@ class Player extends Entity
 	public var keyInput:IReadInput;
 	public var vX:Float = 0.0;
 	public var vY:Float = 0.0;
-	
 
-	public function new(id:Int, x:Float, y:Float, keyInput:IReadInput, gfx:GraphicsFactory, color:Int) 
+	public function new(id:Int, x:Float, y:Float, keyInput:IReadInput, color:Int) 
 	{
 		super(x, y);
 		this.id = id;
 		this.keyInput = keyInput;
-		_gfxFactory = gfx;
 		
+		_gfxFactory = new GraphicsFactory();
 		_gfx = new Graphiclist();
 		
 		_gfx.add(Image.createRect(32, 64, color));
@@ -114,7 +113,7 @@ class Player extends Entity
 		
 		
 		
-		//vY = Math.max(_maxFall, vY);
+		vY = Math.min(_maxFall, vY);
 		
 		moveBy(vX + mX, vY + mY, "solid");
 		HXP.setCamera(this.x - HXP.halfWidth, this.y - HXP.halfHeight);

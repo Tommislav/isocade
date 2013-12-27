@@ -3,8 +3,10 @@ package;
 
 import com.haxepunk.Engine;
 import com.haxepunk.HXP;
+import com.haxepunk.utils.Key;
 import flash.display.Sprite;
 import flash.Lib;
+import flash.ui.Keyboard;
 import se.isotop.cliffpusher.GameScene;
 
 
@@ -19,6 +21,8 @@ class Main extends Engine {
 	{
 		#if debug
 			HXP.console.enable();
+			HXP.console.show();
+			HXP.console.toggleKey = Keyboard.NUMBER_0;
 		#end
 		setScale(1);
 		HXP.scene = new GameScene();	

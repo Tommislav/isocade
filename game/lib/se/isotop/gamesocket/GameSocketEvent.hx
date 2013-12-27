@@ -14,5 +14,8 @@ class GameSocketEvent extends Event
 	public inline static var GS_DATA = "GS_DATA";
 	public inline static var GS_CLOSED = "GS_CLOSED";
 	public inline static var GS_SEND = "GS_SEND";
+	static public inline var GS_CONNECTION_HANDSHAKE:String = "GS_CONNECTION_HANDSHAKE";
+	static public inline var GS_NEW_PLAYER_CONNECTED:String = "GS_NEW_PLAYER_CONNECTED";
+	static public inline var GS_PLAYER_DISCONNECTED:String = "GS_PLAYER_DISCONNECTED";
 	
 }
