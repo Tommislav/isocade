@@ -1,7 +1,9 @@
 package se.isotop.cliffpusher;
 import com.haxepunk.HXP;
 import com.haxepunk.Scene;
+import flash.display.BitmapData;
 import flash.ui.Keyboard;
+import openfl.Assets;
 import se.salomonsson.icade.ICadeKeyboard;
 import se.salomonsson.icade.IReadInput;
 
@@ -32,8 +34,13 @@ class GameScene extends Scene
 		var factory = new GraphicsFactory();
 		
 		//add(new Level(factory));
-		for (i in 0...60) {
-			add(new Block(factory, Math.random() * 1024 - 32, Math.random() * 768 - 32));
+		var level:BitmapData = Assets.getBitmapData("assets/level0.png");
+		for (y in 0...level.height) {
+			for (x in 0...level.width) {
+				if (level.getPixel(x, y) == 0) {
+					add(new Block(factory, x*32, y*32));
+				}
+			}
 		}
 		
 		// Player is added by networkGameLogic on connection

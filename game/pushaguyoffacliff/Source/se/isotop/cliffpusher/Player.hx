@@ -62,10 +62,10 @@ class Player extends Entity
 	
 	private function moveDebug(e:KeyboardEvent):Void 
 	{
-		if (e.keyCode == Keyboard.SPACE) {
-			this.x = Math.random() * 768 - 32;
-			this.y = Math.random() * 1024 - 64;
-		}
+		//if (e.keyCode == Keyboard.SPACE) {
+			//this.x = Math.random() * 768 - 32;
+			//this.y = Math.random() * 1024 - 64;
+		//}
 	}
 	
 	

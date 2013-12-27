@@ -25,7 +25,7 @@ class GamePacket
 		for (i in 0...values.length) {
 			str += ":" + values[i];
 		}
-		return str;
+		return str + "|";
 	}
 	
 	public function parse(data:String):GamePacket {
