@@ -17,6 +17,7 @@ import se.salomonsson.icade.IReadInput;
  */
 class Player extends Entity
 {
+	private var _dir:Int = 1;
 	private var _jumpStr:Float = 12;
 	private var _maxFall:Float = 16;
 	private var _gravity:Float = 1;
@@ -52,20 +53,6 @@ class Player extends Entity
 		
 		setHitbox(32, 64);
 		type = "player";
-		
-		init();
-	}
-	
-	public function init():Void {
-		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, moveDebug);
-	}
-	
-	private function moveDebug(e:KeyboardEvent):Void 
-	{
-		//if (e.keyCode == Keyboard.SPACE) {
-			//this.x = Math.random() * 768 - 32;
-			//this.y = Math.random() * 1024 - 64;
-		//}
 	}
 	
 	
@@ -89,8 +76,13 @@ class Player extends Entity
 			var spd = 4.0;
 			var rad = deg / 180 * Math.PI;
 			mX = Math.cos(rad) * spd;
-			//mY = Math.sin(rad) * spd;
+			
+			if (mX < 0)
+				_dir = -1;
+			else if (mX > 0)
+				_dir = 1;
 		}
+		
 		
 		if (_jumping && collide("solid", x, y - 1) != null) { // hitting head
 			//vY = 0;
@@ -118,6 +110,13 @@ class Player extends Entity
 			vY += _gravity;
 		
 		
+		
+		
+		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_B)) {
+			var pushX = this.x + 34 * _dir;
+			var push:Push = new Push(pushX, this.y + 10, _dir, this.id);
+			scene.add(push);
+		}
 		
 		
 		
