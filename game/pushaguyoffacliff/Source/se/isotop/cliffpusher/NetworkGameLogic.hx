@@ -16,6 +16,8 @@ import se.salomonsson.icade.ICadeKeyboard;
  */
 class NetworkGameLogic extends Entity
 {
+	private var _colors:Array<Int>;
+	
 	private var _playerId:Int = -1;
 	private var _players:Array<Player>;
 	private var _allPlayerIds:Array<Int>;
@@ -28,9 +30,17 @@ class NetworkGameLogic extends Entity
 	{
 		super(0, 0, null, null);
 		
+		_colors = [
+			0xff0000,
+			0x00ff00,
+			0x0000ff
+		];
+		
+		
 		// debug, swap players
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onDebug);
 		_allPlayerIds = new Array<Int>();
+		_dataToProcess = new Array<GamePacket>();
 		
 		trace("connecting...");
 		_gameSocket = new GameSocket();
@@ -42,11 +52,8 @@ class NetworkGameLogic extends Entity
 	{
 		_gameSocket.removeEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
 		_playerId = e.packet.id;
-		_allPlayerIds.push(_playerId);
 		
-		var input = new ICadeKeyboard();
-		input.setKeyboardMode(true);
-		scene.add(new Player(_playerId, HXP.halfWidth, HXP.halfHeight, input, 0xffff0000));
+		newPlayer(_playerId, true);
 		
 		trace("Connected with id: " + _playerId);
 		_gameSocket.addEventListener(GameSocketEvent.GS_DATA, onSocketData);
@@ -64,17 +71,29 @@ class NetworkGameLogic extends Entity
 			}
 		}
 		if (!exists) {
+			_allPlayerIds.push(e.packet.id);
 			trace("WE HAVE A NEW PLAYER with id " + e.packet.id);
-			var input:ICadeKeyboard = new ICadeKeyboard();
-			input.disable();
-			input.setKeyboardMode(true);
-			var p:Player = new Player(e.packet.id, Math.random() * 768, Math.random() * 1024, input, 0xff00ff);
-			scene.add(p);
+			newPlayer(e.packet.id, false);
 		}
 		
-		trace("socket data " + e.raw);
 		_dataToProcess.push(e.packet);
 		
+	}
+	
+	private function newPlayer(id:Int, isItMe:Bool):Player {
+		_allPlayerIds.push(id);
+		
+		var input = new ICadeKeyboard();
+		input.setKeyboardMode(true);
+		if (!isItMe)
+			input.disable();
+		
+		var xPos = (2 + id) * 32;
+		var yPos = 25 * 32;
+		
+		var p:Player = new Player(id, xPos, yPos, input, _colors[id]);
+		scene.add(p);
+		return p;
 	}
 	
 	private function onDebug(e:KeyboardEvent):Void 
@@ -96,18 +115,23 @@ class NetworkGameLogic extends Entity
 		_players = new Array<Player>();
 		this.scene.getClass(Player, _players);
 		
+		trace("numPl: " + _players.length + ", dataLen: " + _dataToProcess.length);
+		
 		for (pl in _players) {
 			if (pl.id == _playerId) { /* this is me */
 				myInfo.id = _playerId;
-				myInfo.values = [Std.string(pl.x), Std.string(pl.y)];
+				myInfo.values = new Array<String>();
+				myInfo.values.push(Std.string(Math.round(pl.x)));
+				myInfo.values.push(Std.string(Math.round(pl.y)));
 				continue;
 			}
 			
 			var id = pl.id;
-			for (i in (_dataToProcess.length-1)...0) {
+			for (i in 0..._dataToProcess.length) {
 				if (_dataToProcess[i].id == id) {
 					pl.x = Std.parseFloat(_dataToProcess[i].values[0]);
 					pl.y = Std.parseFloat(_dataToProcess[i].values[1]);
+					trace("update other with id " + id + ", to " + _dataToProcess[i].values[0] + "/" +_dataToProcess[i].values[1]);
 				}
 			}
 		}

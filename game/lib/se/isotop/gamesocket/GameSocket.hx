@@ -59,7 +59,6 @@ class GameSocket extends Socket
 				if (packet.type == TYPE_PLAYER_DISCONNECTED)
 					type = GameSocketEvent.GS_PLAYER_DISCONNECTED;
 				
-				HXP.console.log(["onData ", raw, packet.type]);
 				this.dispatchEvent( new GameSocketEvent( type, packet, raw ) );
 			}
 			
