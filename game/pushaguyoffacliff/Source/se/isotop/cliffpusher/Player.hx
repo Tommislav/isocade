@@ -29,6 +29,7 @@ class Player extends Entity
 	private var _gfxFactory:GraphicsFactory;
 	private var _canJump:Bool;
 	private var _jumpCnt:Int;
+	private var _freezeInteractionCnt:Int;
 	
 	public var id:Int = -1;
 	public var keyInput:IReadInput;
@@ -110,13 +111,22 @@ class Player extends Entity
 			vY += _gravity;
 		
 		
-		
-		
-		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_B)) {
-			var pushX = this.x + 34 * _dir;
-			var push:Push = new Push(pushX, this.y + 10, _dir, this.id);
-			scene.add(push);
+		if (_freezeInteractionCnt <= 0) {
+			if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_B)) { // shooting?
+				_freezeInteractionCnt = 60;
+				
+				var spawnType = "push";
+				var xPos = this.x + 34 * _dir;
+				var yPos = this.y + 10;
+				
+				var logic:NetworkGameLogic = cast (scene.getInstance("GameLogic"), NetworkGameLogic);
+				logic.spawnPushEntity(xPos, yPos, _dir, this.id);
+			}
+		} else {
+			_freezeInteractionCnt--;
 		}
+		
+		
 		
 		
 		
