@@ -30,10 +30,20 @@ class Push extends Entity
 		
 		_image = Image.createRect(16, 32, 0x00fff9);
 		
+		var duration:Float = 0.2;
+		
 		this.graphic = _image;
-		var t:VarTween = new VarTween( onDone, TweenType.OneShot );
-		//t.tween(this, "x", posX + 100 * _dir, 1, Ease.sineOut);
-		t.tween(_image, "alpha", 0, 1, Ease.sineOut);
+		
+		var move:VarTween = new VarTween( onDone, TweenType.OneShot );
+		move.tween(this, "x", posX + 48 * _dir, duration, Ease.sineOut);
+		
+		var fade:VarTween = new VarTween(null, TweenType.OneShot);
+		fade.tween(_image, "alpha", 0, duration, Ease.sineOut );
+		
+		//t.tween(_image, "alpha", 0, 1, Ease.sineOut);
+		addTween(move, true);
+		addTween(fade, true);
+		
 	}
 	
 	public function onDone(d:Dynamic):Void {
