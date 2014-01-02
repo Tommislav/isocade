@@ -1,6 +1,5 @@
 package se.isotop.gamesocket;
 
-import com.haxepunk.HXP;
 import flash.net.Socket;
 import flash.events.EventDispatcher;
 import flash.events.Event;
