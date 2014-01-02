@@ -35,6 +35,8 @@ class Player extends Entity
 	public var keyInput:IReadInput;
 	public var vX:Float = 0.0;
 	public var vY:Float = 0.0;
+	
+	private var _pushForceX:Float = 0.0;
 
 	public function new(id:Int, x:Float, y:Float, keyInput:IReadInput, color:Int) 
 	{
@@ -127,7 +129,15 @@ class Player extends Entity
 		}
 		
 		
+		if (checkForPushCollision(x+vX+mX, y+vY+mY)) {
+			mX = mY = 0;
+		}
 		
+		
+		// Add push force to movement x
+		mX += _pushForceX;
+		_pushForceX *= 0.9;
+		//if (_pushForceX < 0.01 && _pushForceX > -0.01) { _pushForceX = 0; }
 		
 		
 		vY = Math.min(_maxFall, vY);
@@ -135,5 +145,19 @@ class Player extends Entity
 		moveBy(vX + mX, vY + mY, "solid");
 		HXP.setCamera(this.x - HXP.halfWidth, this.y - HXP.halfHeight);
 		super.update();
+	}
+	
+	function checkForPushCollision(x, y) 
+	{
+		var coll = collide("Push", x, y);
+		if (coll != null) {
+			var push:Push = cast(coll, Push);
+			if (push.playerId == this.id) return false; // I'm not taking damage from my own pushes
+			
+			this.vY = -10;
+			this._pushForceX = 10 * push.dir;
+			return true;
+		}
+		return false;
 	}
 }

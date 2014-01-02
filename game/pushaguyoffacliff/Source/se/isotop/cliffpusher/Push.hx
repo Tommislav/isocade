@@ -18,15 +18,19 @@ import com.haxepunk.utils.Ease.EaseFunction;
  */
 class Push extends Entity
 {
-	private var _dir:Int;
-	private var _playerId:Int;
 	private var _image:Image;
+	
+	public var dir(default, null):Int;
+	public var playerId(default, null):Int;
 	
 	public function new(posX:Float, y:Float, dir:Int, fromPlayer:Int ) 
 	{
 		super(posX, y);
-		_dir = dir;
-		_playerId = fromPlayer;
+		this.type = "Push";
+		this.setHitbox(16, 32);
+		
+		this.dir = dir;
+		this.playerId = fromPlayer;
 		
 		_image = Image.createRect(16, 32, 0x00fff9);
 		
@@ -35,7 +39,7 @@ class Push extends Entity
 		this.graphic = _image;
 		
 		var move:VarTween = new VarTween( onDone, TweenType.OneShot );
-		move.tween(this, "x", posX + 48 * _dir, duration, Ease.sineOut);
+		move.tween(this, "x", posX + 48 * dir, duration, Ease.sineOut);
 		
 		var fade:VarTween = new VarTween(null, TweenType.OneShot);
 		fade.tween(_image, "alpha", 0, duration, Ease.sineOut );
