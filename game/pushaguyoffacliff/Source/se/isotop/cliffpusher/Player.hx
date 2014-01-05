@@ -17,6 +17,9 @@ import se.salomonsson.icade.IReadInput;
  */
 class Player extends Entity
 {
+	private static inline var SHIELD_X_R = 34;
+	private static inline var SHIELD_X_L = -6;
+	
 	private var _dir:Int = 1;
 	private var _jumpStr:Float = 12;
 	private var _maxFall:Float = 16;
@@ -29,7 +32,7 @@ class Player extends Entity
 	private var _gfxFactory:GraphicsFactory;
 	private var _canJump:Bool;
 	private var _jumpCnt:Int;
-	private var _freezeInteractionCnt:Int;
+	private var _freezeInteractionCnt:Int = 0;
 	
 	public var id:Int = -1;
 	public var keyInput:IReadInput;
@@ -37,6 +40,10 @@ class Player extends Entity
 	public var vY:Float = 0.0;
 	
 	private var _pushForceX:Float = 0.0;
+	
+	private var _eyes:Image;
+	private var _eyes2:Image;
+	private var _shield:Image;
 
 	public function new(id:Int, x:Float, y:Float, keyInput:IReadInput, color:Int) 
 	{
@@ -47,11 +54,20 @@ class Player extends Entity
 		_gfxFactory = new GraphicsFactory();
 		_gfx = new Graphiclist();
 		
-		//_gfx.add(Image.createRect(32, 64, color, 0.5));
-		//_gfx.add(new Image(_gfxFactory.getShade()));
-		//_gfx.add(new Image(_gfxFactory.getEyes()));
-		//graphic = _gfx;
-		graphic = Image.createRect(32, 64, color);
+		var body:Image = new Image(_gfxFactory.getBody(id));
+		
+		_eyes = new Image(_gfxFactory.getEyes(), null, "eyes");
+		_eyes2 = new Image(_gfxFactory.getClosedEyes(), null, "eyesClosed");
+		_shield = new Image(_gfxFactory.getShield(id));
+		_shield.relative = true;
+		_shield.x = SHIELD_X_R;
+		
+		_gfx.add(body);
+		_gfx.add(new Image(_gfxFactory.getShade()));
+		_gfx.add(_eyes);
+		_gfx.add(_eyes2);
+		_gfx.add(_shield);
+		graphic = _gfx;
 		
 		
 		setHitbox(32, 64);
@@ -67,8 +83,10 @@ class Player extends Entity
 		var mX = 0.0;
 		var mY = 0.0;
 		
-		_onGround = collide("solid", x, y + 1) != null;
+		_freezeInteractionCnt--;
+		var freezeInteraction = (_freezeInteractionCnt > 0);
 		
+		_onGround = collide("solid", x, y + 1) != null;
 		
 		
 		if (_onGround && _jumping)
@@ -80,10 +98,16 @@ class Player extends Entity
 			var rad = deg / 180 * Math.PI;
 			mX = Math.cos(rad) * spd;
 			
-			if (mX < 0)
+			if (mX < 0) {
+				_eyes.flipped = _eyes2.flipped = true;
+				_shield.x = SHIELD_X_L;
 				_dir = -1;
-			else if (mX > 0)
+			}
+			else if (mX > 0) {
+				_eyes.flipped = _eyes2.flipped = false;
+				_shield.x = SHIELD_X_R;
 				_dir = 1;
+			}
 		}
 		
 		
@@ -92,7 +116,8 @@ class Player extends Entity
 			_jumpCnt = 99;
 		}
 		
-		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_A)) {
+		
+		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_A) && !freezeInteraction) {
 			if (_onGround) {
 				_onGround = false;
 				_jumping = true;
@@ -100,20 +125,19 @@ class Player extends Entity
 			
 			if (_jumping && ++_jumpCnt < 15) {
 				vY = -_jumpStr;
-			}
-		} else {
-			// release button while standing on ground
-			if (_onGround) {
-				vY = 0;
-				_jumpCnt = 0;
-			}
+			} 
 		}
 		
-		if (!_onGround)
+		if (_onGround) {
+			vY = 0;
+			_jumpCnt = 0;
+		} else {
 			vY += _gravity;
+		}
 		
 		
-		if (_freezeInteractionCnt <= 0) {
+		
+		if (!freezeInteraction) {
 			if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_B)) { // shooting?
 				_freezeInteractionCnt = 60;
 				
@@ -124,8 +148,12 @@ class Player extends Entity
 				var logic:NetworkGameLogic = cast (scene.getInstance("GameLogic"), NetworkGameLogic);
 				logic.spawnPushEntity(xPos, yPos, _dir, this.id);
 			}
+		}
+		
+		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_C) && !freezeInteraction && _onGround) { // shield
+			_shield.visible = true;
 		} else {
-			_freezeInteractionCnt--;
+			_shield.visible = false;
 		}
 		
 		
@@ -137,10 +165,17 @@ class Player extends Entity
 		// Add push force to movement x
 		mX += _pushForceX;
 		_pushForceX *= 0.9;
-		//if (_pushForceX < 0.01 && _pushForceX > -0.01) { _pushForceX = 0; }
+		if (_pushForceX < 0.01 && _pushForceX > -0.01) { _pushForceX = 0; }
 		
 		
 		vY = Math.min(_maxFall, vY);
+		
+		
+		
+		var freeze = _freezeInteractionCnt > 0;
+		_eyes.visible = !freeze;
+		_eyes2.visible = freeze;
+		
 		
 		moveBy(vX + mX, vY + mY, "solid");
 		HXP.setCamera(this.x - HXP.halfWidth, this.y - HXP.halfHeight);
