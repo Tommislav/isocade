@@ -81,9 +81,8 @@ class NetworkGameLogic extends Entity
 		
 		var xPos = (2 + id) * 32;
 		var yPos = 25 * 32;
-		var colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff];
 		
-		var p:Player = new Player(id, xPos, yPos, input, colors[id]);
+		var p:Player = new Player(id, xPos, yPos, input, isItMe);
 		scene.add(p);
 		return p;
 	}
@@ -102,7 +101,7 @@ class NetworkGameLogic extends Entity
 	public function spawnPushEntity( x:Float, y:Float, dir:Int, playerId:Int, send:Bool=true ) {
 		var push:Push = new Push(x, y, dir, playerId);
 		scene.add(push);
-		
+		/*
 		if (send) {
 			// push notification to other connected players that I just spawned
 			var gp:GamePacket = new GamePacket();
@@ -114,6 +113,7 @@ class NetworkGameLogic extends Entity
 			gp.values.push(Std.string(dir));
 			_gameSocket.send(gp.serialize());
 		}
+		*/
 	}
 	
 	override public function update():Void 
@@ -132,6 +132,7 @@ class NetworkGameLogic extends Entity
 				myInfo.values = new Array<String>();
 				myInfo.values.push(Std.string(Math.round(pl.x)));
 				myInfo.values.push(Std.string(Math.round(pl.y)));
+				myInfo.values.push(Std.string(pl.keyInput.serialize()));
 				continue;
 			}
 			
@@ -139,6 +140,9 @@ class NetworkGameLogic extends Entity
 			if (gp != null) {
 				pl.x = Std.parseFloat(gp.values[0]);
 				pl.y = Std.parseFloat(gp.values[1]);
+				
+				var parsedInput:Int = Std.parseInt(gp.values[2]);
+				pl.keyInput.deserialize(parsedInput);
 			}
 		}
 		

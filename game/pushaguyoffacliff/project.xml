@@ -13,6 +13,6 @@
 	<assets path="Assets" rename="assets" exclude="openfl.svg" />
 	<icon path="Assets/openfl.svg" />
 	
-	<window orientation="portrait" fps="60" />
+	<window orientation="portrait" width="768" height="1024" fps="60" />
 	
 </project>

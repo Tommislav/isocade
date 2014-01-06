@@ -21,7 +21,7 @@ import haxe.ds.IntMap.IntMap;
  * Then check the keyboardEvent.keyCode against the defined keycodes in the ICadeKeyCode class
  * @author Tommislav
  */
-class ICadeKeyboard implements IReadInput
+class ICadeKeyboard implements ISerializeableReadInput
 {
 	private var _eventDispatcher:EventDispatcher;
 	private var _enabled:Bool;
@@ -167,33 +167,35 @@ class ICadeKeyboard implements IReadInput
 	
 	public function serialize():Int {
 		var d:Int = 0;
-		d += getKeyIsDown(ICadeKeyCode.UP) ? 		( 1 << 1 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.DOWN ) ? 	( 1 << 2 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.LEFT ) ? 	( 1 << 3 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.RIGHT ) ? 	( 1 << 4 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.BUTTON_A) ?	( 1 << 5 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.BUTTON_B) ?	( 1 << 6 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.BUTTON_C) ?	( 1 << 7 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.BUTTON_1) ?	( 1 << 8 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.BUTTON_2) ?	( 1 << 9 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.BUTTON_3) ?	( 1 << 10 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.BUTTON_START) ? ( 1 << 11 ) : 0;
-		d += getKeyIsDown(ICadeKeyCode.BUTTON_BACK ) ? (1 << 12 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.UP) ? 			( 1 << 0 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.DOWN ) ? 		( 1 << 1 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.LEFT ) ? 		( 1 << 2 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.RIGHT ) ? 		( 1 << 3 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.BUTTON_A) ?		( 1 << 4 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.BUTTON_B) ?		( 1 << 5 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.BUTTON_C) ?		( 1 << 6 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.BUTTON_1) ?		( 1 << 7 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.BUTTON_2) ?		( 1 << 8 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.BUTTON_3) ?		( 1 << 9 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.BUTTON_START) ? 	( 1 << 10 ) : 0;
+		d |= getKeyIsDown(ICadeKeyCode.BUTTON_BACK ) ? 	( 1 << 11 ) : 0;
 		return d;
 	}
 	
-	public function deserialize(d:Int) {
-		_buttonsPressed.set(ICadeKeyCode.UP, 			(d | (1 << 1) != 0));
-		_buttonsPressed.set(ICadeKeyCode.DOWN, 			(d | (1 << 2) != 0));
-		_buttonsPressed.set(ICadeKeyCode.LEFT, 			(d | (1 << 3) != 0));
-		_buttonsPressed.set(ICadeKeyCode.RIGHT, 		(d | (1 << 4) != 0));
-		_buttonsPressed.set(ICadeKeyCode.BUTTON_A, 		(d | (1 << 5) != 0));
-		_buttonsPressed.set(ICadeKeyCode.BUTTON_B, 		(d | (1 << 6) != 0));
-		_buttonsPressed.set(ICadeKeyCode.BUTTON_C, 		(d | (1 << 7) != 0));
-		_buttonsPressed.set(ICadeKeyCode.BUTTON_1, 		(d | (1 << 8) != 0));
-		_buttonsPressed.set(ICadeKeyCode.BUTTON_2, 		(d | (1 << 9) != 0));
-		_buttonsPressed.set(ICadeKeyCode.BUTTON_3, 		(d | (1 << 10) != 0));
-		_buttonsPressed.set(ICadeKeyCode.BUTTON_START, 	(d | (1 << 11) != 0));
-		_buttonsPressed.set(ICadeKeyCode.BUTTON_BACK, 	(d | (1 << 12) != 0));
+	public function deserialize(d:Int):Void {
+		_buttonsPressed.set(ICadeKeyCode.UP, 			(d & (1 << 0) != 0));
+		_buttonsPressed.set(ICadeKeyCode.DOWN, 			(d & (1 << 1) != 0));
+		_buttonsPressed.set(ICadeKeyCode.LEFT, 			(d & (1 << 2) != 0));
+		_buttonsPressed.set(ICadeKeyCode.RIGHT, 		(d & (1 << 3) != 0));
+		_buttonsPressed.set(ICadeKeyCode.BUTTON_A, 		(d & (1 << 4) != 0));
+		_buttonsPressed.set(ICadeKeyCode.BUTTON_B, 		(d & (1 << 5) != 0));
+		_buttonsPressed.set(ICadeKeyCode.BUTTON_C, 		(d & (1 << 6) != 0));
+		_buttonsPressed.set(ICadeKeyCode.BUTTON_1, 		(d & (1 << 7) != 0));
+		_buttonsPressed.set(ICadeKeyCode.BUTTON_2, 		(d & (1 << 8) != 0));
+		_buttonsPressed.set(ICadeKeyCode.BUTTON_3, 		(d & (1 << 9) != 0));
+		_buttonsPressed.set(ICadeKeyCode.BUTTON_START, 	(d & (1 << 10) != 0));
+		_buttonsPressed.set(ICadeKeyCode.BUTTON_BACK, 	(d & (1 << 11) != 0));
+		
+		trace(d + "===> " + (d & (1 << 4)));
 	}
 }

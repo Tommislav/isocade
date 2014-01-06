@@ -8,23 +8,18 @@ import com.haxepunk.graphics.Tilemap;
  */
 class Level extends Entity
 {
-	private var _tileMap:Tilemap;
-
+	public static inline var NAME = "Level";
 	
-	public function new(gfxFactory:GraphicsFactory) 
+	public var levelWidthTiles:Int;
+	public var levelHeightTiles:Int;
+	public var levelWidthPx:Int;
+	public var levelHeightPx:Int;
+	public var tileW:Int;
+	public var tileH:Int;
+	
+	public function new() 
 	{
-		super(0,0);
-		type = "solid";
-		_tileMap = new Tilemap(gfxFactory.getGroundTile(), 1024, 768, 32, 32);
-		
-		var tilesX = 32;
-		var tilesY = 24;
-		
-		for (i in 0...100) {
-			_tileMap.setTile(Std.int(Math.random() * tilesX), Std.int(Math.random() * tilesY), 0);
-		}
-		
-		graphic = _tileMap;
+		super();
+		name = NAME;
 	}
-	
 }

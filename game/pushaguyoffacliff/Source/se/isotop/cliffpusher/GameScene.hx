@@ -37,6 +37,7 @@ class GameScene extends Scene
 		
 		var factory = new GraphicsFactory();
 		
+		
 		//add(new Level(factory));
 		var level:BitmapData = Assets.getBitmapData("assets/level0.png");
 		for (y in 0...level.height) {
@@ -46,6 +47,14 @@ class GameScene extends Scene
 				}
 			}
 		}
+		
+		var ld:Level = new Level();
+		ld.levelWidthTiles = level.width;
+		ld.levelWidthPx = level.width * 32;
+		ld.levelHeightTiles = level.height;
+		ld.levelHeightPx = level.height * 32;
+		ld.tileW = ld.tileH = 32;
+		add(ld);
 		
 		// Player is added by networkGameLogic on connection
 		

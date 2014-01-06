@@ -10,6 +10,7 @@ import flash.Lib;
 import flash.ui.Keyboard;
 import se.salomonsson.icade.ICadeKeyCode;
 import se.salomonsson.icade.IReadInput;
+import se.salomonsson.icade.ISerializeableReadInput;
 
 /**
  * ...
@@ -19,6 +20,8 @@ class Player extends Entity
 {
 	private static inline var SHIELD_X_R = 34;
 	private static inline var SHIELD_X_L = -6;
+	
+	private var _isItMe:Bool;
 	
 	private var _dir:Int = 1;
 	private var _jumpStr:Float = 12;
@@ -35,7 +38,7 @@ class Player extends Entity
 	private var _freezeInteractionCnt:Int = 0;
 	
 	public var id:Int = -1;
-	public var keyInput:IReadInput;
+	public var keyInput:ISerializeableReadInput;
 	public var vX:Float = 0.0;
 	public var vY:Float = 0.0;
 	
@@ -44,12 +47,14 @@ class Player extends Entity
 	private var _eyes:Image;
 	private var _eyes2:Image;
 	private var _shield:Image;
+	private var _ld:Level;
 
-	public function new(id:Int, x:Float, y:Float, keyInput:IReadInput, color:Int) 
+	public function new(id:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
 		super(x, y);
 		this.id = id;
 		this.keyInput = keyInput;
+		_isItMe = isItMe;
 		
 		_gfxFactory = new GraphicsFactory();
 		_gfx = new Graphiclist();
@@ -77,7 +82,11 @@ class Player extends Entity
 	
 	override public function update():Void 
 	{
-		if (this.y > 1024)
+		if (_ld == null) {
+			_ld = cast(scene.getInstance(Level.NAME), Level);
+		}
+		
+		if (this.y > _ld.levelHeightPx + 518)
 			this.y = -256;
 		
 		var mX = 0.0;
@@ -117,6 +126,7 @@ class Player extends Entity
 		}
 		
 		
+		// Jump (Button A)
 		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_A) && !freezeInteraction) {
 			if (_onGround) {
 				_onGround = false;
@@ -136,9 +146,9 @@ class Player extends Entity
 		}
 		
 		
-		
+		// Shoot (Button B)
 		if (!freezeInteraction) {
-			if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_B)) { // shooting?
+			if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_B)) {
 				_freezeInteractionCnt = 60;
 				
 				var spawnType = "push";
@@ -150,15 +160,17 @@ class Player extends Entity
 			}
 		}
 		
+		// Shield (Button C)
 		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_C) && !freezeInteraction && _onGround) { // shield
 			_shield.visible = true;
 		} else {
 			_shield.visible = false;
 		}
 		
-		
-		if (checkForPushCollision(x+vX+mX, y+vY+mY)) {
-			mX = mY = 0;
+		if (!_shield.visible) {
+			if (checkForPushCollision(x+vX+mX, y+vY+mY)) {
+				mX = mY = 0;
+			}
 		}
 		
 		
@@ -178,8 +190,19 @@ class Player extends Entity
 		
 		
 		moveBy(vX + mX, vY + mY, "solid");
-		HXP.setCamera(this.x - HXP.halfWidth, this.y - HXP.halfHeight);
+		
+		
+		moveCamera();
 		super.update();
+	}
+	
+	function moveCamera() 
+	{
+		var cX = this.x - HXP.halfWidth;
+		var cY = this.y - HXP.halfHeight;
+		cX = Math.max(-64, Math.min(_ld.levelWidthPx - 768 + 64, cX));
+		cY = Math.max(-70, Math.min(_ld.levelHeightPx - 1024 + 128, cY));
+		HXP.setCamera(cX, cY);
 	}
 	
 	function checkForPushCollision(x, y) 
