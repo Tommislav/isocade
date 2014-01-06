@@ -47,7 +47,10 @@ class NetworkGameLogic extends Entity
 		_gameSocket.removeEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
 		_playerId = e.packet.id;
 		
+		
+		newFakePlayer(); // fake player - remove before trying over network!!
 		newPlayer(_playerId, true);
+		
 		
 		trace("Connected with id: " + _playerId);
 		_gameSocket.addEventListener(GameSocketEvent.GS_DATA, onSocketData);
@@ -85,6 +88,21 @@ class NetworkGameLogic extends Entity
 		var p:Player = new Player(id, xPos, yPos, input, isItMe);
 		scene.add(p);
 		return p;
+	}
+	
+	private function newFakePlayer() {
+		var fakeId = 4;
+		_playerUpdates.set(fakeId, null);
+		
+		var input = new ICadeKeyboard();
+		input.setKeyboardMode(true);
+		input.disable();
+		
+		var xPos = 5 * 32;
+		var yPos = 25 * 32;
+		
+		var p:FakePlayer = new FakePlayer(fakeId, xPos, yPos, input, false);
+		scene.add(p);
 	}
 	
 	private function spawnNetworkPush(gp:GamePacket) {

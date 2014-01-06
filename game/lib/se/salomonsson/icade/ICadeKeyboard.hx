@@ -113,6 +113,10 @@ class ICadeKeyboard implements ISerializeableReadInput
 	public function getKeyIsDown(keyCode:Int):Bool {
 		return _buttonsPressed.get(keyCode);
 	}
+	// not part of regular interface, but can be used to fake NPC interaction
+	public function setKeyIsDown(keyCode:Int, isDown:Bool) {
+		_buttonsPressed.set(keyCode, isDown);
+	}
 	
 	
 	private function onKeyDown(e:KeyboardEvent):Void {
@@ -196,4 +200,5 @@ class ICadeKeyboard implements ISerializeableReadInput
 		_buttonsPressed.set(ICadeKeyCode.BUTTON_START, 	(d & (1 << 10) != 0));
 		_buttonsPressed.set(ICadeKeyCode.BUTTON_BACK, 	(d & (1 << 11) != 0));
 	}
+	
 }

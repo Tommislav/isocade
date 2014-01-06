@@ -40,7 +40,7 @@ def debug_output(data):
 def client_thread(connection):
     # send the client id to the connecting client
     client_id = str(clients.index(connection))
-    connection.send((client_id + ":" + TYPE_CONNECTION_HANDSHAKE + ":R|").encode());
+    connection.send((client_id + ":" + TYPE_CONNECTION_HANDSHAKE + "|").encode());
     send_all((client_id + ":" + TYPE_NEW_PLAYER_CONNECTED + "|").encode());
     #connection.send((client_id+":-1:-1:-1|").encode())
 

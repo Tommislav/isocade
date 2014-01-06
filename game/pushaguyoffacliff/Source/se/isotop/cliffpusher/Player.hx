@@ -191,10 +191,14 @@ class Player extends Entity
 		
 		moveBy(vX + mX, vY + mY, "solid");
 		
+		checkForPlayerCollision();
 		
-		moveCamera();
+		if (_isItMe) 
+			moveCamera();
+		
 		super.update();
 	}
+	
 	
 	function moveCamera() 
 	{
@@ -217,5 +221,22 @@ class Player extends Entity
 			return true;
 		}
 		return false;
+	}
+	
+	
+	
+	function checkForPlayerCollision() 
+	{
+		var otherPlayer:Entity = collide("player", this.x, this.y);
+		trace("collision " + otherPlayer);
+		if (otherPlayer != null) {
+			var collPl:Player = cast(otherPlayer, Player);
+			if (this.y > collPl.y) { // He is above us and moving downward - he jumped on us!
+				_freezeInteractionCnt = 120;
+			}
+			else if (this.y < collPl.y) { // We are above and moving downward - we jumped on him!
+				this.vY = -18;
+			}
+		}
 	}
 }
