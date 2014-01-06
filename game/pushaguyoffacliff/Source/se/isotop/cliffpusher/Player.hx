@@ -228,7 +228,6 @@ class Player extends Entity
 	function checkForPlayerCollision() 
 	{
 		var otherPlayer:Entity = collide("player", this.x, this.y);
-		trace("collision " + otherPlayer);
 		if (otherPlayer != null) {
 			var collPl:Player = cast(otherPlayer, Player);
 			if (this.y > collPl.y) { // He is above us and moving downward - he jumped on us!
