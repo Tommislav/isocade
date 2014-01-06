@@ -195,7 +195,5 @@ class ICadeKeyboard implements ISerializeableReadInput
 		_buttonsPressed.set(ICadeKeyCode.BUTTON_3, 		(d & (1 << 9) != 0));
 		_buttonsPressed.set(ICadeKeyCode.BUTTON_START, 	(d & (1 << 10) != 0));
 		_buttonsPressed.set(ICadeKeyCode.BUTTON_BACK, 	(d & (1 << 11) != 0));
-		
-		trace(d + "===> " + (d & (1 << 4)));
 	}
 }
