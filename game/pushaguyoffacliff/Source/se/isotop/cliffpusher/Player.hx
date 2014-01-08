@@ -112,6 +112,7 @@ class Player extends Entity
 		if (this.y > _ld.levelHeightPx + 518) {
 			this.x = _startX;
 			this.y = _startY;
+			if (_isItMe) SoundPlayer.play(SoundPlayer.SND_DIE);
 		}
 		
 		var mX = 0.0;
@@ -162,6 +163,7 @@ class Player extends Entity
 			if (_onGround) {
 				_onGround = false;
 				_jumping = true;
+				SoundPlayer.play( (_isItMe?SoundPlayer.SND_JUMP_ME : SoundPlayer.SND_JUMP_THEM));
 			}
 			
 			if (_jumping && ++_jumpCnt < 15) {
@@ -205,6 +207,8 @@ class Player extends Entity
 		
 		
 		vY = Math.min(_maxFall, vY);
+		vX *= 0.9;
+		if (vX < 0.1 && (mX != 0)) vX = 0;
 		
 		
 		
@@ -242,7 +246,11 @@ class Player extends Entity
 			if (bullet.getPlayerId() == this.id) return false; // I'm not taking damage from my own pushes
 			
 			if (_shield.visible && _dir != bullet.getDir()) {
-				bullet.destroy(true);
+				bullet.destroy(false);
+				var pushBack = (2 * bullet.getDamage() * bullet.getDir());
+				this.x += pushBack;
+				this.vX = pushBack;
+				SoundPlayer.play(SoundPlayer.SND_HIT_SHIELD);
 				return false;
 			}
 			
@@ -251,6 +259,7 @@ class Player extends Entity
 			_eyes.visible = false;
 			_eyes2.visible = true;
 			_closedEyesCounter = 60;
+			SoundPlayer.play(SoundPlayer.SND_EXPLOSION);
 			
 			if (_screenShakeCounter < -8) {
 				_screenShakeCounter = 5;

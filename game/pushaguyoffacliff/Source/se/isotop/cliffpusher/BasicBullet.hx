@@ -1,9 +1,13 @@
 package se.isotop.cliffpusher;
 import com.haxepunk.Entity;
 import com.haxepunk.Graphic;
+import com.haxepunk.graphics.atlas.AtlasData;
 import com.haxepunk.graphics.Emitter;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.Mask;
+import flash.display.BitmapData;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 import openfl.Assets;
 
 /**
@@ -53,17 +57,20 @@ class BasicBullet extends Entity implements IBullet
 		this.x += _speedX;
 		this.y += _speedY;
 		
-		if (x < _minX || x > _maxX || --_life <= 0) {
+		if (x < _minX || x > _maxX) {
 			scene.remove(this);
 		}
 		
 		if (_emitter != null) {
-			_emitter.emitInCircle("one", this.x, this.y, 32);
+			_emitter.emitInCircle("one", 16, 4, 16);
 		}
 		
-		if (--_life <= 0 && --_explosionCounter <= 0) {
+		_life--;
+		_explosionCounter--;
+		if (_life <= 0 && _explosionCounter <= 0) {
 			scene.remove(this);
 		}
+		
 		
 		super.update();
 	}
@@ -81,11 +88,15 @@ class BasicBullet extends Entity implements IBullet
 		_speedY = 0;
 		this.collidable = false;
 		
+		withExplosion = true;
+		
 		if (withExplosion) {
-			_life = 0;
-			_explosionCounter = 5;
-			_emitter = new Emitter(Assets.getBitmapData("assets/explosion.png"), 64, 64);
-			_emitter.newType("one", [0,1,2,3]);
+			_life = -1;
+			_explosionCounter = 8;
+			
+			_emitter = new Emitter(GraphicsFactory.instance.getExplosionSheetRegion(), 64, 64);
+			_emitter.newType("one", [0, 1, 2, 3]);
+			_emitter.setMotion("one", 0, 1, 0.2);
 			this.graphic = _emitter;
 			
 		} else {

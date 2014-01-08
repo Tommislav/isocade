@@ -18,9 +18,14 @@ class GraphicsFactory
 	private var _shadeRegion:AtlasRegion;
 	private var _bodys:Array<AtlasRegion>;
 	private var _shields:Array<AtlasRegion>;
+	private var _explosionSheet:AtlasRegion;
+	
+	public static var instance:GraphicsFactory;
 	
 	public function new() 
 	{
+		GraphicsFactory.instance = this;
+		
 		_atlas = AtlasData.getAtlasDataByName("assets/sheet.png", true);
 		
 		_bodys = new Array<AtlasRegion>();
@@ -42,6 +47,10 @@ class GraphicsFactory
 		_eyesRegion = _atlas.createRegion(new Rectangle(32, 0, 32, 32), new Point(0, 0));
 		_eyes2Region = _atlas.createRegion(new Rectangle(64, 0, 32, 32), new Point(0, 0));
 		_shadeRegion = _atlas.createRegion(new Rectangle(0, 0, 32, 64), new Point(0, 0));
+		
+		var explosion:AtlasData = AtlasData.getAtlasDataByName("assets/explosion.png", true);
+		_explosionSheet = explosion.createRegion(new Rectangle(0, 0, explosion.width, explosion.height), new Point());
+		
 	}
 	
 	public function getBody(index:Int):AtlasRegion {
@@ -67,5 +76,9 @@ class GraphicsFactory
 	public function getClosedEyes():AtlasRegion
 	{
 		return _eyes2Region;
+	}
+	
+	public function getExplosionSheetRegion():AtlasRegion {
+		return _explosionSheet;
 	}
 }
