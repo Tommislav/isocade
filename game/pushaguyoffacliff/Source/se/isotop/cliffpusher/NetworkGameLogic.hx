@@ -3,6 +3,7 @@ package se.isotop.cliffpusher;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
 import flash.events.KeyboardEvent;
+import flash.geom.Point;
 import flash.Lib;
 import flash.ui.Keyboard;
 import se.isotop.gamesocket.GamePacket;
@@ -39,8 +40,8 @@ class NetworkGameLogic extends Entity
 		trace("connecting...");
 		_gameSocket = new GameSocket();
 		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
-		//_gameSocket.connect("127.0.0.1", 8888);
-		_gameSocket.connect("192.168.12.122", 8888);
+		_gameSocket.connect("127.0.0.1", 8888);
+		//_gameSocket.connect("192.168.12.122", 8888);
 	}
 	
 	private function onSocketConnected(e:GameSocketEvent):Void 
@@ -49,7 +50,10 @@ class NetworkGameLogic extends Entity
 		_playerId = e.packet.id;
 		
 		
-		newFakePlayer(); // fake player - remove before trying over network!!
+		newFakePlayer(0); // fake player - remove before trying over network!!
+		newFakePlayer(1); // fake player - remove before trying over network!!
+		newFakePlayer(2); // fake player - remove before trying over network!!
+		newFakePlayer(3); // fake player - remove before trying over network!!
 		newPlayer(_playerId, true);
 		
 		
@@ -87,15 +91,15 @@ class NetworkGameLogic extends Entity
 		if (!isItMe)
 			input.disable();
 		
-		var xPos = (2 + id) * 32;
-		var yPos = 25 * 32;
+		var xPos = (3 + id) * 32;
+		var yPos = 57 * 32;
 		
 		var p:Player = new Player(id, xPos, yPos, input, isItMe);
 		scene.add(p);
 		return p;
 	}
 	
-	private function newFakePlayer() {
+	private function newFakePlayer(id:Int=0) {
 		var fakeId = 4;
 		_playerUpdates.set(fakeId, null);
 		
@@ -103,8 +107,11 @@ class NetworkGameLogic extends Entity
 		//input.setKeyboardMode(true);
 		input.disable();
 		
-		var xPos = 5 * 32;
-		var yPos = 25 * 32;
+		var pList = [new Point(12,48), new Point(18,59), new Point(6,44), new Point(13,38), new Point(17,33)];
+		
+		var p = pList[id];
+		var xPos = p.x * 32;
+		var yPos = p.y * 32;
 		
 		var p:FakePlayer = new FakePlayer(fakeId, xPos, yPos, input, false);
 		scene.add(p);

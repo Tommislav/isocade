@@ -34,6 +34,8 @@ class GameScene extends Scene
 		_networkHandler = new NetworkGameLogic();
 		add(_networkHandler);
 		
+		var bulletFactory:BulletFactory = new BulletFactory();
+		add(bulletFactory);
 		
 		var factory = new GraphicsFactory();
 		

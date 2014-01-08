@@ -21,10 +21,11 @@ class FakePlayer extends Player
 	
 	override public function update():Void 
 	{
-		var isShooting = Math.random() > 0.99;
 		var isJumping = Math.random() > 0.99;
-		_keyboard.setKeyIsDown(ICadeKeyCode.BUTTON_A, isJumping);
-		_keyboard.setKeyIsDown(ICadeKeyCode.BUTTON_B, isShooting);
+		_keyboard.setKeyIsDown(Player.JUMP_BUTTON, isJumping);
+		
+		var isShooting = Math.random() > 0.85;
+		_keyboard.setKeyIsDown(Player.SHOOT_BUTTON, isShooting);
 		
 		_keyboard.setKeyIsDown(ICadeKeyCode.LEFT, Math.random() < 0.01);
 		_keyboard.setKeyIsDown(ICadeKeyCode.RIGHT, Math.random() < 0.01);

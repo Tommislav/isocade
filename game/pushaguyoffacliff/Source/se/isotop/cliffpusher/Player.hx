@@ -21,6 +21,10 @@ class Player extends Entity
 	private static inline var SHIELD_X_R = 34;
 	private static inline var SHIELD_X_L = -6;
 	
+	private static inline var SHOOT_BUTTON = ICadeKeyCode.BUTTON_A;
+	private static inline var JUMP_BUTTON = ICadeKeyCode.BUTTON_B;
+	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_C;
+	
 	private var _isItMe:Bool;
 	
 	private var _dir:Int = 1;
@@ -37,6 +41,15 @@ class Player extends Entity
 	private var _jumpCnt:Int;
 	private var _freezeInteractionCnt:Int = 0;
 	
+	private var _bulletFactory:BulletFactory;
+	private var _currentBulletType:String = "bullet";
+	private var _shootDelay:Int;
+	private var _shieldDelay:Int;
+	private var _screenShakeCounter:Int;
+	private var _screenShakeStr:Int = 2;
+	
+	private var _closedEyesCounter:Int;
+	
 	public var id:Int = -1;
 	public var keyInput:ISerializeableReadInput;
 	public var vX:Float = 0.0;
@@ -48,6 +61,9 @@ class Player extends Entity
 	private var _eyes2:Image;
 	private var _shield:Image;
 	private var _ld:Level;
+	
+	private var _startX:Float;
+	private var _startY:Float;
 
 	public function new(id:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
@@ -55,6 +71,8 @@ class Player extends Entity
 		this.id = id;
 		this.keyInput = keyInput;
 		_isItMe = isItMe;
+		_startX = x;
+		_startY = y;
 		
 		_gfxFactory = new GraphicsFactory();
 		_gfx = new Graphiclist();
@@ -63,6 +81,7 @@ class Player extends Entity
 		
 		_eyes = new Image(_gfxFactory.getEyes(), null, "eyes");
 		_eyes2 = new Image(_gfxFactory.getClosedEyes(), null, "eyesClosed");
+		_eyes2.visible = false;
 		_shield = new Image(_gfxFactory.getShield(id));
 		_shield.relative = true;
 		_shield.x = SHIELD_X_R;
@@ -86,11 +105,22 @@ class Player extends Entity
 			_ld = cast(scene.getInstance(Level.NAME), Level);
 		}
 		
-		if (this.y > _ld.levelHeightPx + 518)
-			this.y = -256;
+		if (_bulletFactory == null) {
+			_bulletFactory = cast(scene.getInstance(BulletFactory.NAME) , BulletFactory);
+		}
+		
+		if (this.y > _ld.levelHeightPx + 518) {
+			this.x = _startX;
+			this.y = _startY;
+		}
 		
 		var mX = 0.0;
 		var mY = 0.0;
+		
+		if (--_closedEyesCounter == 0) {
+			_eyes.visible = true;
+			_eyes2.visible = false;
+		}
 		
 		_freezeInteractionCnt--;
 		var freezeInteraction = (_freezeInteractionCnt > 0);
@@ -125,9 +155,10 @@ class Player extends Entity
 			_jumpCnt = 99;
 		}
 		
+		// TODO: Add pickups - different weapons!!
 		
 		// Jump (Button A)
-		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_A) && !freezeInteraction) {
+		if (this.keyInput.getKeyIsDown(JUMP_BUTTON) && !freezeInteraction) {
 			if (_onGround) {
 				_onGround = false;
 				_jumping = true;
@@ -145,33 +176,26 @@ class Player extends Entity
 			vY += _gravity;
 		}
 		
-		
 		// Shoot (Button B)
-		if (!freezeInteraction) {
-			if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_B)) {
-				_freezeInteractionCnt = 60;
-				
-				var spawnType = "push";
-				var xPos = this.x + 34 * _dir;
-				var yPos = this.y + 10;
-				
-				var logic:NetworkGameLogic = cast (scene.getInstance("GameLogic"), NetworkGameLogic);
-				logic.spawnPushEntity(xPos, yPos, _dir, this.id);
+		if (--_shootDelay <= 0) {
+			if (this.keyInput.getKeyIsDown(SHOOT_BUTTON)) {
+				_shootDelay = _bulletFactory.shoot(this.id, _currentBulletType, centerX + (20 * _dir), centerY - 6, _dir);
+				_shieldDelay = 26;
 			}
 		}
 		
 		// Shield (Button C)
-		if (this.keyInput.getKeyIsDown(ICadeKeyCode.BUTTON_C) && !freezeInteraction && _onGround) { // shield
+		if (this.keyInput.getKeyIsDown(SHIELD_BUTTON) && --_shieldDelay <= 0) { // shield
 			_shield.visible = true;
 		} else {
 			_shield.visible = false;
 		}
 		
-		if (!_shield.visible) {
-			if (checkForPushCollision(x+vX+mX, y+vY+mY)) {
-				mX = mY = 0;
-			}
+		
+		if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
+			mX = mY = 0;
 		}
+		
 		
 		
 		// Add push force to movement x
@@ -185,13 +209,8 @@ class Player extends Entity
 		
 		
 		var freeze = _freezeInteractionCnt > 0;
-		_eyes.visible = !freeze;
-		_eyes2.visible = freeze;
-		
-		
 		moveBy(vX + mX, vY + mY, "solid");
 		
-		checkForPlayerCollision();
 		
 		if (_isItMe) 
 			moveCamera();
@@ -205,37 +224,43 @@ class Player extends Entity
 		var cX = this.x - HXP.halfWidth;
 		var cY = this.y - HXP.halfHeight;
 		cX = Math.max(-64, Math.min(_ld.levelWidthPx - 768 + 64, cX));
-		cY = Math.max(-70, Math.min(_ld.levelHeightPx - 1024 + 128, cY));
+		cY = Math.max( -70, Math.min(_ld.levelHeightPx - 1024 + 128, cY));
+		
+		if (--_screenShakeCounter >= 0) {
+			cX += Math.random() * _screenShakeStr * 2 - _screenShakeStr;
+			cY += Math.random() * _screenShakeStr * 2 - _screenShakeStr;
+		}
+		
 		HXP.setCamera(cX, cY);
 	}
 	
-	function checkForPushCollision(x, y) 
+	function checkForBulletCollision(x, y) 
 	{
-		var coll = collide("Push", x, y);
+		var coll = collide("bullet", x, y);
 		if (coll != null) {
-			var push:Push = cast(coll, Push);
-			if (push.playerId == this.id) return false; // I'm not taking damage from my own pushes
+			var bullet:IBullet = cast(coll, IBullet);
+			if (bullet.getPlayerId() == this.id) return false; // I'm not taking damage from my own pushes
 			
-			this.vY = -10;
-			this._pushForceX = 10 * push.dir;
+			if (_shield.visible && _dir != bullet.getDir()) {
+				bullet.destroy(true);
+				return false;
+			}
+			
+			this.vY = -6 * bullet.getDamage();
+			this._pushForceX = 6 * bullet.getDir() * bullet.getDamage();
+			_eyes.visible = false;
+			_eyes2.visible = true;
+			_closedEyesCounter = 60;
+			
+			if (_screenShakeCounter < -8) {
+				_screenShakeCounter = 5;
+				_screenShakeStr = 12;
+			}
+			
+			
+			bullet.destroy(true);
 			return true;
 		}
 		return false;
-	}
-	
-	
-	
-	function checkForPlayerCollision() 
-	{
-		var otherPlayer:Entity = collide("player", this.x, this.y);
-		if (otherPlayer != null) {
-			var collPl:Player = cast(otherPlayer, Player);
-			if (this.y > collPl.y) { // He is above us and moving downward - he jumped on us!
-				_freezeInteractionCnt = 120;
-			}
-			else if (this.y < collPl.y) { // We are above and moving downward - we jumped on him!
-				this.vY = -18;
-			}
-		}
 	}
 }
