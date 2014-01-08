@@ -39,7 +39,8 @@ class NetworkGameLogic extends Entity
 		trace("connecting...");
 		_gameSocket = new GameSocket();
 		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
-		_gameSocket.connect("127.0.0.1", 8888);
+		//_gameSocket.connect("127.0.0.1", 8888);
+		_gameSocket.connect("192.168.12.122", 8888);
 	}
 	
 	private function onSocketConnected(e:GameSocketEvent):Void 
@@ -78,7 +79,11 @@ class NetworkGameLogic extends Entity
 		_playerUpdates.set(id, null);
 		
 		var input = new ICadeKeyboard();
-		input.setKeyboardMode(true);
+		
+		#if windows
+			input.setKeyboardMode(true);
+		#end
+		
 		if (!isItMe)
 			input.disable();
 		
@@ -95,7 +100,7 @@ class NetworkGameLogic extends Entity
 		_playerUpdates.set(fakeId, null);
 		
 		var input = new ICadeKeyboard();
-		input.setKeyboardMode(true);
+		//input.setKeyboardMode(true);
 		input.disable();
 		
 		var xPos = 5 * 32;

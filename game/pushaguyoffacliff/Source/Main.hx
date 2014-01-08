@@ -7,6 +7,7 @@ import com.haxepunk.utils.Key;
 import flash.display.Sprite;
 import flash.Lib;
 import flash.ui.Keyboard;
+import openfl.display.DI;
 import se.isotop.cliffpusher.GameScene;
 
 
@@ -24,7 +25,7 @@ class Main extends Engine {
 			HXP.console.show();
 			HXP.console.toggleKey = Keyboard.NUMBER_0;
 		#end
-		setScale(1);
+		
 		HXP.scene = new GameScene();	
 	}
 	
