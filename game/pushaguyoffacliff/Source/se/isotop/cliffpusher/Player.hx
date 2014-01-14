@@ -138,12 +138,12 @@ class Player extends Entity
 			var rad = deg / 180 * Math.PI;
 			mX = Math.cos(rad) * spd;
 			
-			if (mX < 0) {
+			if (mX < -0.2) {
 				_eyes.flipped = _eyes2.flipped = true;
 				_shield.x = SHIELD_X_L;
 				_dir = -1;
 			}
-			else if (mX > 0) {
+			else if (mX > 0.2) {
 				_eyes.flipped = _eyes2.flipped = false;
 				_shield.x = SHIELD_X_R;
 				_dir = 1;

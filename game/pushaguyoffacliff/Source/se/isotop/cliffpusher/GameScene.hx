@@ -24,6 +24,7 @@ class GameScene extends Scene
 	override public function begin() 
 	{
 		var keyboard = new ICadeKeyboard();
+		var factory = new GraphicsFactory();
 		
 		#if (cpp)
 			// On windows, use debug mode as default
@@ -37,32 +38,7 @@ class GameScene extends Scene
 		var bulletFactory:BulletFactory = new BulletFactory();
 		add(bulletFactory);
 		
-		var factory = new GraphicsFactory();
-		
-		
-		//add(new Level(factory));
-		var level:BitmapData = Assets.getBitmapData("assets/level0.png");
-		for (y in 0...level.height) {
-			for (x in 0...level.width) {
-				if (level.getPixel(x, y) == 0) {
-					add(new Block(factory, x*32, y*32));
-				}
-			}
-		}
-		
 		var ld:Level = new Level();
-		ld.levelWidthTiles = level.width;
-		ld.levelWidthPx = level.width * 32;
-		ld.levelHeightTiles = level.height;
-		ld.levelHeightPx = level.height * 32;
-		ld.tileW = ld.tileH = 32;
 		add(ld);
-		
-		// Player is added by networkGameLogic on connection
-		
-		//add(new Player(-1, HXP.halfWidth, HXP.halfHeight, keyboard, 0xffff0000));
-		//add(new Player(10, 10, keyboard, factory, 0xff0000ff));
-		//add(new Player(100, 60, keyboard, factory, 0xff00ff00));
 	}
-	
 }
