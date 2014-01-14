@@ -21,9 +21,9 @@ class Player extends Entity
 	private static inline var SHIELD_X_R = 34;
 	private static inline var SHIELD_X_L = -6;
 	
-	private static inline var SHOOT_BUTTON = ICadeKeyCode.BUTTON_A;
-	private static inline var JUMP_BUTTON = ICadeKeyCode.BUTTON_B;
-	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_C;
+	private static inline var SHOOT_BUTTON = ICadeKeyCode.BUTTON_B;
+	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_A;
+	private static inline var JUMP_BUTTON = ICadeKeyCode.BUTTON_C;
 	
 	private var _isItMe:Bool;
 	
@@ -181,7 +181,12 @@ class Player extends Entity
 		// Shoot (Button B)
 		if (--_shootDelay <= 0) {
 			if (this.keyInput.getKeyIsDown(SHOOT_BUTTON)) {
-				_shootDelay = _bulletFactory.shoot(this.id, _currentBulletType, centerX + (20 * _dir), centerY - 6, _dir);
+				
+				var bulletAngle = _dir > 0 ? 0 : 180;
+				if (keyInput.getKeyIsDown(ICadeKeyCode.UP))
+					bulletAngle = 270; // up
+				
+				_shootDelay = _bulletFactory.shoot(this.id, _currentBulletType, centerX, centerY, bulletAngle);
 				_shieldDelay = 26;
 			}
 		}
@@ -248,14 +253,14 @@ class Player extends Entity
 			if (_shield.visible && _dir != bullet.getDir()) {
 				bullet.destroy(false);
 				var pushBack = (2 * bullet.getDamage() * bullet.getDir());
-				this.x += pushBack;
+				//this.x += pushBack;
 				this.vX = pushBack;
 				SoundPlayer.play(SoundPlayer.SND_HIT_SHIELD);
 				return false;
 			}
 			
 			this.vY = -6 * bullet.getDamage();
-			this._pushForceX = 6 * bullet.getDir() * bullet.getDamage();
+			this._pushForceX = 8 * bullet.getDir() * bullet.getDamage();
 			_eyes.visible = false;
 			_eyes2.visible = true;
 			_closedEyesCounter = 60;
@@ -263,7 +268,7 @@ class Player extends Entity
 			
 			if (_screenShakeCounter < -8) {
 				_screenShakeCounter = 5;
-				_screenShakeStr = 12;
+				_screenShakeStr = 18;
 			}
 			
 			

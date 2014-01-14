@@ -22,13 +22,13 @@ class BulletFactory extends Entity
 	}
 	
 	// Will spawn a bullet and return your freeze-time in frames
-	public function shoot(playerId:Int, bulletType:String, x:Float, y:Float, dir:Int):Int {
+	public function shoot(playerId:Int, bulletType:String, x:Float, y:Float, angle:Float):Int {
 		
 		if (_level == null) {
 			_level = cast(scene.getInstance(Level.NAME), Level);
 		}
 		
-		var bullet:Entity = new BasicBullet(playerId, x, y, dir, _level );
+		var bullet:Entity = new BasicBullet(playerId, x, y, angle, _level );
 		scene.add(bullet);
 		
 		return 4;

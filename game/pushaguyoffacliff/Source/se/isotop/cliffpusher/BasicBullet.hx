@@ -17,6 +17,7 @@ import openfl.Assets;
 class BasicBullet extends Entity implements IBullet
 {
 	private var _playerId:Int;
+	private var _angle:Float;
 	private var _dir:Int;
 	
 	private var _speedX:Float;
@@ -28,26 +29,55 @@ class BasicBullet extends Entity implements IBullet
 	private var _emitter:Emitter;
 	private var _explosionCounter:Int;
 	
-	public function new(playerId:Int, x:Float=0, y:Float=0, dir:Int, level:Level, graphic:Graphic=null, mask:Mask=null) 
+	public function new(playerId:Int, x:Float=0, y:Float=0, angle:Float, level:Level, graphic:Graphic=null, mask:Mask=null) 
 	{
 		var width = 32;
 		var height = 14;
+		var halfW:Int = 16;
+		var halfH:Int = 7;
 		
 		super(x, y, graphic, mask);
-		this.graphic = Image.createRect(width, height, 0xff0000);
-		this.setHitbox(width, height);
+		var img:Image = Image.createRect(width, height, 0xff0000);
+		img.originX = halfW;
+		img.originY = halfH;
+		//img.centerOO();
+		this.graphic = img;
+		
 		
 		_playerId = playerId;
-		_dir = dir;
-		_life = 40;
-		_speedX = 10 * dir;
-		_speedY = (Math.random() * 2) - 1;
+		_life = 30;
+		
+		angle += Math.random() * 12 - 6;
+		_angle = angle * Math.PI / 180;
+		img.angle = -angle;
+		
+		
+		var speed = 10;
+		
+		var sX = Math.cos(_angle);
+		var sY = Math.sin(_angle);
+		
+		this.x = halfW + sX * 20;
+		this.y = halfH + sY * 20;
+		
+		_speedX = sX * speed;
+		_speedY = sY * speed;
+		
+		_dir = (_speedX > 0) ? 1 : -1;
+		
+		if ((Math.abs(_speedX) > Math.abs(_speedY))) { // horizontal
+			setHitbox(width, height, halfW, halfH);
+		} else {
+			setHitbox(height, width);
+		}
+		
+		
 		
 		_minX = -32;
 		_maxX = level.levelWidthPx;
 		
-		this.x = x-halfWidth;
-		this.y = y-halfHeight;
+		this.x = x;
+		this.y = y;
 		
 		this.type = "bullet";
 	}
