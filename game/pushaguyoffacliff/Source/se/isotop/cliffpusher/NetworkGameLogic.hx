@@ -30,6 +30,8 @@ class NetworkGameLogic extends Entity
 	private var _gameSocket:GameSocket;
 	private var _connected:Bool;
 	private var _playerUpdates:Map<Int, GamePacket>;
+	private var _playerSpawnPoint:Point;
+	
 	
 	public function new() 
 	{
@@ -40,7 +42,7 @@ class NetworkGameLogic extends Entity
 		trace("connecting...");
 		_gameSocket = new GameSocket();
 		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
-		_gameSocket.connect("127.0.0.1", 8888);
+		_gameSocket.connect("192.168.13.116", 8888);
 		//_gameSocket.connect("192.168.12.122", 8888);
 	}
 	
@@ -50,10 +52,16 @@ class NetworkGameLogic extends Entity
 		_playerId = e.packet.id;
 		
 		
-		newFakePlayer(0); // fake player - remove before trying over network!!
-		newFakePlayer(1); // fake player - remove before trying over network!!
-		newFakePlayer(2); // fake player - remove before trying over network!!
-		newFakePlayer(3); // fake player - remove before trying over network!!
+		var ld:Level = cast(scene.getInstance(Level.NAME), Level);
+		var enemies:Array<Point> = ld.enemyPositionList;
+		for (e in enemies) {
+			newFakePlayer(e.x, e.y);
+		}
+		
+		_playerSpawnPoint = ld.playerSpawnPoint;
+		
+		
+		
 		newPlayer(_playerId, true);
 		
 		
@@ -91,29 +99,22 @@ class NetworkGameLogic extends Entity
 		if (!isItMe)
 			input.disable();
 		
-		var xPos = (3 + id) * 32;
-		var yPos = 57 * 32;
+		var xPos = _playerSpawnPoint.x + (id * 32);
+		var yPos = _playerSpawnPoint.y;
 		
 		var p:Player = new Player(id, xPos, yPos, input, isItMe);
 		scene.add(p);
 		return p;
 	}
 	
-	private function newFakePlayer(id:Int=0) {
+	private function newFakePlayer(x, y) {
 		var fakeId = 4;
 		_playerUpdates.set(fakeId, null);
 		
 		var input = new ICadeKeyboard();
-		//input.setKeyboardMode(true);
 		input.disable();
 		
-		var pList = [new Point(12,48), new Point(18,59), new Point(6,44), new Point(13,38), new Point(17,33)];
-		
-		var p = pList[id];
-		var xPos = p.x * 32;
-		var yPos = p.y * 32;
-		
-		var p:FakePlayer = new FakePlayer(fakeId, xPos, yPos, input, false);
+		var p:FakePlayer = new FakePlayer(fakeId, x, y, input, false);
 		scene.add(p);
 	}
 	

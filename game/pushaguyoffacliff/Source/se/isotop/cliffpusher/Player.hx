@@ -25,6 +25,8 @@ class Player extends Entity
 	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_A;
 	private static inline var JUMP_BUTTON = ICadeKeyCode.BUTTON_C;
 	
+	private var _bulletCount:Int;
+	
 	private var _isItMe:Bool;
 	
 	private var _dir:Int = 1;
@@ -109,6 +111,7 @@ class Player extends Entity
 			_bulletFactory = cast(scene.getInstance(BulletFactory.NAME) , BulletFactory);
 		}
 		
+		
 		if (this.y > _ld.levelHeightPx + 518) {
 			this.x = _startX;
 			this.y = _startY;
@@ -179,17 +182,26 @@ class Player extends Entity
 		}
 		
 		// Shoot (Button B)
-		if (--_shootDelay <= 0) {
-			if (this.keyInput.getKeyIsDown(SHOOT_BUTTON)) {
+		if (this.keyInput.getKeyIsDown(SHOOT_BUTTON)) {
+			
+			_bulletCount--;
+			
+			if (--_shootDelay <= 0) {
+			
+				if (_bulletCount > 0) {
+					var bulletAngle = _dir > 0 ? 0 : 180;
+					if (keyInput.getKeyIsDown(ICadeKeyCode.UP))
+						bulletAngle = 270; // up
+					
+					_shootDelay = _bulletFactory.shoot(this.id, _currentBulletType, centerX, centerY, bulletAngle);
+					_shieldDelay = 26;
+				}
 				
-				var bulletAngle = _dir > 0 ? 0 : 180;
-				if (keyInput.getKeyIsDown(ICadeKeyCode.UP))
-					bulletAngle = 270; // up
 				
-				_shootDelay = _bulletFactory.shoot(this.id, _currentBulletType, centerX, centerY, bulletAngle);
-				_shieldDelay = 26;
 			}
 		}
+		
+		if (!this.keyInput.getKeyIsDown(SHOOT_BUTTON)) { _bulletCount = 100; }
 		
 		// Shield (Button C)
 		if (this.keyInput.getKeyIsDown(SHIELD_BUTTON) && --_shieldDelay <= 0) { // shield

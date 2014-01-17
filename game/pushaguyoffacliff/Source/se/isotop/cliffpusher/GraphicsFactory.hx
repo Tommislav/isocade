@@ -19,6 +19,8 @@ class GraphicsFactory
 	private var _bodys:Array<AtlasRegion>;
 	private var _shields:Array<AtlasRegion>;
 	private var _explosionSheet:AtlasRegion;
+	private var _scoreRegion:AtlasRegion;
+	private var _pickupRegion:AtlasRegion;
 	
 	public static var instance:GraphicsFactory;
 	
@@ -47,6 +49,12 @@ class GraphicsFactory
 		_eyesRegion = _atlas.createRegion(new Rectangle(32, 0, 32, 32), new Point(0, 0));
 		_eyes2Region = _atlas.createRegion(new Rectangle(64, 0, 32, 32), new Point(0, 0));
 		_shadeRegion = _atlas.createRegion(new Rectangle(0, 0, 32, 64), new Point(0, 0));
+		
+		// pickup box
+		_pickupRegion = _atlas.createRegion(new Rectangle(32, 64, 32, 32), new Point());
+		
+		// score limit
+		_scoreRegion = _atlas.createRegion(new Rectangle(64, 64, 32, 32), new Point());
 		
 		var explosion:AtlasData = AtlasData.getAtlasDataByName("assets/explosion.png", true);
 		_explosionSheet = explosion.createRegion(new Rectangle(0, 0, explosion.width, explosion.height), new Point());
@@ -80,5 +88,9 @@ class GraphicsFactory
 	
 	public function getExplosionSheetRegion():AtlasRegion {
 		return _explosionSheet;
+	}
+	
+	public function getPickupRegion():AtlasRegion {
+		return _pickupRegion;
 	}
 }

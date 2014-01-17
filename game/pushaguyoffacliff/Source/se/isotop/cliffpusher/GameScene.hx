@@ -32,13 +32,13 @@ class GameScene extends Scene
 			keyboard.setDebugToggleKey(Keyboard.SPACE);
 		#end
 		
-		_networkHandler = new NetworkGameLogic();
-		add(_networkHandler);
-		
 		var bulletFactory:BulletFactory = new BulletFactory();
 		add(bulletFactory);
 		
 		var ld:Level = new Level();
 		add(ld);
+		
+		_networkHandler = new NetworkGameLogic();
+		add(_networkHandler);
 	}
 }
