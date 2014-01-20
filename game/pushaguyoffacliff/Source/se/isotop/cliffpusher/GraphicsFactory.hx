@@ -22,6 +22,10 @@ class GraphicsFactory
 	private var _scoreRegion:AtlasRegion;
 	private var _pickupRegion:AtlasRegion;
 	
+	private var _hudFrame:AtlasRegion;
+	private var _hudDecoy:AtlasRegion;
+	private var _hudMine:AtlasRegion;
+	
 	public static var instance:GraphicsFactory;
 	
 	public function new() 
@@ -56,10 +60,16 @@ class GraphicsFactory
 		// score limit
 		_scoreRegion = _atlas.createRegion(new Rectangle(64, 64, 32, 32), new Point());
 		
+		_hudFrame = _atlas.createRegion(new Rectangle(128, 64, 64, 64), new Point());
+		_hudDecoy = _atlas.createRegion(new Rectangle(192, 64, 64, 64), new Point());
+		_hudMine = _atlas.createRegion(new Rectangle(256, 64, 64, 64), new Point());
+		
 		var explosion:AtlasData = AtlasData.getAtlasDataByName("assets/explosion.png", true);
 		_explosionSheet = explosion.createRegion(new Rectangle(0, 0, explosion.width, explosion.height), new Point());
 		
 	}
+	
+	
 	
 	public function getBody(index:Int):AtlasRegion {
 		return _bodys[index];
@@ -93,4 +103,8 @@ class GraphicsFactory
 	public function getPickupRegion():AtlasRegion {
 		return _pickupRegion;
 	}
+	
+	public function getHudFrame():AtlasRegion { return _hudFrame; }
+	public function getHudDecoy():AtlasRegion { return _hudDecoy; }
+	public function getHudMine():AtlasRegion { return _hudMine; }
 }

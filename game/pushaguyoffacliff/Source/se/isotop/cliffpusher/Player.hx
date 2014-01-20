@@ -66,6 +66,8 @@ class Player extends Entity
 	
 	private var _startX:Float;
 	private var _startY:Float;
+	
+	public var score:Int;
 
 	public function new(id:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
@@ -95,6 +97,7 @@ class Player extends Entity
 		_gfx.add(_shield);
 		graphic = _gfx;
 		
+		this.score = 0;
 		
 		setHitbox(32, 64);
 		type = "player";
@@ -113,6 +116,7 @@ class Player extends Entity
 		
 		
 		if (this.y > _ld.levelHeightPx + 518) {
+			this.score = 0;
 			this.x = _startX;
 			this.y = _startY;
 			if (_isItMe) SoundPlayer.play(SoundPlayer.SND_DIE);
@@ -161,6 +165,12 @@ class Player extends Entity
 		
 		// TODO: Add pickups - different weapons!!
 		
+		
+		
+		if (this.y < _ld.scoreAboveYPx) {
+			checkForAdditionalScore();
+		}
+		
 		// Jump (Button A)
 		if (this.keyInput.getKeyIsDown(JUMP_BUTTON) && !freezeInteraction) {
 			if (_onGround) {
@@ -194,7 +204,7 @@ class Player extends Entity
 						bulletAngle = 270; // up
 					
 					_shootDelay = _bulletFactory.shoot(this.id, _currentBulletType, centerX, centerY, bulletAngle);
-					_shieldDelay = 26;
+					_shieldDelay = 18;
 				}
 				
 				
@@ -237,6 +247,11 @@ class Player extends Entity
 			moveCamera();
 		
 		super.update();
+	}
+	
+	function checkForAdditionalScore() 
+	{
+		// Only top-most player gets score
 	}
 	
 	

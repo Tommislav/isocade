@@ -42,8 +42,8 @@ class NetworkGameLogic extends Entity
 		trace("connecting...");
 		_gameSocket = new GameSocket();
 		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
-		_gameSocket.connect("192.168.13.116", 8888);
-		//_gameSocket.connect("192.168.12.122", 8888);
+		//_gameSocket.connect("127.0.0.1", 8888);
+		_gameSocket.connect("192.168.12.137", 8888);
 	}
 	
 	private function onSocketConnected(e:GameSocketEvent):Void 
