@@ -15,7 +15,6 @@ class WpnHUD extends Entity
 	private var _hudMine:Image;
 	private var _hudDecoy:Image;
 	private var _num:Text;
-	private var _score:Text;
 	
 	public function new() 
 	{
@@ -36,12 +35,6 @@ class WpnHUD extends Entity
 		gList.add(_hudMine);
 		gList.add(_hudDecoy);
 		gList.add(_num);
-		
-		var scoreOpt:TextOptions = { };
-		scoreOpt.color = 0x000000;
-		scoreOpt.size =  18;
-		_score = new Text("Score", 10, 10, 300, 200, scoreOpt);
-		gList.add(_score);
 		
 		followCamera = true;
 		

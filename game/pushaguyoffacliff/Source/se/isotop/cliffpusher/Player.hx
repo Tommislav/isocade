@@ -18,6 +18,8 @@ import se.salomonsson.icade.ISerializeableReadInput;
  */
 class Player extends Entity
 {
+	public static inline var NAME = "player";
+	
 	private static inline var SHIELD_X_R = 34;
 	private static inline var SHIELD_X_L = -6;
 	
@@ -101,7 +103,7 @@ class Player extends Entity
 		this.score = 0;
 		
 		setHitbox(32, 64);
-		type = "player";
+		type = NAME;
 	}
 	
 	
@@ -256,8 +258,8 @@ class Player extends Entity
 			// Only top-most player gets score
 			var players = new Array<Player>();
 			this.scene.getClass(Player, players);
-			var topPlayerId:Int = this.id;
-			var topY:Float = this.y;
+			var topPlayerId:Int = -1;
+			var topY:Float = 999999;
 			for (pl in players) {
 				if (pl.y < topY) {
 					topY = pl.y;
