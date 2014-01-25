@@ -68,6 +68,7 @@ class Player extends Entity
 	private var _startY:Float;
 	
 	public var score:Int;
+	private var _scoreCnt:Int;
 
 	public function new(id:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
@@ -211,7 +212,7 @@ class Player extends Entity
 			}
 		}
 		
-		if (!this.keyInput.getKeyIsDown(SHOOT_BUTTON)) { _bulletCount = 100; }
+		if (!this.keyInput.getKeyIsDown(SHOOT_BUTTON)) { _bulletCount = 55; }
 		
 		// Shield (Button C)
 		if (this.keyInput.getKeyIsDown(SHIELD_BUTTON) && --_shieldDelay <= 0) { // shield
@@ -251,7 +252,23 @@ class Player extends Entity
 	
 	function checkForAdditionalScore() 
 	{
-		// Only top-most player gets score
+		if (++_scoreCnt % 30 == 0) {
+			// Only top-most player gets score
+			var players = new Array<Player>();
+			this.scene.getClass(Player, players);
+			var topPlayerId:Int = this.id;
+			var topY:Float = this.y;
+			for (pl in players) {
+				if (pl.y < topY) {
+					topY = pl.y;
+					topPlayerId = pl.id;
+				}
+			}
+			
+			if (this.y < _ld.scoreAboveYPx && topPlayerId == this.id) {
+				this.score++;
+			}
+		}	
 	}
 	
 	

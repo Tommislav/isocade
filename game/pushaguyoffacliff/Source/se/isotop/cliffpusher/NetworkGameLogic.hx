@@ -19,7 +19,8 @@ class NetworkGameLogic extends Entity
 {
 	public static inline var NAME:String = "GameLogic";
 	
-	private static inline var TYPE_SPAWN_PUSH:Int = 20;
+	public static inline var SOCKET_TYPE_PLAYER_INFO:Int = 20;
+	public static inline var SOCKET_TYPE_PLAYER_SCORE:Int = 21;
 	
 	
 	private var _colors:Array<Int>;
@@ -42,8 +43,8 @@ class NetworkGameLogic extends Entity
 		trace("connecting...");
 		_gameSocket = new GameSocket();
 		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
-		//_gameSocket.connect("127.0.0.1", 8888);
-		_gameSocket.connect("192.168.12.137", 8888);
+		_gameSocket.connect("127.0.0.1", 8888);
+		//_gameSocket.connect("192.168.12.137", 8888);
 	}
 	
 	private function onSocketConnected(e:GameSocketEvent):Void 
@@ -73,18 +74,22 @@ class NetworkGameLogic extends Entity
 	
 	private function onSocketData(e:GameSocketEvent):Void 
 	{
-		var type = e.packet.type;
-		if (e.packet.type == TYPE_SPAWN_PUSH) {
-			spawnNetworkPush(e.packet);
-			return;
-		}
-		
 		var id = e.packet.id;
+		var type:Int = e.packet.type;
+		
 		if (!_playerUpdates.exists(id)) {
 			trace("we have a new player with id " + id);
 			newPlayer(id, false);
 		}
-		_playerUpdates.set(id, e.packet);
+		
+		switch (type) {
+			case SOCKET_TYPE_PLAYER_INFO:
+				_playerUpdates.set(id, e.packet);
+			case SOCKET_TYPE_PLAYER_SCORE:
+				
+		}
+		
+		
 	}
 	
 	private function newPlayer(id:Int, isItMe:Bool):Player {
@@ -118,34 +123,6 @@ class NetworkGameLogic extends Entity
 		scene.add(p);
 	}
 	
-	private function spawnNetworkPush(gp:GamePacket) {
-		var x:Float = Std.parseFloat(gp.values[0]);
-		var y:Float = Std.parseFloat(gp.values[1]);
-		var dir:Int = Std.parseInt(gp.values[2]);
-		var playerId = gp.id;
-		
-		if (playerId != _playerId) {
-			spawnPushEntity(x, y, dir, playerId, false); // already spawned... this could be refactored =)
-		}
-	}
-	
-	public function spawnPushEntity( x:Float, y:Float, dir:Int, playerId:Int, send:Bool=true ) {
-		var push:Push = new Push(x, y, dir, playerId);
-		scene.add(push);
-		/*
-		if (send) {
-			// push notification to other connected players that I just spawned
-			var gp:GamePacket = new GamePacket();
-			gp.id = playerId;
-			gp.type = TYPE_SPAWN_PUSH;
-			gp.values = new Array();
-			gp.values.push(Std.string(x));
-			gp.values.push(Std.string(y));
-			gp.values.push(Std.string(dir));
-			_gameSocket.send(gp.serialize());
-		}
-		*/
-	}
 	
 	override public function update():Void 
 	{
@@ -160,6 +137,7 @@ class NetworkGameLogic extends Entity
 			
 			if (id == _playerId) { /* this is me */
 				myInfo.id = _playerId;
+				myInfo.type = SOCKET_TYPE_PLAYER_INFO;
 				myInfo.values = new Array<String>();
 				myInfo.values.push(Std.string(Math.round(pl.x)));
 				myInfo.values.push(Std.string(Math.round(pl.y)));

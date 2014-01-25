@@ -38,7 +38,7 @@ class GameScene extends Scene
 		var ld:Level = new Level();
 		add(ld);
 		
-		var hud:HUD = new HUD();
+		var hud:WpnHUD = new WpnHUD();
 		add(hud);
 		
 		_networkHandler = new NetworkGameLogic();

@@ -10,11 +10,12 @@ import flash.Lib;
  * ...
  * @author Tommislav
  */
-class HUD extends Entity
+class WpnHUD extends Entity
 {
 	private var _hudMine:Image;
 	private var _hudDecoy:Image;
 	private var _num:Text;
+	private var _score:Text;
 	
 	public function new() 
 	{
@@ -36,6 +37,11 @@ class HUD extends Entity
 		gList.add(_hudDecoy);
 		gList.add(_num);
 		
+		var scoreOpt:TextOptions = { };
+		scoreOpt.color = 0x000000;
+		scoreOpt.size =  18;
+		_score = new Text("Score", 10, 10, 300, 200, scoreOpt);
+		gList.add(_score);
 		
 		followCamera = true;
 		
