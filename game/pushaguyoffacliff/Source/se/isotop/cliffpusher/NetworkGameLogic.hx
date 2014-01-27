@@ -58,6 +58,10 @@ class NetworkGameLogic extends Entity
 		for (e in enemies) {
 			newFakePlayer(e.x, e.y);
 		}
+		var pickups:Array<Point> = ld.pickupSpawnPointList;
+		for (p in pickups) {
+			newPickup(p.x, p.y);
+		}
 		
 		_playerSpawnPoint = ld.playerSpawnPoint;
 		
@@ -123,6 +127,12 @@ class NetworkGameLogic extends Entity
 		scene.add(p);
 	}
 	
+	private function newPickup(x, y) {
+		var p:Pickup = new Pickup();
+		p.x = x;
+		p.y = y;
+		scene.add(p);
+	}
 	
 	override public function update():Void 
 	{

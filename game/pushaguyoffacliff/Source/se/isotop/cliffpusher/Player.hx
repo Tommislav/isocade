@@ -8,6 +8,11 @@ import flash.display.BitmapData;
 import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.ui.Keyboard;
+import se.isotop.cliffpusher.enums.ExtraWeaponType;
+import se.isotop.cliffpusher.events.ExtraWeaponEvent;
+import se.isotop.cliffpusher.events.ShootBulletEvent;
+import se.isotop.cliffpusher.factories.GraphicsFactory;
+import se.isotop.haxepunk.Eventity;
 import se.salomonsson.icade.ICadeKeyCode;
 import se.salomonsson.icade.IReadInput;
 import se.salomonsson.icade.ISerializeableReadInput;
@@ -16,7 +21,7 @@ import se.salomonsson.icade.ISerializeableReadInput;
  * ...
  * @author Tommislav
  */
-class Player extends Entity
+class Player extends Eventity
 {
 	public static inline var NAME = "player";
 	
@@ -26,6 +31,7 @@ class Player extends Entity
 	private static inline var SHOOT_BUTTON = ICadeKeyCode.BUTTON_B;
 	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_A;
 	private static inline var JUMP_BUTTON = ICadeKeyCode.BUTTON_C;
+	private static inline var EXTRA_BUTTON = ICadeKeyCode.BUTTON_1;
 	
 	private var _bulletCount:Int;
 	
@@ -45,10 +51,11 @@ class Player extends Entity
 	private var _jumpCnt:Int;
 	private var _freezeInteractionCnt:Int = 0;
 	
-	private var _bulletFactory:BulletFactory;
 	private var _currentBulletType:String = "bullet";
+	private var _extraWeaponType:ExtraWeaponType;
 	private var _shootDelay:Int;
 	private var _shieldDelay:Int;
+	private var _extraWeaponDelay:Int;
 	private var _screenShakeCounter:Int;
 	private var _screenShakeStr:Int = 2;
 	
@@ -81,6 +88,7 @@ class Player extends Entity
 		_startX = x;
 		_startY = y;
 		
+		_extraWeaponType = ExtraWeaponType.NONE;
 		_gfxFactory = new GraphicsFactory();
 		_gfx = new Graphiclist();
 		
@@ -113,16 +121,15 @@ class Player extends Entity
 			_ld = cast(scene.getInstance(Level.NAME), Level);
 		}
 		
-		if (_bulletFactory == null) {
-			_bulletFactory = cast(scene.getInstance(BulletFactory.NAME) , BulletFactory);
-		}
-		
-		
 		if (this.y > _ld.levelHeightPx + 518) {
 			this.score = 0;
 			this.x = _startX;
 			this.y = _startY;
-			if (_isItMe) SoundPlayer.play(SoundPlayer.SND_DIE);
+			if (_isItMe) {
+				SoundPlayer.play(SoundPlayer.SND_DIE);
+				dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.CHANGE, this, ExtraWeaponType.NONE, 0, -1));
+			}
+			
 		}
 		
 		var mX = 0.0;
@@ -166,7 +173,7 @@ class Player extends Entity
 			_jumpCnt = 99;
 		}
 		
-		// TODO: Add pickups - different weapons!!
+		
 		
 		
 		
@@ -203,10 +210,12 @@ class Player extends Entity
 			
 				if (_bulletCount > 0) {
 					var bulletAngle = _dir > 0 ? 0 : 180;
+					
 					if (keyInput.getKeyIsDown(ICadeKeyCode.UP))
 						bulletAngle = 270; // up
 					
-					_shootDelay = _bulletFactory.shoot(this.id, _currentBulletType, centerX, centerY, bulletAngle);
+					dispatchEvent(new ShootBulletEvent(ShootBulletEvent.SHOOT_BULLET, this.id, _currentBulletType, centerX, centerY, bulletAngle));
+					_shootDelay = 4;
 					_shieldDelay = 18;
 				}
 				
@@ -223,6 +232,13 @@ class Player extends Entity
 			_shield.visible = false;
 		}
 		
+		
+		// Extra Weapon (Button 1) - if any
+		if (_extraWeaponType != ExtraWeaponType.NONE) {
+			if (this.keyInput.getKeyIsDown(EXTRA_BUTTON) && --_extraWeaponDelay <= 0) {
+				dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.FIRE, this, _extraWeaponType, 0));
+			}
+		}
 		
 		if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
 			mX = mY = 0;
@@ -252,6 +268,14 @@ class Player extends Entity
 		super.update();
 	}
 	
+	/* INTERFACE se.isotop.cliffpusher.ISetExtraWeaponType */
+	
+	public function setExtraWeapon(type:ExtraWeaponType, num:Int) 
+	{
+		_extraWeaponType = type;
+	}
+	
+	
 	function checkForAdditionalScore() 
 	{
 		if (++_scoreCnt % 30 == 0) {
@@ -267,7 +291,7 @@ class Player extends Entity
 				}
 			}
 			
-			if (this.y < _ld.scoreAboveYPx && topPlayerId == this.id) {
+			if (topPlayerId == this.id) {
 				this.score++;
 			}
 		}	

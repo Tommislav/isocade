@@ -5,12 +5,16 @@ import com.haxepunk.graphics.Image;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.HXP;
 import flash.Lib;
+import se.isotop.cliffpusher.enums.ExtraWeaponType;
+import se.isotop.cliffpusher.events.ExtraWeaponEvent;
+import se.isotop.cliffpusher.factories.GraphicsFactory;
+import se.isotop.haxepunk.Eventity;
 
 /**
  * ...
  * @author Tommislav
  */
-class WpnHUD extends Entity
+class WpnHUD extends Eventity
 {
 	private var _hudMine:Image;
 	private var _hudDecoy:Image;
@@ -43,12 +47,34 @@ class WpnHUD extends Entity
 		
 		this.graphic = gList;
 		
-		mine();
-		setNumber(4);
+		nothing();
+		setNumber(-1);
+		
+		addEventListener(ExtraWeaponEvent.CHANGE, onNewExtraWeapon);
+	}
+	
+	private function onNewExtraWeapon(e:ExtraWeaponEvent):Void 
+	{
+		switch(e.extraWeaponType) {
+			case ExtraWeaponType.NONE:
+				nothing();
+			case ExtraWeaponType.MINE:
+				mine();
+			case ExtraWeaponType.DECOY:
+				decoy();
+		}
+		
+		setNumber(e.num);
 	}
 	
 	public function setNumber(v:Int) {
-		_num.text = "x" + v;
+		if (v >= 0) {
+			_num.text = "x" + v;
+		} else {
+			_num.text = "";
+		}
+		
+		
 	}
 	
 	public function nothing() {

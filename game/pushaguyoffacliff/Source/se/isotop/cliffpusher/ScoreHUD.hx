@@ -2,6 +2,7 @@ package se.isotop.cliffpusher;
 
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Text;
+import com.haxepunk.HXP;
 
 /**
  * ...
@@ -21,6 +22,8 @@ class ScoreHUD extends Entity
 		_score = new Text("", 10, 40, 300, 200, scoreOpt);
 		this.graphic = _score;
 		followCamera = true;
+		
+		layer = HXP.BASELAYER - 1; // render on top
 	}
 	
 	override public function update():Void 
