@@ -1,31 +1,25 @@
 package se.isotop.cliffpusher;
 import com.haxepunk.Sfx;
 import openfl.Assets;
+import se.isotop.cliffpusher.events.SoundEvent;
+import se.isotop.haxepunk.Eventity;
 
 /**
  * ...
  * @author Tommislav
  */
-class SoundPlayer
+class SoundPlayer extends Eventity
 {
-	public static inline var SND_JUMP_ME:String = "assets/jump_me.wav";
-	public static inline var SND_JUMP_THEM:String = "assets/jump_them.wav";
-	public static inline var SND_SHOOT_ME:String = "assets/shoot2.wav";
-	public static inline var SND_SHOOT_ENEMY:String = "assets/shoot.wav";
-	public static inline var SND_EXPLOSION:String = "assets/explosion.wav";
-	public static inline var SND_HIT_SHIELD:String = "assets/shield.wav";
-	public static inline var SND_DIE:String = "assets/die.wav";
 	
-	public static function play(id:String) {
-		
-		
-		var snd:Sfx = new Sfx(id);
-		snd.play();
+	public function new() {
+		super();
+		addEventListener(SoundEvent.PLAY_SOUND, onPlaySound);
 	}
 	
-	public function new() 
+	private function onPlaySound(e:SoundEvent):Void 
 	{
-		
+		var snd:Sfx = new Sfx(e.soundId);
+		snd.play();
 	}
 	
 }

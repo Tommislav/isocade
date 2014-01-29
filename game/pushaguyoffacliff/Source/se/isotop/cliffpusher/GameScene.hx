@@ -33,6 +33,7 @@ class GameScene extends Scene
 			keyboard.setDebugToggleKey(Keyboard.SPACE);
 		#end
 		
+		add(new SoundPlayer());
 		add(new BulletFactory());
 		
 		var ld:Level = new Level();

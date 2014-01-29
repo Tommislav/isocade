@@ -1,6 +1,8 @@
 package se.isotop.cliffpusher.factories;
 import com.haxepunk.graphics.atlas.AtlasData;
 import com.haxepunk.graphics.atlas.AtlasRegion;
+import com.haxepunk.graphics.atlas.TileAtlas;
+import com.haxepunk.graphics.Spritemap;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import openfl.Assets;
@@ -12,6 +14,7 @@ import openfl.Assets;
 class GraphicsFactory
 {	
 	private var _atlas:AtlasData;
+	private var _spriteMap:Spritemap;
 	private var _blockRegion:AtlasRegion;
 	private var _eyesRegion:AtlasRegion;
 	private var _eyes2Region:AtlasRegion;
@@ -35,6 +38,9 @@ class GraphicsFactory
 		GraphicsFactory.instance = this;
 		
 		_atlas = AtlasData.getAtlasDataByName("assets/sheet.png", true);
+		
+		//var tileAtlas:TileAtlas = new TileAtlas("assets/sheet.png", 32, 32);
+		//_spriteMap = new Spritemap(tileAtlas, 32, 32, null, "spriteMap");
 		
 		_bodys = new Array<AtlasRegion>();
 		_shields = new Array<AtlasRegion>();
@@ -111,4 +117,8 @@ class GraphicsFactory
 	public function getHudFrame():AtlasRegion { return _hudFrame; }
 	public function getHudDecoy():AtlasRegion { return _hudDecoy; }
 	public function getHudMine():AtlasRegion { return _hudMine; }
+	
+	//public function getMineTileAtlas():TileAtlas {
+		//var t:TileAtlas = new TileAtlas(
+	//}
 }

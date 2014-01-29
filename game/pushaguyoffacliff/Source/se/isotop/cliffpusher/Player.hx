@@ -9,8 +9,10 @@ import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.ui.Keyboard;
 import se.isotop.cliffpusher.enums.ExtraWeaponType;
+import se.isotop.cliffpusher.enums.SoundId;
 import se.isotop.cliffpusher.events.ExtraWeaponEvent;
 import se.isotop.cliffpusher.events.ShootBulletEvent;
+import se.isotop.cliffpusher.events.SoundEvent;
 import se.isotop.cliffpusher.factories.GraphicsFactory;
 import se.isotop.haxepunk.Eventity;
 import se.salomonsson.icade.ICadeKeyCode;
@@ -112,6 +114,7 @@ class Player extends Eventity
 		
 		setHitbox(32, 64);
 		type = NAME;
+		
 	}
 	
 	
@@ -126,8 +129,11 @@ class Player extends Eventity
 			this.x = _startX;
 			this.y = _startY;
 			if (_isItMe) {
-				SoundPlayer.play(SoundPlayer.SND_DIE);
-				dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.CHANGE, this, ExtraWeaponType.NONE, 0, -1));
+				
+				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_DIE));
+				if (_extraWeaponType != ExtraWeaponType.NONE) {
+					dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.CHANGE, this, ExtraWeaponType.NONE, 0, -1));
+				}
 			}
 			
 		}
@@ -186,7 +192,7 @@ class Player extends Eventity
 			if (_onGround) {
 				_onGround = false;
 				_jumping = true;
-				SoundPlayer.play( (_isItMe?SoundPlayer.SND_JUMP_ME : SoundPlayer.SND_JUMP_THEM));
+				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, (_isItMe ? SoundId.SND_JUMP_ME : SoundId.SND_JUMP_THEM)));
 			}
 			
 			if (_jumping && ++_jumpCnt < 15) {
@@ -325,7 +331,7 @@ class Player extends Eventity
 				var pushBack = (2 * bullet.getDamage() * bullet.getDir());
 				//this.x += pushBack;
 				this.vX = pushBack;
-				SoundPlayer.play(SoundPlayer.SND_HIT_SHIELD);
+				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_HIT_SHIELD));
 				return false;
 			}
 			
@@ -334,7 +340,7 @@ class Player extends Eventity
 			_eyes.visible = false;
 			_eyes2.visible = true;
 			_closedEyesCounter = 60;
-			SoundPlayer.play(SoundPlayer.SND_EXPLOSION);
+			dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_EXPLOSION));
 			
 			if (_screenShakeCounter < -8) {
 				_screenShakeCounter = 5;
