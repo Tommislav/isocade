@@ -11,15 +11,16 @@ import com.haxepunk.HXP;
 class ScoreHUD extends Entity
 {
 	private var _score:Text;
-	private var _players:Array<Player>;
+    private var _scores:GameScore;
 	
-	public function new() 
+	public function new(scores:GameScore)
 	{
 		super();
 		var scoreOpt:TextOptions = { };
 		scoreOpt.color = 0x000000;
 		scoreOpt.size =  18;
 		_score = new Text("", 10, 40, 300, 200, scoreOpt);
+        _scores = scores;
 		this.graphic = _score;
 		followCamera = true;
 		
@@ -28,16 +29,23 @@ class ScoreHUD extends Entity
 	
 	override public function update():Void 
 	{
+        trace('ScoreHUD.update');
 		super.update();
-		_players = [];
-		scene.getType(Player.NAME, _players);
-		
-		
-		var score = "";
-		for (pl in _players) {
-			score += pl.id + ": " + pl.score + "\n";
-		_score.text = score;
-		}
+        updateScore();
 	}
-	
+
+    private function updateScore():Void {
+
+        if (_scores == null) {
+            trace('no gamescore found');
+            return;
+        }
+
+        var score = "";
+        for (playerScore in _scores.getCurrentPlayerScores()) {
+            trace('score ' + score);
+            score += playerScore.playerId + ": " + playerScore.score + "\n";
+        }
+        _score.text = score;
+    }
 }
