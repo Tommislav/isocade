@@ -164,13 +164,11 @@ class NetworkGameLogic extends Entity
 	}
 
     private function objectiveReached() {
-        trace('hej');
         var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
         if (gameScore == null)
             return false;
 
-        var leadScore = gameScore.getLeaderScore();
-        return leadScore.score >= MAX_SCORE;
+        return gameScore.getLeaderScore() >= MAX_SCORE;
     }
 
     private function sendMyPlayerInfo(player:Player):Void {

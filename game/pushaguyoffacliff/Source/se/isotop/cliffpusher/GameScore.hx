@@ -63,9 +63,12 @@ class GameScore extends Entity {
         return playerScoresCopy;
     }
 
-    public function getLeaderScore():Score {
+    public function getLeaderScore():Int {
         var scores = getSortedPlayerScores();
-        return scores[0];
+        if (scores.length == 0)
+            return 0;
+
+        return scores[0].score;
     }
 
     private function traceDebug(msg:String):Void {
