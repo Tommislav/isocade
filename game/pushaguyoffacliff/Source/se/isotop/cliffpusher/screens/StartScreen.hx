@@ -24,6 +24,7 @@ class StartScreen extends Scene {
     private var startButton:Entity;
     private var helpButton:Entity;
 	private var settingsButton:Entity;
+	private var errorText:Entity;
 	
 	private var _imgConnect:Image;
 	private var _imgConnAnim1:Image;
@@ -50,12 +51,13 @@ class StartScreen extends Scene {
 		
 		var buttonAtlas:AtlasData = AtlasData.getAtlasDataByName("assets/buttons.png", true);
 		var btnW = 290;
-		var btnH = 71;
+		var btnH = 70;
 		
-		_imgConnect 	= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH*0, btnW, btnH)));
-		_imgConnAnim1 	= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH*1, btnW, btnH)));
-		_imgConnAnim2 	= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH*2, btnW, btnH)));
-		_imgSettings	= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH*3, btnW, btnH)));
+		_imgConnect 	= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH * 0, btnW, btnH)));
+		_imgConnAnim1 	= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH * 1, btnW, btnH)));
+		_imgConnAnim2 	= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH * 2, btnW, btnH)));
+		_imgSettings	= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH * 3, btnW, btnH)));
+		_imgStart		= new Image(buttonAtlas.createRegion(new Rectangle(0, btnH * 4, btnW, btnH)));
 		
 		
 		
@@ -76,11 +78,27 @@ class StartScreen extends Scene {
         splashTextEntity.x = (HXP.width/2)-(splashText.width/2);
         splashTextEntity.y = (HXP.height/3)-(splashText.height/2);
         add(splashTextEntity);
+		
+		onConnectionError();
     }
 
+	private function onConnectionError() {
+		if (errorText == null) {
+			var ip:String = "127.0.0.1"; // <------- change to real ip!
+			var err:Text = new Text("Error connecting to IP: "+ip+"\nChange in settings");
+			err.color = 0xff0000;
+			err.size = 24;
+			errorText = new Entity(200, startButton.y + 80, err);
+		}
+		add(errorText);
+		_startButtonState = 0;
+		startButton.graphic = _imgConnect;
+	}
+	
     override public function update():Void {
 		
-		var isConnected:Bool = false;
+		var isConnected:Bool = false;	// Check if we are connected yet!! <----------
+		
 		
 		if (Input.check(Key.X)) {
             HXP.screen.color = 0x222233;
@@ -93,14 +111,21 @@ class StartScreen extends Scene {
         if (Input.mouseReleased) {
             if (this.collidePoint("start_button", Input.mouseX, Input.mouseY) != null) {
 				
+				if (_startButtonState == 1 || _startButtonState == 2) isConnected = true;	// <------------ remove this hack!
+				
 				if (_startButtonState == 0) {
-					// start connecting...
+					// start connecting...		<-------------
+					
 					_connAnimationCounter = 0;
 					_startButtonState = 1;
+					if (errorText != null) {
+						remove(errorText);
+					}
 				}
 				if (_startButtonState == 3) { // connected
 					HXP.scene = new GameScene();
 				}
+				
             }
 
 			
@@ -113,18 +138,16 @@ class StartScreen extends Scene {
 			}
         }
 		
+		if (isConnected) {
+			startButton.graphic = _imgStart;
+			_startButtonState = 3;
+		}
 		
-		var connected:Bool = false;
 		if (_startButtonState == 1 || _startButtonState == 2) {
 				if (--_connAnimationCounter <= 0) {
 					startButton.graphic = (_startButtonState == 1) ? _imgConnAnim1 : _imgConnAnim2;
 					_startButtonState = (_startButtonState == 1) ? 2:1;
 					_connAnimationCounter = 30;
-				}
-				
-				if (connected) {
-					startButton.graphic = _imgStart;
-					_startButtonState = 3;
 				}
 			}
 		
