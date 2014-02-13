@@ -16,6 +16,7 @@ import flash.events.KeyboardEvent;
 class StartScreen extends Scene {
     var startButton:Entity;
     var helpButton:Entity;
+	var settingsButton:Entity;
 
     public function new() {
         super();
@@ -37,7 +38,6 @@ class StartScreen extends Scene {
         add(startButton);
 
         var helpButtonImage:Image = new Image("assets/help_button.png");
-
         helpButton = new Entity(HXP.width/2+50,HXP.height/2,helpButtonImage);
         helpButton.setHitbox(helpButtonImage.width,helpButtonImage.height);
         helpButton.type = "help_button";
@@ -45,6 +45,14 @@ class StartScreen extends Scene {
         //addGraphic(new Image("help_button.png"));
 
         add(helpButton);
+		
+		
+		var settingsButtonImage:Image = new Image("assets/start_button.png");
+		settingsButton = new Entity(HXP.width - settingsButtonImage.width - 50, HXP.height - settingsButtonImage.height - 50, settingsButtonImage);
+		settingsButton.setHitbox(settingsButtonImage.width, settingsButtonImage.height);
+		settingsButton.type = "settings_button";
+		
+		add(settingsButton);
 
 
 
@@ -101,6 +109,10 @@ class StartScreen extends Scene {
             if(this.collidePoint("help_button",Input.mouseX,Input.mouseY)!= null ) {
                 HXP.scene = new HelpScreen();
             }
+			
+			if (this.collidePoint("settings_button", Input.mouseX, Input.mouseY) != null) {
+				HXP.scene = new SettingsScreen();
+			}
         }
 
     }

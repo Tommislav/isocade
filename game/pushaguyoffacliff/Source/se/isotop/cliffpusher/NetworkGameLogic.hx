@@ -34,44 +34,44 @@ class NetworkGameLogic extends Entity
 	private var _playerSpawnPoint:Point;
 	private var _serverData:SharedObject;
 	
-	public function new() 
+	public function new(shouldConnect:Bool = true) 
 	{
 		super(0, 0, null, null);
 		this.name = NAME;
 		_playerUpdates = new Map<Int, GamePacket>(); // store the last recieved update for each player id
 	
 		this._serverData = SharedObject.getLocal("serverConnection");
-		SaveServerFile(new Server("127.0.0.1",8888));
-		ConnectToServer();
+		
+		if (_serverData.data.server == null)
+			SaveServerFile(new Server("127.0.0.1",8888));
+		
+		if (shouldConnect)
+			ConnectToServer();
 	}
 		public function UpdateServerConnection(serverIP:String, port:Int)
 	{
 		
 	}
 	
-	private function GetServerInformation() : Server
+	public function GetServerInformation() : Server
 	{
 		if (this._serverData.data.server  == null)
 		{
 			this._serverData.data.server = new Array();
 		}
 		
+		trace("GETSERVERINFORMATION: " + this._serverData.data);
+		
 		return this._serverData.data.server[0];
 	}
 	
-	private function SaveServerFile(serverInformation:Server) : Void
+	public function SaveServerFile(serverInformation:Server) : Void
 	{
-		
-		
 		this._serverData.clear();
-		
-		
-		if (this._serverData.data.server == null)
-		{
-			this._serverData.data.server = new Array();	
-			this._serverData.data.server.push(serverInformation);
-			this._serverData.flush();
-		}	
+
+		this._serverData.data.server = new Array();	
+		this._serverData.data.server.push(serverInformation);
+		this._serverData.flush();
 	}
 	
 	private function ConnectToServer() : Void

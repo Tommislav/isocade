@@ -59,16 +59,27 @@ class IpPart extends Sprite
 	
 	private function onButtonUpClicked(event:MouseEvent)
 	{
-		_ipValue++;
-		_text.text = _ipValue + "";
-		_text.setTextFormat(_textFormat);
+		if (_ipValue < 255)
+		{
+			_ipValue++;
+			_text.text = _ipValue + "";
+			_text.setTextFormat(_textFormat);
+		}
 	}
 	
 	private function onButtonDownClicked(event:MouseEvent)
 	{
-		_ipValue--;
-		_text.text = _ipValue + "";
-		_text.setTextFormat(_textFormat);
+		if (_ipValue > 0)
+		{
+			_ipValue--;
+			_text.text = _ipValue + "";
+			_text.setTextFormat(_textFormat);
+		}
+	}
+	
+	public function GetValue():String
+	{
+		return Std.string(_ipValue);
 	}
 	
 	public function Destroy()
