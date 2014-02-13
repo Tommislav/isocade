@@ -26,6 +26,7 @@ class ICadeKeyboard implements ISerializeableReadInput
 	private var _eventDispatcher:EventDispatcher;
 	private var _enabled:Bool;
 	private var _useKeyboard:Bool;
+	private var _useController:Bool;
 	
 	private var _iCadeButton_down:Map<Int,Int>;
 	private var _iCadeButton_up:Map<Int,Int>;
@@ -81,6 +82,13 @@ class ICadeKeyboard implements ISerializeableReadInput
 	public function setKeyboardMode(flag:Bool) {
 		_buttonsPressed = new IntMap<Bool>(); // reset pressed state
 		_useKeyboard = flag;
+		_useController = false;
+	}
+	
+	public function setXboxControllerMode(flag:Bool) {
+		_buttonsPressed = new IntMap<Bool>(); // reset pressed state
+		_useController = flag;
+		_useKeyboard = false;
 	}
 	
 	public function getKeyboardMode():Bool {
@@ -120,6 +128,12 @@ class ICadeKeyboard implements ISerializeableReadInput
 	
 	
 	private function onKeyDown(e:KeyboardEvent):Void {
+		if (_useController) {
+			// ... DO STUFF HERE!!!!
+			return;
+		}
+		
+		
 		if (!_useKeyboard) {
 			// ignore key down if icade
 		} else {
@@ -129,6 +143,13 @@ class ICadeKeyboard implements ISerializeableReadInput
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void {
+		if (_useController) {
+			// DO STUFF HERE!!!
+			
+			return;
+		}
+		
+		
 		if (_debugToggleKey == e.keyCode) {
 			debugToggle();
 		}
