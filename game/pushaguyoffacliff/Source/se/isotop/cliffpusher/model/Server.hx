@@ -1,4 +1,4 @@
-package se.isotop.cliffpusher;
+package se.isotop.cliffpusher.model;
 import flash.net.SharedObject;
 /**
  * ...
@@ -7,7 +7,7 @@ import flash.net.SharedObject;
 class Server
 {
 	private var _serverData:SharedObject;
-	
+
 	public var _serverIP:String;
 	public var _port:Int;
 	public function new(server:String,port:Int) 

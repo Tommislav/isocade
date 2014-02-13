@@ -11,16 +11,14 @@ import com.haxepunk.HXP;
 class ScoreHUD extends Entity
 {
 	private var _score:Text;
-    private var _scores:GameScore;
 	
-	public function new(scores:GameScore)
+	public function new()
 	{
 		super();
 		var scoreOpt:TextOptions = { };
 		scoreOpt.color = 0x000000;
 		scoreOpt.size =  18;
 		_score = new Text("", 10, 40, 300, 200, scoreOpt);
-        _scores = scores;
 		this.graphic = _score;
 		followCamera = true;
 		
@@ -34,13 +32,14 @@ class ScoreHUD extends Entity
 	}
 
     private function updateScore():Void {
+        var scores:GameScore = cast(scene.typeFirst(GameScore.NAME), GameScore);
 
-        if (_scores == null)
+        if (scores == null)
             return;
 
         var score = "";
 
-        for (playerScore in _scores.getSortedPlayerScores()) {
+        for (playerScore in scores.getSortedPlayerScores()) {
             score += playerScore.playerName + ": " + playerScore.score + "\n";
         }
         _score.text = score;

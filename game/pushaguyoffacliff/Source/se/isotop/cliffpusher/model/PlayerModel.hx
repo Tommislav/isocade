@@ -15,7 +15,6 @@ class PlayerModel {
     }
 
     private function new() {
-        trace("create new instance of PlayerModel");
         _playerInfos = new Map<Int, PlayerInfo>();
         _myId = -999;
     }

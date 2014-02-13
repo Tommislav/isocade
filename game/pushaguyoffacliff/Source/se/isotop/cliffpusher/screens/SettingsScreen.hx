@@ -1,16 +1,14 @@
 package se.isotop.cliffpusher.screens;
+import se.isotop.cliffpusher.model.Socket;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.Scene;
 import com.haxepunk.HXP;
 import com.haxepunk.utils.Input;
-import com.haxepunk.utils.Key;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.Entity;
-import se.isotop.cliffpusher.GameScene;
-import flash.events.KeyboardEvent;
 import se.isotop.cliffpusher.IpPart;
 import se.isotop.cliffpusher.NetworkGameLogic;
-import se.isotop.cliffpusher.Server;
+import se.isotop.cliffpusher.model.Server;
 
 
 /**
@@ -26,6 +24,7 @@ class SettingsScreen extends Scene
 	private var _saveButton:Entity;
 	private var _serverInformation:Server;
 	private var _network:NetworkGameLogic;
+    private var _socket:Socket;
 	
 	public function new() 
 	{
@@ -34,8 +33,9 @@ class SettingsScreen extends Scene
 	
 	override public function begin() 
 	{
-		_network = new NetworkGameLogic(false);
-		_serverInformation = _network.GetServerInformation();
+        _socket = Socket.instance;
+
+		_serverInformation = _socket.getServerInformation();
 		var serverIpParts = _serverInformation.GetServerIpParts();
 		trace("SERVER IP PARTS: " + serverIpParts);
 		
@@ -116,7 +116,7 @@ class SettingsScreen extends Scene
 				ipArray.push(_ipPart4.GetValue());
 				
 				_serverInformation.SetServerIp(ipArray);
-				_network.SaveServerFile(_serverInformation);
+                _socket.saveServerFile(_serverInformation);
 				
 				HXP.scene = new StartScreen();
 			}
