@@ -2,3 +2,5 @@ Export
 *.hide
 .DS_Store
 .idea
+*.iml
+out
