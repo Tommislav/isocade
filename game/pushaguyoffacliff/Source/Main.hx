@@ -9,6 +9,7 @@ import flash.Lib;
 import flash.ui.Keyboard;
 import openfl.display.DI;
 import se.isotop.cliffpusher.GameScene;
+import se.isotop.cliffpusher.screens.StartScreen;
 
 
 class Main extends Engine {
@@ -25,8 +26,10 @@ class Main extends Engine {
 			HXP.console.show();
 			HXP.console.toggleKey = Keyboard.NUMBER_0;
 		#end
-		
-		HXP.scene = new GameScene();	
+
+		//HXP.scene = new GameScene();
+
+        HXP.scene = new StartScreen();
 	}
 	
 	public function setScale(scale:Float) {

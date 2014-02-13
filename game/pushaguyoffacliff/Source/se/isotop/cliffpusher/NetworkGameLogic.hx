@@ -5,12 +5,12 @@ import com.haxepunk.HXP;
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
 import flash.Lib;
+import flash.net.SharedObject;
 import flash.ui.Keyboard;
 import se.isotop.gamesocket.GamePacket;
 import se.isotop.gamesocket.GameSocket;
 import se.isotop.gamesocket.GameSocketEvent;
 import se.salomonsson.icade.ICadeKeyboard;
-
 /**
  * ...
  * @author Tommislav
@@ -32,21 +32,61 @@ class NetworkGameLogic extends Entity
 	private var _playerUpdates:Map<Int, GamePacket>;
     private var _playerScores:Map<Int, GamePacket>;
 	private var _playerSpawnPoint:Point;
+	private var _serverData:SharedObject;
 	
-	
-	public function new() 
+	public function new(shouldConnect:Bool = true) 
 	{
 		super(0, 0, null, null);
 		this.name = NAME;
 		_playerUpdates = new Map<Int, GamePacket>(); // store the last recieved update for each player id
         _playerScores = new Map<Int, GamePacket>();
 
-		trace("connecting...");
+	
+		this._serverData = SharedObject.getLocal("serverConnection");
+		
+		if (_serverData.data.server == null)
+			SaveServerFile(new Server("127.0.0.1",8888));
+		
+		if (shouldConnect)
+			ConnectToServer();
+	}
+		public function UpdateServerConnection(serverIP:String, port:Int)
+	{
+		
+	}
+	
+	public function GetServerInformation() : Server
+	{
+		if (this._serverData.data.server  == null)
+		{
+			this._serverData.data.server = new Array();
+		}
+		
+		trace("GETSERVERINFORMATION: " + this._serverData.data);
+		
+		return this._serverData.data.server[0];
+	}
+	
+	public function SaveServerFile(serverInformation:Server) : Void
+	{
+		this._serverData.clear();
+
+		this._serverData.data.server = new Array();	
+		this._serverData.data.server.push(serverInformation);
+		this._serverData.flush();
+	}
+	
+	private function ConnectToServer() : Void
+	{
 		_gameSocket = new GameSocket();
 		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
-		//_gameSocket.connect("127.0.0.1", 8888);
-		_gameSocket.connect("192.168.8.87", 8888);
+		var server:Server = GetServerInformation();
+		
+		_gameSocket.connect(server._serverIP, server._port);
+	
 	}
+	
+	
 	
 	private function onSocketConnected(e:GameSocketEvent):Void 
 	{
@@ -102,8 +142,6 @@ class NetworkGameLogic extends Entity
 
     private function handleScorePacket(packet:GamePacket):Void {
         var id = packet.id;
-
-        trace('ScoreRecived: ' + packet.id + ' score: ' + packet.values[0]);
 
         _playerScores.set(id, packet);
     }

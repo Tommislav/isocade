@@ -3,7 +3,7 @@
 	
 	<meta title="Pushaguyoffacliff" package="se.isotop.cliffpusher" version="1.0.0" company="IsoTomNils" />
 	<app main="Main" path="Export" file="Pushaguyoffacliff" />
-	
+    <ios deployment='5.0' binaries='armv7' />
 	<source path="Source" />
 	<source path="../lib" />
 	
