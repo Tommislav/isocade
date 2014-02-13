@@ -1,5 +1,6 @@
 package se.isotop.cliffpusher;
 
+import se.isotop.cliffpusher.model.PlayerInfo;
 import se.isotop.cliffpusher.model.Socket;
 import se.isotop.cliffpusher.model.PlayerModel;
 import com.haxepunk.Entity;
@@ -85,18 +86,20 @@ class NetworkGameLogic extends Entity
         var xPos = _playerSpawnPoint.x + (id * 32);
         var yPos = _playerSpawnPoint.y;
 
-        var p:Player = new Player(id, xPos, yPos, input, isItMe);
+		var pInfo:PlayerInfo = playerModel.getPlayer(id);
+        var p:Player = new Player(id, pInfo.color, xPos, yPos, input, isItMe);
         scene.add(p);
     }
 
     private function newFakePlayer(x, y) {
-        var fakeId = 4;
+        var fakeId = -1;
+		var fakeColor = 4;
         _playerUpdates.set(fakeId, null);
 
         var input = new ICadeKeyboard();
         input.disable();
 
-        var p:FakePlayer = new FakePlayer(fakeId, x, y, input, false);
+        var p:FakePlayer = new FakePlayer(fakeId, fakeColor, x, y, input, false);
         scene.add(p);
     }
 
@@ -120,18 +123,15 @@ class NetworkGameLogic extends Entity
 
     private function handlePlayerPacket(packet:GamePacket):Void {
         var id = packet.id;
-
         if (!_playerUpdates.exists(id)) {
             trace("we have a new player with id " + id);
             newPlayer(id, false);
         }
-
         _playerUpdates.set(id, packet);
     }
 
     private function handleScorePacket(packet:GamePacket):Void {
         var id = packet.id;
-
         _playerScores.set(id, packet);
     }
 
@@ -148,7 +148,9 @@ class NetworkGameLogic extends Entity
             if (id == _playerId) { /* this is me */
                 sendMyPlayerInfo(pl);
             } else {
-                updateOtherPlayer(pl);
+				if (pl.id >= 0) {
+					updateOtherPlayer(pl);
+				}
             }
         }
 	}

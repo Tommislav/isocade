@@ -36,6 +36,8 @@ class Player extends Eventity
 	
 	private var _bulletCount:Int;
 	
+	private var _colorId:Int;
+	
 	private var _isItMe:Bool;
 	
 	private var _dir:Int = 1;
@@ -79,17 +81,18 @@ class Player extends Eventity
 	public var score:Int;
 	private var _scoreCnt:Int;
 
-	public function new(id:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
+	public function new(id:Int, color:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
 		super(x, y);
 		this.id = id;
 		this.keyInput = keyInput;
+		_colorId = color;
 		_isItMe = isItMe;
 		_startX = x;
 		_startY = y;
 		
 		_extraWeaponType = ExtraWeaponType.NONE;
-		_playerGfx = new PlayerGraphics(id);
+		_playerGfx = new PlayerGraphics(_colorId);
 		graphic = _playerGfx;
 		
 		this.score = 0;

@@ -112,8 +112,6 @@ class StartScreen extends Scene {
         if (Input.mouseReleased) {
             if (this.collidePoint("start_button", Input.mouseX, Input.mouseY) != null) {
 				
-				//if (_startButtonState == 1 || _startButtonState == 2) isConnected = true;	// <------------ remove this hack!
-				
 				if (_startButtonState == 0) {
 					// start connecting...
 					Socket.instance.connectToServer();

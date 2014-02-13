@@ -28,14 +28,16 @@ class GameScore extends Entity {
     }
 
     public function setScores(players:Array<Player>):Void {
-        for(player in players) {
-            for(player in players){
-                var success = setPlayerScore(player.id, player.score);
-                if (!success) {
-                    _playerScores.push(new Score(player.id, player.score));
-                }
+        
+            for (player in players) {
+				if (player.id > -1) {
+					var success = setPlayerScore(player.id, player.score);
+					if (!success) {
+						_playerScores.push(new Score(player.id, player.score));
+					}
+				}
             }
-        }
+        
     }
 
     public function setPlayerScore(id:Int, score:Int):Bool {

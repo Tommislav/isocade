@@ -13,9 +13,9 @@ class FakePlayer extends Player
 {
 	private var _keyboard:ICadeKeyboard;
 
-	public function new(id:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
+	public function new(id:Int, color:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
-		super(id, x, y, keyInput, isItMe);
+		super(id, color, x, y, keyInput, isItMe);
 		_keyboard = cast(keyInput, ICadeKeyboard);
 	}
 	
