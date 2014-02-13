@@ -9,6 +9,7 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import openfl.Assets;
+import se.isotop.cliffpusher.factories.GraphicsFactory;
 
 /**
  * ...

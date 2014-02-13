@@ -8,6 +8,13 @@ import flash.display.BitmapData;
 import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.ui.Keyboard;
+import se.isotop.cliffpusher.enums.ExtraWeaponType;
+import se.isotop.cliffpusher.enums.SoundId;
+import se.isotop.cliffpusher.events.ExtraWeaponEvent;
+import se.isotop.cliffpusher.events.ShootBulletEvent;
+import se.isotop.cliffpusher.events.SoundEvent;
+import se.isotop.cliffpusher.factories.GraphicsFactory;
+import se.isotop.haxepunk.Eventity;
 import se.salomonsson.icade.ICadeKeyCode;
 import se.salomonsson.icade.IReadInput;
 import se.salomonsson.icade.ISerializeableReadInput;
@@ -16,14 +23,19 @@ import se.salomonsson.icade.ISerializeableReadInput;
  * ...
  * @author Tommislav
  */
-class Player extends Entity
+class Player extends Eventity
 {
+	public static inline var NAME = "player";
+	
 	private static inline var SHIELD_X_R = 34;
 	private static inline var SHIELD_X_L = -6;
 	
 	private static inline var SHOOT_BUTTON = ICadeKeyCode.BUTTON_B;
 	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_A;
 	private static inline var JUMP_BUTTON = ICadeKeyCode.BUTTON_C;
+	private static inline var EXTRA_BUTTON = ICadeKeyCode.BUTTON_1;
+	
+	private var _bulletCount:Int;
 	
 	private var _isItMe:Bool;
 	
@@ -41,10 +53,11 @@ class Player extends Entity
 	private var _jumpCnt:Int;
 	private var _freezeInteractionCnt:Int = 0;
 	
-	private var _bulletFactory:BulletFactory;
 	private var _currentBulletType:String = "bullet";
+	private var _extraWeaponType:ExtraWeaponType;
 	private var _shootDelay:Int;
 	private var _shieldDelay:Int;
+	private var _extraWeaponDelay:Int;
 	private var _screenShakeCounter:Int;
 	private var _screenShakeStr:Int = 2;
 	
@@ -64,6 +77,9 @@ class Player extends Entity
 	
 	private var _startX:Float;
 	private var _startY:Float;
+	
+	public var score:Int;
+	private var _scoreCnt:Int;
 
 	public function new(id:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
@@ -74,6 +90,7 @@ class Player extends Entity
 		_startX = x;
 		_startY = y;
 		
+		_extraWeaponType = ExtraWeaponType.NONE;
 		_gfxFactory = new GraphicsFactory();
 		_gfx = new Graphiclist();
 		
@@ -93,9 +110,11 @@ class Player extends Entity
 		_gfx.add(_shield);
 		graphic = _gfx;
 		
+		this.score = 0;
 		
 		setHitbox(32, 64);
-		type = "player";
+		type = NAME;
+		
 	}
 	
 	
@@ -105,14 +124,18 @@ class Player extends Entity
 			_ld = cast(scene.getInstance(Level.NAME), Level);
 		}
 		
-		if (_bulletFactory == null) {
-			_bulletFactory = cast(scene.getInstance(BulletFactory.NAME) , BulletFactory);
-		}
-		
 		if (this.y > _ld.levelHeightPx + 518) {
+			this.score = 0;
 			this.x = _startX;
 			this.y = _startY;
-			if (_isItMe) SoundPlayer.play(SoundPlayer.SND_DIE);
+			if (_isItMe) {
+				
+				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_DIE));
+				if (_extraWeaponType != ExtraWeaponType.NONE) {
+					dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.CHANGE, this, ExtraWeaponType.NONE, 0, -1));
+				}
+			}
+			
 		}
 		
 		var mX = 0.0;
@@ -156,14 +179,17 @@ class Player extends Entity
 			_jumpCnt = 99;
 		}
 		
-		// TODO: Add pickups - different weapons!!
+		
+		if (this.y < _ld.scoreAboveYPx) {
+			checkForAdditionalScore();
+		}
 		
 		// Jump (Button A)
 		if (this.keyInput.getKeyIsDown(JUMP_BUTTON) && !freezeInteraction) {
 			if (_onGround) {
 				_onGround = false;
 				_jumping = true;
-				SoundPlayer.play( (_isItMe?SoundPlayer.SND_JUMP_ME : SoundPlayer.SND_JUMP_THEM));
+				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, (_isItMe ? SoundId.SND_JUMP_ME : SoundId.SND_JUMP_THEM)));
 			}
 			
 			if (_jumping && ++_jumpCnt < 15) {
@@ -179,17 +205,28 @@ class Player extends Entity
 		}
 		
 		// Shoot (Button B)
-		if (--_shootDelay <= 0) {
-			if (this.keyInput.getKeyIsDown(SHOOT_BUTTON)) {
+		if (this.keyInput.getKeyIsDown(SHOOT_BUTTON)) {
+			
+			_bulletCount--;
+			
+			if (--_shootDelay <= 0) {
+			
+				if (_bulletCount > 0) {
+					var bulletAngle = _dir > 0 ? 0 : 180;
+					
+					if (keyInput.getKeyIsDown(ICadeKeyCode.UP))
+						bulletAngle = 270; // up
+					
+					dispatchEvent(new ShootBulletEvent(ShootBulletEvent.SHOOT_BULLET, this.id, _currentBulletType, centerX, centerY, bulletAngle));
+					_shootDelay = 4;
+					_shieldDelay = 18;
+				}
 				
-				var bulletAngle = _dir > 0 ? 0 : 180;
-				if (keyInput.getKeyIsDown(ICadeKeyCode.UP))
-					bulletAngle = 270; // up
 				
-				_shootDelay = _bulletFactory.shoot(this.id, _currentBulletType, centerX, centerY, bulletAngle);
-				_shieldDelay = 26;
 			}
 		}
+		
+		if (!this.keyInput.getKeyIsDown(SHOOT_BUTTON)) { _bulletCount = 55; }
 		
 		// Shield (Button C)
 		if (this.keyInput.getKeyIsDown(SHIELD_BUTTON) && --_shieldDelay <= 0) { // shield
@@ -198,6 +235,13 @@ class Player extends Entity
 			_shield.visible = false;
 		}
 		
+		
+		// Extra Weapon (Button 1) - if any
+		if (_extraWeaponType != ExtraWeaponType.NONE) {
+			if (this.keyInput.getKeyIsDown(EXTRA_BUTTON) && --_extraWeaponDelay <= 0) {
+				dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.FIRE, this, _extraWeaponType, 0));
+			}
+		}
 		
 		if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
 			mX = mY = 0;
@@ -225,6 +269,39 @@ class Player extends Entity
 			moveCamera();
 		
 		super.update();
+	}
+	
+	/* INTERFACE se.isotop.cliffpusher.ISetExtraWeaponType */
+	
+	public function setExtraWeapon(playerId:Int, type:ExtraWeaponType, num:Int) 
+	{
+		trace("Set extra weapon on player with id: " + playerId + ", my id is: " + this.id );
+		if (playerId == this.id) {
+			_extraWeaponType = type;
+			dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, this, type, 0, num));
+		}
+	}
+	
+	
+	function checkForAdditionalScore() 
+	{
+		if (++_scoreCnt % 30 == 0) {
+			// Only top-most player gets score
+			var players = new Array<Player>();
+			this.scene.getClass(Player, players);
+			var topPlayerId:Int = -1;
+			var topY:Float = 999999;
+			for (pl in players) {
+				if (pl.y < topY) {
+					topY = pl.y;
+					topPlayerId = pl.id;
+				}
+			}
+			
+			if (topPlayerId == this.id) {
+				this.score++;
+			}
+		}	
 	}
 	
 	
@@ -255,7 +332,7 @@ class Player extends Entity
 				var pushBack = (2 * bullet.getDamage() * bullet.getDir());
 				//this.x += pushBack;
 				this.vX = pushBack;
-				SoundPlayer.play(SoundPlayer.SND_HIT_SHIELD);
+				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_HIT_SHIELD));
 				return false;
 			}
 			
@@ -264,7 +341,7 @@ class Player extends Entity
 			_eyes.visible = false;
 			_eyes2.visible = true;
 			_closedEyesCounter = 60;
-			SoundPlayer.play(SoundPlayer.SND_EXPLOSION);
+			dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_EXPLOSION));
 			
 			if (_screenShakeCounter < -8) {
 				_screenShakeCounter = 5;

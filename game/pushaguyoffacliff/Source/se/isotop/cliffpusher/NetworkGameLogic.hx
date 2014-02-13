@@ -19,7 +19,8 @@ class NetworkGameLogic extends Entity
 {
 	public static inline var NAME:String = "GameLogic";
 	
-	private static inline var TYPE_SPAWN_PUSH:Int = 20;
+	public static inline var SOCKET_TYPE_PLAYER_INFO:Int = 20;
+	public static inline var SOCKET_TYPE_PLAYER_SCORE:Int = 21;
 	
 	
 	private var _colors:Array<Int>;
@@ -30,6 +31,8 @@ class NetworkGameLogic extends Entity
 	private var _gameSocket:GameSocket;
 	private var _connected:Bool;
 	private var _playerUpdates:Map<Int, GamePacket>;
+	private var _playerSpawnPoint:Point;
+	
 	
 	public function new() 
 	{
@@ -41,7 +44,7 @@ class NetworkGameLogic extends Entity
 		_gameSocket = new GameSocket();
 		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
 		_gameSocket.connect("127.0.0.1", 8888);
-		//_gameSocket.connect("192.168.12.122", 8888);
+		//_gameSocket.connect("192.168.12.137", 8888);
 	}
 	
 	private function onSocketConnected(e:GameSocketEvent):Void 
@@ -50,10 +53,20 @@ class NetworkGameLogic extends Entity
 		_playerId = e.packet.id;
 		
 		
-		newFakePlayer(0); // fake player - remove before trying over network!!
-		newFakePlayer(1); // fake player - remove before trying over network!!
-		newFakePlayer(2); // fake player - remove before trying over network!!
-		newFakePlayer(3); // fake player - remove before trying over network!!
+		var ld:Level = cast(scene.getInstance(Level.NAME), Level);
+		var enemies:Array<Point> = ld.enemyPositionList;
+		for (e in enemies) {
+			newFakePlayer(e.x, e.y);
+		}
+		var pickups:Array<Point> = ld.pickupSpawnPointList;
+		for (p in pickups) {
+			newPickup(p.x, p.y);
+		}
+		
+		_playerSpawnPoint = ld.playerSpawnPoint;
+		
+		
+		
 		newPlayer(_playerId, true);
 		
 		
@@ -65,18 +78,22 @@ class NetworkGameLogic extends Entity
 	
 	private function onSocketData(e:GameSocketEvent):Void 
 	{
-		var type = e.packet.type;
-		if (e.packet.type == TYPE_SPAWN_PUSH) {
-			spawnNetworkPush(e.packet);
-			return;
-		}
-		
 		var id = e.packet.id;
+		var type:Int = e.packet.type;
+		
 		if (!_playerUpdates.exists(id)) {
 			trace("we have a new player with id " + id);
 			newPlayer(id, false);
 		}
-		_playerUpdates.set(id, e.packet);
+		
+		switch (type) {
+			case SOCKET_TYPE_PLAYER_INFO:
+				_playerUpdates.set(id, e.packet);
+			case SOCKET_TYPE_PLAYER_SCORE:
+				
+		}
+		
+		
 	}
 	
 	private function newPlayer(id:Int, isItMe:Bool):Player {
@@ -84,66 +101,37 @@ class NetworkGameLogic extends Entity
 		
 		var input = new ICadeKeyboard();
 		
-		#if windows
+		#if (cpp)
 			input.setKeyboardMode(true);
 		#end
 		
 		if (!isItMe)
 			input.disable();
 		
-		var xPos = (3 + id) * 32;
-		var yPos = 57 * 32;
+		var xPos = _playerSpawnPoint.x + (id * 32);
+		var yPos = _playerSpawnPoint.y;
 		
 		var p:Player = new Player(id, xPos, yPos, input, isItMe);
 		scene.add(p);
 		return p;
 	}
 	
-	private function newFakePlayer(id:Int=0) {
+	private function newFakePlayer(x, y) {
 		var fakeId = 4;
 		_playerUpdates.set(fakeId, null);
 		
 		var input = new ICadeKeyboard();
-		//input.setKeyboardMode(true);
 		input.disable();
 		
-		var pList = [new Point(12,48), new Point(18,59), new Point(6,44), new Point(13,38), new Point(17,33)];
-		
-		var p = pList[id];
-		var xPos = p.x * 32;
-		var yPos = p.y * 32;
-		
-		var p:FakePlayer = new FakePlayer(fakeId, xPos, yPos, input, false);
+		var p:FakePlayer = new FakePlayer(fakeId, x, y, input, false);
 		scene.add(p);
 	}
 	
-	private function spawnNetworkPush(gp:GamePacket) {
-		var x:Float = Std.parseFloat(gp.values[0]);
-		var y:Float = Std.parseFloat(gp.values[1]);
-		var dir:Int = Std.parseInt(gp.values[2]);
-		var playerId = gp.id;
-		
-		if (playerId != _playerId) {
-			spawnPushEntity(x, y, dir, playerId, false); // already spawned... this could be refactored =)
-		}
-	}
-	
-	public function spawnPushEntity( x:Float, y:Float, dir:Int, playerId:Int, send:Bool=true ) {
-		var push:Push = new Push(x, y, dir, playerId);
-		scene.add(push);
-		/*
-		if (send) {
-			// push notification to other connected players that I just spawned
-			var gp:GamePacket = new GamePacket();
-			gp.id = playerId;
-			gp.type = TYPE_SPAWN_PUSH;
-			gp.values = new Array();
-			gp.values.push(Std.string(x));
-			gp.values.push(Std.string(y));
-			gp.values.push(Std.string(dir));
-			_gameSocket.send(gp.serialize());
-		}
-		*/
+	private function newPickup(x, y) {
+		var p:Pickup = new Pickup();
+		p.x = x;
+		p.y = y;
+		scene.add(p);
 	}
 	
 	override public function update():Void 
@@ -159,6 +147,7 @@ class NetworkGameLogic extends Entity
 			
 			if (id == _playerId) { /* this is me */
 				myInfo.id = _playerId;
+				myInfo.type = SOCKET_TYPE_PLAYER_INFO;
 				myInfo.values = new Array<String>();
 				myInfo.values.push(Std.string(Math.round(pl.x)));
 				myInfo.values.push(Std.string(Math.round(pl.y)));
