@@ -1,6 +1,11 @@
 package se.isotop.cliffpusher;
 
+<<<<<<< HEAD
 import se.isotop.cliffpusher.model.PlayerInfo;
+=======
+import se.isotop.cliffpusher.screens.StartScreen;
+import com.haxepunk.HXP;
+>>>>>>> Winning condition added (fails)
 import se.isotop.cliffpusher.model.Socket;
 import se.isotop.cliffpusher.model.PlayerModel;
 import com.haxepunk.Entity;
@@ -16,6 +21,7 @@ import se.salomonsson.icade.ICadeKeyboard;
 class NetworkGameLogic extends Entity
 {
 	public static inline var NAME:String = "GameLogic";
+    public static inline var MAX_SCORE:Int = 10;
 	
 	public static inline var SOCKET_TYPE_PLAYER_INFO:Int = 20;
 	public static inline var SOCKET_TYPE_PLAYER_SCORE:Int = 21;
@@ -138,10 +144,12 @@ class NetworkGameLogic extends Entity
 	override public function update():Void 
 	{
 		super.update();
+        if (objectiveReached())
+            HXP.scene = new StartScreen();
+
         var players = new Array<Player>();
         this.scene.getClass(Player, players);
 
-		
         for (pl in players) {
 			
             var id = pl.id;
@@ -154,6 +162,16 @@ class NetworkGameLogic extends Entity
             }
         }
 	}
+
+    private function objectiveReached() {
+        trace('hej');
+        var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
+        if (gameScore == null)
+            return false;
+
+        var leadScore = gameScore.getLeaderScore();
+        return leadScore.score >= MAX_SCORE;
+    }
 
     private function sendMyPlayerInfo(player:Player):Void {
         var packets = new Array<GamePacket>();
