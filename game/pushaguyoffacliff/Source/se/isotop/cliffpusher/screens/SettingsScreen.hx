@@ -1,6 +1,6 @@
 package se.isotop.cliffpusher.screens;
 import com.haxepunk.Scene;
-import se.isotop.cliffpusher.TextField;
+import com.haxepunk.
 
 /**
  * ...
@@ -16,7 +16,9 @@ class SettingsScreen extends Scene
 	
 	override public function begin() 
 	{
-		add(new TextField(100, 100, "Settings screen"));
+		
+		
+		
 	}
 	
 }
