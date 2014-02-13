@@ -10,6 +10,7 @@ import com.haxepunk.utils.Key;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.Entity;
 import se.isotop.cliffpusher.GameScene;
+import se.isotop.cliffpusher.Mine;
 import se.isotop.cliffpusher.screens.HelpScreen;
 import com.haxepunk.utils.Touch;
 import flash.events.KeyboardEvent;
@@ -18,6 +19,7 @@ class StartScreen extends Scene {
     var startButton:Entity;
     var helpButton:Entity;
 	var settingsButton:Entity;
+	var mine:Mine;
 
     public function new() {
         super();
@@ -27,6 +29,9 @@ class StartScreen extends Scene {
     override public function begin() {
         HXP.screen.color = 0x332222;
         trace("HXP screen" + HXP.width);
+		
+		mine = new Mine(50, 50);
+		add(mine);
 
 //        HXP.stage.addEventListener(MouseEvent.CLICK, onClick);
 
@@ -87,7 +92,8 @@ class StartScreen extends Scene {
 
 
     override public function update():Void {
-        if (Input.check(Key.X)) {
+		
+		if (Input.check(Key.X)) {
             HXP.screen.color = 0x222233;
             HXP.scene = new GameScene();
         }
@@ -114,6 +120,9 @@ class StartScreen extends Scene {
 				HXP.scene = new SettingsScreen();
 			}
         }
+		
+		mine.update();
+		super.update();
 
     }
 

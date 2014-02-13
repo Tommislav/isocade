@@ -39,27 +39,24 @@ class SettingsScreen extends Scene
 		var serverIpParts = _serverInformation.GetServerIpParts();
 		trace("SERVER IP PARTS: " + serverIpParts);
 		
-		var splashText:Text = new Text("Settings");
-        splashText.color = 0xBB3377;
-        splashText.size = 56;
-        var splashTextEntity:Entity = new Entity(0,0,splashText);
-        splashTextEntity.x = (HXP.width/2)-(splashText.width/2);
-        splashTextEntity.y = (HXP.height/3)-(splashText.height/2);
-        add(splashTextEntity);
+		var bgImage:Image = new Image("assets/settings_bg.png");
+		var bgEntity = new Entity(0, (HXP.height / 2) - (bgImage.height / 2), bgImage);
+		add(bgEntity);
+		
 		
 		var titleText:Text = new Text("Server IP:");
         titleText.color = 0x000000;
-        titleText.size = 24;
+        titleText.size = 36;
         var textEntity:Entity = new Entity(0,0,titleText);
-        textEntity.x = (HXP.width/4)-(titleText.width/2);
-        textEntity.y = (HXP.height/2)-(titleText.height/2);
+        textEntity.x = (HXP.width/2)-(titleText.width/2);
+        textEntity.y = (HXP.height/2)-(bgImage.height/2) + 20;
         add(textEntity);
 		
 		var xOffset = 140;
 
 		_ipPart = new IpPart(serverIpParts[0]);
-		_ipPart.x = textEntity.x;
-		_ipPart.y = textEntity.y + 40;
+		_ipPart.x = 110;
+		_ipPart.y = textEntity.y + 60;
 		HXP.stage.addChild(_ipPart);
 
 		_ipPart2 = new IpPart(serverIpParts[1]);
@@ -77,12 +74,14 @@ class SettingsScreen extends Scene
 		_ipPart4.y = _ipPart.y;
 		HXP.stage.addChild(_ipPart4);
 		
-		var buttonImage:Image = new Image("assets/start_button.png");
-		_saveButton = new Entity(HXP.width - buttonImage.width - 50, HXP.height - buttonImage.height - 50, buttonImage);
+		var buttonImage:Image = new Image("assets/save_button.png");
+		_saveButton = new Entity((HXP.width / 2) - (buttonImage.width / 2), (HXP.height / 2) - (buttonImage.height / 2) + (bgImage.height / 2(, buttonImage);
 		_saveButton.setHitbox(buttonImage.width, buttonImage.height);
 		_saveButton.type = "save_button";
 		
 		add(_saveButton);
+		
+		
 	}
 	
 	override public function end() 
