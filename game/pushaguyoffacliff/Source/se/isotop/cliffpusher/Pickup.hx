@@ -35,6 +35,7 @@ class Pickup extends Eventity
 	{
 		super.update();
 		
+		
 		if (_emitCount > 0) {
 			_emitCount--;
 			_emitter.emitInCircle("one", 16, 16, 64);
@@ -52,9 +53,8 @@ class Pickup extends Eventity
 				var pl = cast(coll, Player);
 				var newType:ExtraWeaponType = ExtraWeaponType.MINE; // make random
 				var numberOfWpns = 3;
-				dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, pl, newType, 0, numberOfWpns));
-				pl.setExtraWeapon(newType, numberOfWpns);
 				
+				pl.setExtraWeapon(pl.id, newType, numberOfWpns);
 				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_PICKUP_GET));
 				
 				_emitCount = 60;

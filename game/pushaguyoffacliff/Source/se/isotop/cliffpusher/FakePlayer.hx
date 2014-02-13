@@ -1,5 +1,6 @@
 package se.isotop.cliffpusher;
 
+import se.isotop.cliffpusher.enums.ExtraWeaponType;
 import se.salomonsson.icade.ICadeKeyboard;
 import se.salomonsson.icade.ICadeKeyCode;
 import se.salomonsson.icade.ISerializeableReadInput;
@@ -33,5 +34,10 @@ class FakePlayer extends Player
 		super.update();
 	}
 	
+	
+	override public function setExtraWeapon(playerId:Int, type:ExtraWeaponType, num:Int) 
+	{
+		// nothing
+	}
 	
 }

@@ -180,9 +180,6 @@ class Player extends Eventity
 		}
 		
 		
-		
-		
-		
 		if (this.y < _ld.scoreAboveYPx) {
 			checkForAdditionalScore();
 		}
@@ -276,9 +273,13 @@ class Player extends Eventity
 	
 	/* INTERFACE se.isotop.cliffpusher.ISetExtraWeaponType */
 	
-	public function setExtraWeapon(type:ExtraWeaponType, num:Int) 
+	public function setExtraWeapon(playerId:Int, type:ExtraWeaponType, num:Int) 
 	{
-		_extraWeaponType = type;
+		trace("Set extra weapon on player with id: " + playerId + ", my id is: " + this.id );
+		if (playerId == this.id) {
+			_extraWeaponType = type;
+			dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, this, type, 0, num));
+		}
 	}
 	
 	

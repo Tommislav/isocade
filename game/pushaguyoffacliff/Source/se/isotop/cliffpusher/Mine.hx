@@ -15,7 +15,7 @@ class Mine extends Eventity
 	public function new(x:Float, y:Float) 
 	{
 		super( x, y );
-		
+		_animation.
 	}
 	
 }
