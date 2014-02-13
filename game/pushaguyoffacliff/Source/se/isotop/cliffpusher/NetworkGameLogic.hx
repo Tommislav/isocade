@@ -26,11 +26,11 @@ class NetworkGameLogic extends Entity
 	private var _colors:Array<Int>;
 	
 	private var _playerId:Int = -1;
-	private var _players:Array<Player>;
 
 	private var _gameSocket:GameSocket;
 	private var _connected:Bool;
 	private var _playerUpdates:Map<Int, GamePacket>;
+    private var _playerScores:Map<Int, GamePacket>;
 	private var _playerSpawnPoint:Point;
 	
 	
@@ -39,7 +39,8 @@ class NetworkGameLogic extends Entity
 		super(0, 0, null, null);
 		this.name = NAME;
 		_playerUpdates = new Map<Int, GamePacket>(); // store the last recieved update for each player id
-		
+        _playerScores = new Map<Int, GamePacket>();
+
 		trace("connecting...");
 		_gameSocket = new GameSocket();
 		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
@@ -78,23 +79,34 @@ class NetworkGameLogic extends Entity
 	
 	private function onSocketData(e:GameSocketEvent):Void 
 	{
-		var id = e.packet.id;
 		var type:Int = e.packet.type;
-		
-		if (!_playerUpdates.exists(id)) {
-			trace("we have a new player with id " + id);
-			newPlayer(id, false);
-		}
-		
+
 		switch (type) {
 			case SOCKET_TYPE_PLAYER_INFO:
-				_playerUpdates.set(id, e.packet);
+				handlePlayerPacket(e.packet);
 			case SOCKET_TYPE_PLAYER_SCORE:
-				
+				handleScorePacket(e.packet);
 		}
-		
-		
 	}
+
+    private function handlePlayerPacket(packet:GamePacket):Void {
+        var id = packet.id;
+
+        if (!_playerUpdates.exists(id)) {
+            trace("we have a new player with id " + id);
+            newPlayer(id, false);
+        }
+
+        _playerUpdates.set(id, packet);
+    }
+
+    private function handleScorePacket(packet:GamePacket):Void {
+        var id = packet.id;
+
+        trace('ScoreRecived: ' + packet.id + ' score: ' + packet.values[0]);
+
+        _playerScores.set(id, packet);
+    }
 	
 	private function newPlayer(id:Int, isItMe:Bool):Player {
 		_playerUpdates.set(id, null);
@@ -137,35 +149,73 @@ class NetworkGameLogic extends Entity
 	override public function update():Void 
 	{
 		super.update();
-		
-		var myInfo:GamePacket = new GamePacket();
-		_players = new Array<Player>();
-		this.scene.getClass(Player, _players);
-		
-		for (pl in _players) {
-			var id = pl.id;
-			
-			if (id == _playerId) { /* this is me */
-				myInfo.id = _playerId;
-				myInfo.type = SOCKET_TYPE_PLAYER_INFO;
-				myInfo.values = new Array<String>();
-				myInfo.values.push(Std.string(Math.round(pl.x)));
-				myInfo.values.push(Std.string(Math.round(pl.y)));
-				myInfo.values.push(Std.string(pl.keyInput.serialize()));
-				continue;
-			}
-			
-			var gp = _playerUpdates.get(id);
-			if (gp != null) {
-				pl.x = Std.parseFloat(gp.values[0]);
-				pl.y = Std.parseFloat(gp.values[1]);
-				
-				var parsedInput:Int = Std.parseInt(gp.values[2]);
-				pl.keyInput.deserialize(parsedInput);
-			}
-		}
-		
-		if (_connected)
-			_gameSocket.send(myInfo.serialize());
+        var players = new Array<Player>();
+        this.scene.getClass(Player, players);
+
+        for (pl in players) {
+            var id = pl.id;
+
+            if (id == _playerId) { /* this is me */
+                sendMyPlayerInfo(pl);
+            } else {
+                updateOtherPlayer(pl);
+            }
+        }
 	}
+
+    private function sendMyPlayerInfo(player:Player):Void {
+        var packets = new Array<GamePacket>();
+        var myInfo:GamePacket = new GamePacket();
+
+        myInfo.id = _playerId;
+        myInfo.type = SOCKET_TYPE_PLAYER_INFO;
+        myInfo.values = new Array<String>();
+
+        myInfo.values.push(Std.string(Math.round(player.x)));
+        myInfo.values.push(Std.string(Math.round(player.y)));
+        myInfo.values.push(Std.string(player.keyInput.serialize()));
+
+        packets.push(myInfo);
+
+        var myScore:GamePacket = new GamePacket();
+
+        myScore.id = _playerId;
+        myScore.type = SOCKET_TYPE_PLAYER_SCORE;
+        myScore.values = new Array<String>();
+
+        var gp:GamePacket = _playerScores.get(_playerId);
+        var currentServerSideScore = gp != null ? Std.parseInt(gp.values[0]) : 0;
+
+        if (currentServerSideScore != player.score) {
+            myScore.values.push(Std.string(player.score));
+            packets.push(myScore);
+        }
+
+        sendPackets(packets);
+    }
+
+    private function sendPackets(packets:Array<GamePacket>):Void {
+        if (_connected) {
+            for(gp in packets) {
+                _gameSocket.send(gp.serialize());
+            }
+        }
+    }
+
+    private function updateOtherPlayer(player:Player):Void {
+        var gp:GamePacket = _playerUpdates.get(player.id);
+        if (gp != null) {
+            player.x = Std.parseFloat(gp.values[0]);
+            player.y = Std.parseFloat(gp.values[1]);
+
+            var parsedInput:Int = Std.parseInt(gp.values[2]);
+            player.keyInput.deserialize(parsedInput);
+        }
+
+        gp = _playerScores.get(player.id);
+        if (gp != null) {
+            player.score = Std.parseInt(gp.values[0]);
+        }
+    }
+
 }

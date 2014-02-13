@@ -29,22 +29,19 @@ class ScoreHUD extends Entity
 	
 	override public function update():Void 
 	{
-        trace('ScoreHUD.update');
 		super.update();
         updateScore();
 	}
 
     private function updateScore():Void {
 
-        if (_scores == null) {
-            trace('no gamescore found');
+        if (_scores == null)
             return;
-        }
 
         var score = "";
-        for (playerScore in _scores.getCurrentPlayerScores()) {
-            trace('score ' + score);
-            score += playerScore.playerId + ": " + playerScore.score + "\n";
+
+        for (playerScore in _scores.getSortedPlayerScores()) {
+            score += playerScore.playerName + ": " + playerScore.score + "\n";
         }
         _score.text = score;
     }

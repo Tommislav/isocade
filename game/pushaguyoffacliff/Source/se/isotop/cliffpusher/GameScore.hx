@@ -12,30 +12,33 @@ class GameScore extends Entity {
 
     public function new() {
         super();
-
         _playerScores = new Array<Score>();
         type = NAME;
     }
 
     override public function update():Void {
-        updatePlayerScores();
-
         super.update();
+        updatePlayerScores();
     }
 
     private function updatePlayerScores():Void {
         var players = new Array<Player>();
         this.scene.getType(Player.NAME, players);
+        setScores(players);
+    }
 
-        for(player in players){
-            var success = setPlayerScore(player.id, player.score);
-            if (!success) {
-                _playerScores.push(new Score(player.id, player.score));
+    public function setScores(players:Array<Player>):Void {
+        for(player in players) {
+            for(player in players){
+                var success = setPlayerScore(player.id, player.score);
+                if (!success) {
+                    _playerScores.push(new Score(player.id, player.score));
+                }
             }
         }
     }
 
-    private function setPlayerScore(id:Int, score:Int):Bool {
+    public function setPlayerScore(id:Int, score:Int):Bool {
         for(playerScore in _playerScores) {
             if (playerScore.playerId == id) {
                 playerScore.score = score;
@@ -45,12 +48,24 @@ class GameScore extends Entity {
         return false;
     }
 
-    public function getCurrentPlayerScores():Array<Score> {
-        return _playerScores;
+    public function getSortedPlayerScores():Array<Score> {
+        var playerScoresCopy = new Array<Score>();
+        for(score in _playerScores) {
+            playerScoresCopy.push(score);
+        }
+
+        playerScoresCopy.sort( function(a:Score, b:Score):Int {
+            if (a.score < b.score) return 1;
+            if (a.score > b.score) return -1;
+            return 0;
+        });
+
+        return playerScoresCopy;
     }
 
-    public function getLeaderScore():Int {
-
+    public function getLeaderScore():Score {
+        var scores = getSortedPlayerScores();
+        return scores[0];
     }
 
     private function traceDebug(msg:String):Void {
