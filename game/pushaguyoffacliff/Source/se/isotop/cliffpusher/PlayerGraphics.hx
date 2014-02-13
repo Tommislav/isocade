@@ -72,4 +72,8 @@ class PlayerGraphics extends Graphiclist
 		
 	}
 	
+	public function setIsWalking(val:Bool) {
+		
+	}
+	
 }
