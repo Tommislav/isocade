@@ -7,6 +7,7 @@ import com.haxepunk.graphics.Text;
 import com.haxepunk.Entity;
 import se.isotop.cliffpusher.GameScene;
 import flash.events.KeyboardEvent;
+import se.isotop.cliffpusher.IpPart;
 
 
 /**
@@ -15,7 +16,11 @@ import flash.events.KeyboardEvent;
  */
 class SettingsScreen extends Scene
 {
-
+	private var _ipPart:IpPart;
+	private var _ipPart2:IpPart;
+	private var _ipPart3:IpPart;
+	private var _ipPart4:IpPart;
+	
 	public function new() 
 	{
 		super();
@@ -23,7 +28,6 @@ class SettingsScreen extends Scene
 	
 	override public function begin() 
 	{
-		
 		var splashText:Text = new Text("Settings");
         splashText.color = 0xBB3377;
         splashText.size = 56;
@@ -39,6 +43,37 @@ class SettingsScreen extends Scene
         textEntity.x = (HXP.width/4)-(titleText.width/2);
         textEntity.y = (HXP.height/2)-(titleText.height/2);
         add(textEntity);
+		
+		var xOffset = 140;
+		
+		_ipPart = new IpPart(192);
+		_ipPart.x = textEntity.x;
+		_ipPart.y = textEntity.y + 40;
+		HXP.stage.addChild(_ipPart);
+
+		_ipPart2 = new IpPart(168);
+		_ipPart2.x = _ipPart.x + xOffset;
+		_ipPart2.y = _ipPart.y;
+		HXP.stage.addChild(_ipPart2);
+		
+		_ipPart3 = new IpPart(0);
+		_ipPart3.x = _ipPart2.x + xOffset;
+		_ipPart3.y = _ipPart.y;
+		HXP.stage.addChild(_ipPart3);
+		
+		_ipPart4 = new IpPart(1);
+		_ipPart4.x = _ipPart3.x + xOffset;
+		_ipPart4.y = _ipPart.y;
+		HXP.stage.addChild(_ipPart4);
+	}
+	
+	override public function end() 
+	{
+		super.end();
+		_ipPart.Destroy();
+		_ipPart2.Destroy();
+		_ipPart3.Destroy();
+		_ipPart4.Destroy();
 		
 	}
 	
