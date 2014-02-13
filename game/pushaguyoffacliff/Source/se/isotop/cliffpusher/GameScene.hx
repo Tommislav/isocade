@@ -24,14 +24,7 @@ class GameScene extends Scene
 	
 	override public function begin() 
 	{
-		var keyboard = new ICadeKeyboard();
 		var factory = new GraphicsFactory();
-		
-		#if (cpp)
-			// On windows, use debug mode as default
-			keyboard.setKeyboardMode(true);
-			keyboard.setDebugToggleKey(Keyboard.SPACE);
-		#end
 		
 		add(new SoundPlayer());
 		add(new BulletFactory());

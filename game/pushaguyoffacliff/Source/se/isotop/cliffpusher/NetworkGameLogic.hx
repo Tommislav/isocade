@@ -101,7 +101,7 @@ class NetworkGameLogic extends Entity
 		
 		var input = new ICadeKeyboard();
 		
-		#if windows
+		#if (cpp)
 			input.setKeyboardMode(true);
 		#end
 		
