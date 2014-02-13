@@ -1,4 +1,6 @@
 package se.isotop.cliffpusher;
+import com.haxepunk.Entity;
+import com.haxepunk.graphics.Text;
 import com.haxepunk.HXP;
 import flash.display.Bitmap;
 import flash.display.Sprite;
