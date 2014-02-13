@@ -1,5 +1,6 @@
 package se.isotop.cliffpusher.screens;
 
+import se.isotop.cliffpusher.model.PlayerModel;
 import flash.events.MouseEvent;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.Scene;
@@ -25,7 +26,6 @@ class StartScreen extends Scene {
 
     override public function begin() {
         HXP.screen.color = 0x332222;
-
         trace("HXP screen" + HXP.width);
 
 //        HXP.stage.addEventListener(MouseEvent.CLICK, onClick);
