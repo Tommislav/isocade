@@ -41,15 +41,15 @@ class IpPart extends Sprite
 		addChild(_buttonDown);
 		
 		_textFormat = new TextFormat ();
-		_textFormat.size = 30;
-		
+		_textFormat.size = 36;
+
 		_text = new TextField();
 		_text.selectable = false;
 		_text.mouseEnabled = false;
 		_ipValue = value;
 		_text.text = _ipValue + "";
-		_text.y = 60;
-		_text.x = (_buttonDown.width / 2) - (_buttonDown.width / 4);
+		_text.y = 40;
+		_text.x = (_buttonDown.width / 2) - (_buttonDown.width / 2);
 		_text.textColor = 0x000000;
 		_text.setTextFormat(_textFormat);
 		addChild(_text);

@@ -44,7 +44,7 @@ class SettingsScreen extends Scene
 		add(bgEntity);
 		
 		
-		var titleText:Text = new Text("Server IP:");
+		var titleText:Text = new Text("Server IP");
         titleText.color = 0x000000;
         titleText.size = 36;
         var textEntity:Entity = new Entity(0,0,titleText);
@@ -52,11 +52,11 @@ class SettingsScreen extends Scene
         textEntity.y = (HXP.height/2)-(bgImage.height/2) + 20;
         add(textEntity);
 		
-		var xOffset = 140;
+		var xOffset = 130;
 
 		_ipPart = new IpPart(serverIpParts[0]);
-		_ipPart.x = 110;
-		_ipPart.y = textEntity.y + 60;
+		_ipPart.x = 160;
+		_ipPart.y = textEntity.y + 80;
 		HXP.stage.addChild(_ipPart);
 
 		_ipPart2 = new IpPart(serverIpParts[1]);
@@ -75,7 +75,7 @@ class SettingsScreen extends Scene
 		HXP.stage.addChild(_ipPart4);
 		
 		var buttonImage:Image = new Image("assets/save_button.png");
-		_saveButton = new Entity((HXP.width / 2) - (buttonImage.width / 2), (HXP.height / 2) - (buttonImage.height / 2) + (bgImage.height / 2), buttonImage);
+		_saveButton = new Entity((HXP.width / 2) - (buttonImage.width / 2), (HXP.height / 2) - (buttonImage.height / 2) + 240, buttonImage);
 		_saveButton.setHitbox(buttonImage.width, buttonImage.height);
 		_saveButton.type = "save_button";
 		
