@@ -12,6 +12,10 @@ class Socket extends EventDispatcher {
 
     private var _serverData:SharedObject;
 	private var _serverId:Int;
+	
+	
+	private var _ip:String = "(none)";
+	public function getConnectIp() { return _ip; }
 
     private static var _socket:Socket;
     public static var instance(get_instance, null):Socket;
@@ -40,9 +44,14 @@ class Socket extends EventDispatcher {
         _isConnected = false;
 
         _serverData = SharedObject.getLocal(SERVER_STORAGE);
-
-        if (_serverData.data.server == null)
-            saveServerFile(new Server("127.0.0.1",8888));
+		var hasData:Bool = (_serverData.data.serverIp != null);
+		#if (windows || mac)
+			hasData = false;
+		#end
+		
+        if (!hasData) {
+			saveServerFile(new DefaultServer());
+		}
     }
 
     public function getGameSocket():GameSocket {
@@ -54,7 +63,6 @@ class Socket extends EventDispatcher {
         _serverData.clear();
         _serverData.data.serverIp = serverInformation._serverIP;
         _serverData.data.serverPort = serverInformation._port;
-
         this._serverData.flush();
     }
 
@@ -62,6 +70,8 @@ class Socket extends EventDispatcher {
         _gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onGameSocketConnected);
         var server:Server = getServerInformation();
 
+		_ip = server._serverIP;
+		
         _gameSocket.connect(server._serverIP, server._port);
     }
 

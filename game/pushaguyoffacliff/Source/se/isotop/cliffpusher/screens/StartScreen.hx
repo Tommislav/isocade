@@ -13,6 +13,7 @@ import com.haxepunk.graphics.Text;
 import com.haxepunk.Entity;
 import se.isotop.cliffpusher.GameScene;
 import se.isotop.cliffpusher.Mine;
+import se.isotop.cliffpusher.model.Socket;
 import se.isotop.cliffpusher.screens.HelpScreen;
 import com.haxepunk.utils.Touch;
 import flash.events.KeyboardEvent;
@@ -79,12 +80,12 @@ class StartScreen extends Scene {
         splashTextEntity.y = (HXP.height/3)-(splashText.height/2);
         add(splashTextEntity);
 		
-		onConnectionError();
+		//onConnectionError();	 // TODO -> Implement error callback from socket - call onConnectionError();
     }
 
 	private function onConnectionError() {
 		if (errorText == null) {
-			var ip:String = "127.0.0.1"; // <------- change to real ip!
+			var ip:String = Socket.instance.getConnectIp();
 			var err:Text = new Text("Error connecting to IP: "+ip+"\nChange in settings");
 			err.color = 0xff0000;
 			err.size = 24;
@@ -97,7 +98,7 @@ class StartScreen extends Scene {
 	
     override public function update():Void {
 		
-		var isConnected:Bool = false;	// Check if we are connected yet!! <----------
+		var isConnected:Bool = Socket.instance.isConnected;	// Check if we are connected yet!!
 		
 		
 		if (Input.check(Key.X)) {
@@ -111,10 +112,11 @@ class StartScreen extends Scene {
         if (Input.mouseReleased) {
             if (this.collidePoint("start_button", Input.mouseX, Input.mouseY) != null) {
 				
-				if (_startButtonState == 1 || _startButtonState == 2) isConnected = true;	// <------------ remove this hack!
+				//if (_startButtonState == 1 || _startButtonState == 2) isConnected = true;	// <------------ remove this hack!
 				
 				if (_startButtonState == 0) {
-					// start connecting...		<-------------
+					// start connecting...
+					Socket.instance.connectToServer();
 					
 					_connAnimationCounter = 0;
 					_startButtonState = 1;

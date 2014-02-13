@@ -25,7 +25,6 @@ class NetworkGameLogic extends Entity
 
     private var _socket:Socket;
 	private var _gameSocket:GameSocket;
-	private var _connected:Bool;
 	private var _playerUpdates:Map<Int, GamePacket>;
     private var _playerScores:Map<Int, GamePacket>;
 	private var _playerSpawnPoint:Point;
@@ -39,6 +38,7 @@ class NetworkGameLogic extends Entity
 		
         _socket = Socket.instance;
         _gameSocket = _socket.gameSocket;
+		_playerId = _socket.getMyServerId();
         _gameSocket.addEventListener(GameSocketEvent.GS_DATA, onSocketData);
 	}
 	
@@ -59,6 +59,12 @@ class NetworkGameLogic extends Entity
         _playerSpawnPoint = ld.playerSpawnPoint;
 		newPlayer(_socket.getMyServerId(), true);
     }
+	
+	override public function removed():Void 
+	{
+		super.removed();
+		_gameSocket.removeEventListener(GameSocketEvent.GS_DATA, onSocketData);
+	}
 
     private function newPlayer(id:Int, isItMe:Bool):Void {
         _playerUpdates.set(id, null);
@@ -100,17 +106,10 @@ class NetworkGameLogic extends Entity
         p.y = y;
         scene.add(p);
     }
-
-	private function onSocketConnected(e:GameSocketEvent):Void 
-	{
-		_playerId = e.packet.id; // How to get this?
-
-	}
 	
 	private function onSocketData(e:GameSocketEvent):Void 
 	{
 		var type:Int = e.packet.type;
-
 		switch (type) {
 			case SOCKET_TYPE_PLAYER_INFO:
 				handlePlayerPacket(e.packet);
@@ -142,9 +141,10 @@ class NetworkGameLogic extends Entity
         var players = new Array<Player>();
         this.scene.getClass(Player, players);
 
+		
         for (pl in players) {
+			
             var id = pl.id;
-
             if (id == _playerId) { /* this is me */
                 sendMyPlayerInfo(pl);
             } else {
@@ -185,11 +185,9 @@ class NetworkGameLogic extends Entity
     }
 
     private function sendPackets(packets:Array<GamePacket>):Void {
-        if (_connected) {
-            for(gp in packets) {
-                _gameSocket.send(gp.serialize());
-            }
-        }
+		for(gp in packets) {
+			_gameSocket.send(gp.serialize());
+		}
     }
 
     private function updateOtherPlayer(player:Player):Void {
