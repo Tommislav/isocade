@@ -27,8 +27,7 @@ class Player extends Eventity
 {
 	public static inline var NAME = "player";
 	
-	private static inline var SHIELD_X_R = 34;
-	private static inline var SHIELD_X_L = -6;
+	
 	
 	private static inline var SHOOT_BUTTON = ICadeKeyCode.BUTTON_B;
 	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_A;
@@ -45,9 +44,10 @@ class Player extends Eventity
 	private var _gravity:Float = 1;
 	private var _jumping:Bool;
 	private var _onGround:Bool;
+	private var _shielding:Bool;
+	private var _shooting:Bool;
 	
 	private var _playerColor:Int;
-	private var _gfx:Graphiclist;
 	private var _gfxFactory:GraphicsFactory;
 	private var _canJump:Bool;
 	private var _jumpCnt:Int;
@@ -70,9 +70,7 @@ class Player extends Eventity
 	
 	private var _pushForceX:Float = 0.0;
 	
-	private var _eyes:Image;
-	private var _eyes2:Image;
-	private var _shield:Image;
+	private var _playerGfx:PlayerGraphics;
 	private var _ld:Level;
 	
 	private var _startX:Float;
@@ -91,24 +89,8 @@ class Player extends Eventity
 		_startY = y;
 		
 		_extraWeaponType = ExtraWeaponType.NONE;
-		_gfxFactory = new GraphicsFactory();
-		_gfx = new Graphiclist();
-		
-		var body:Image = new Image(_gfxFactory.getBody(id));
-		
-		_eyes = new Image(_gfxFactory.getEyes(), null, "eyes");
-		_eyes2 = new Image(_gfxFactory.getClosedEyes(), null, "eyesClosed");
-		_eyes2.visible = false;
-		_shield = new Image(_gfxFactory.getShield(id));
-		_shield.relative = true;
-		_shield.x = SHIELD_X_R;
-		
-		_gfx.add(body);
-		_gfx.add(new Image(_gfxFactory.getShade()));
-		_gfx.add(_eyes);
-		_gfx.add(_eyes2);
-		_gfx.add(_shield);
-		graphic = _gfx;
+		_playerGfx = new PlayerGraphics(id);
+		graphic = _playerGfx;
 		
 		this.score = 0;
 		
@@ -142,8 +124,7 @@ class Player extends Eventity
 		var mY = 0.0;
 		
 		if (--_closedEyesCounter == 0) {
-			_eyes.visible = true;
-			_eyes2.visible = false;
+			_playerGfx.setEyesAreOpen(true);
 		}
 		
 		_freezeInteractionCnt--;
@@ -152,8 +133,9 @@ class Player extends Eventity
 		_onGround = collide("solid", x, y + 1) != null;
 		
 		
-		if (_onGround && _jumping)
+		if (_onGround && _jumping) {
 			_jumping = false;
+		}
 		
 		var deg = this.keyInput.getDegrees();
 		if (deg != -1) {
@@ -162,15 +144,13 @@ class Player extends Eventity
 			mX = Math.cos(rad) * spd;
 			
 			if (mX < -0.2) {
-				_eyes.flipped = _eyes2.flipped = true;
-				_shield.x = SHIELD_X_L;
 				_dir = -1;
 			}
 			else if (mX > 0.2) {
-				_eyes.flipped = _eyes2.flipped = false;
-				_shield.x = SHIELD_X_R;
 				_dir = 1;
 			}
+			
+			_playerGfx.setDir(_dir);
 		}
 		
 		
@@ -220,19 +200,21 @@ class Player extends Eventity
 					dispatchEvent(new ShootBulletEvent(ShootBulletEvent.SHOOT_BULLET, this.id, _currentBulletType, centerX, centerY, bulletAngle));
 					_shootDelay = 4;
 					_shieldDelay = 18;
+					_shooting = true;
 				}
-				
-				
 			}
 		}
 		
-		if (!this.keyInput.getKeyIsDown(SHOOT_BUTTON)) { _bulletCount = 55; }
+		if (!this.keyInput.getKeyIsDown(SHOOT_BUTTON)) { 
+			_shooting = false;
+			_bulletCount = 55; 
+			}
 		
 		// Shield (Button C)
 		if (this.keyInput.getKeyIsDown(SHIELD_BUTTON) && --_shieldDelay <= 0) { // shield
-			_shield.visible = true;
+			_shielding = true;
 		} else {
-			_shield.visible = false;
+			_shielding = false;
 		}
 		
 		
@@ -267,6 +249,13 @@ class Player extends Eventity
 		
 		if (_isItMe) 
 			moveCamera();
+		
+		
+		// update graphics
+		_playerGfx.setIsJumping(_jumping);
+		_playerGfx.setShowShied(_shielding);
+		_playerGfx.setIsShooting(_shooting);
+		_playerGfx.setShowShied(_shielding);
 		
 		super.update();
 	}
@@ -327,7 +316,7 @@ class Player extends Eventity
 			var bullet:IBullet = cast(coll, IBullet);
 			if (bullet.getPlayerId() == this.id) return false; // I'm not taking damage from my own pushes
 			
-			if (_shield.visible && _dir != bullet.getDir()) {
+			if (_shielding && _dir != bullet.getDir()) {
 				bullet.destroy(false);
 				var pushBack = (2 * bullet.getDamage() * bullet.getDir());
 				//this.x += pushBack;
@@ -338,8 +327,7 @@ class Player extends Eventity
 			
 			this.vY = -6 * bullet.getDamage();
 			this._pushForceX = 8 * bullet.getDir() * bullet.getDamage();
-			_eyes.visible = false;
-			_eyes2.visible = true;
+			_playerGfx.setEyesAreOpen(false);
 			_closedEyesCounter = 60;
 			dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_EXPLOSION));
 			
