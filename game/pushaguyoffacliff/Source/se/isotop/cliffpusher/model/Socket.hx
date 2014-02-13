@@ -11,6 +11,7 @@ class Socket extends EventDispatcher {
     private static inline var SERVER_STORAGE:String = "serverConnection";
 
     private var _serverData:SharedObject;
+	private var _serverId:Int;
 
     private static var _socket:Socket;
     public static var instance(get_instance, null):Socket;
@@ -67,9 +68,12 @@ class Socket extends EventDispatcher {
     private function onGameSocketConnected(e:GameSocketEvent) {
         _gameSocket.removeEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onGameSocketConnected);
         _isConnected = true;
+		_serverId = e.packet.id;
         dispatchEvent(new Event("connected"));
     }
 
+	public function getMyServerId() { return _serverId; }
+	
     public function getServerInformation() : Server
     {
         if (_serverData.data.serverIp  == null)

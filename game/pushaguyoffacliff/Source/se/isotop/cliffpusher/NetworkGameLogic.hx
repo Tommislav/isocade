@@ -30,22 +30,22 @@ class NetworkGameLogic extends Entity
     private var _playerScores:Map<Int, GamePacket>;
 	private var _playerSpawnPoint:Point;
 	
-	public function new(shouldConnect:Bool = true) 
+	public function new() 
 	{
 		super(0, 0, null, null);
 		this.name = NAME;
 		_playerUpdates = new Map<Int, GamePacket>(); // store the last recieved update for each player id
         _playerScores = new Map<Int, GamePacket>();
-
+		
         _socket = Socket.instance;
         _gameSocket = _socket.gameSocket;
-
-        setUpGame();
-
         _gameSocket.addEventListener(GameSocketEvent.GS_DATA, onSocketData);
 	}
-
-    private function setUpGame():Void {
+	
+	override public function added():Void 
+	{
+		super.added();
+		
         var ld:Level = cast(scene.getInstance(Level.NAME), Level);
         var enemies:Array<Point> = ld.enemyPositionList;
         for (e in enemies) {
@@ -55,9 +55,9 @@ class NetworkGameLogic extends Entity
         for (p in pickups) {
             newPickup(p.x, p.y);
         }
-
+		
         _playerSpawnPoint = ld.playerSpawnPoint;
-        newPlayer(_playerId, true);
+		newPlayer(_socket.getMyServerId(), true);
     }
 
     private function newPlayer(id:Int, isItMe:Bool):Void {
