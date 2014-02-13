@@ -75,10 +75,10 @@ class SettingsScreen extends Scene
 		HXP.stage.addChild(_ipPart4);
 		
 		var buttonImage:Image = new Image("assets/save_button.png");
-		_saveButton = new Entity((HXP.width / 2) - (buttonImage.width / 2), (HXP.height / 2) - (buttonImage.height / 2) + (bgImage.height / 2(, buttonImage);
+		_saveButton = new Entity((HXP.width / 2) - (buttonImage.width / 2), (HXP.height / 2) - (buttonImage.height / 2) + (bgImage.height / 2));
+		_saveButton.graphic = buttonImage;
 		_saveButton.setHitbox(buttonImage.width, buttonImage.height);
 		_saveButton.type = "save_button";
-		
 		add(_saveButton);
 		
 		
