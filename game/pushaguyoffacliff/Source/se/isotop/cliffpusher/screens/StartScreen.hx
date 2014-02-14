@@ -24,6 +24,9 @@ import com.haxepunk.utils.Touch;
 import flash.events.KeyboardEvent;
 import se.salomonsson.icade.ICadeKeyboard;
 import se.salomonsson.icade.ICadeKeyCode;
+#if(windows || win)
+import com.furusystems.openfl.input.xinput.XBox360Controller;
+#end
 class StartScreen extends Scene {
 
 	var mine:Mine;
@@ -49,6 +52,17 @@ class StartScreen extends Scene {
 			#if (win || windows)
 			{
 			trace("set controller");
+			
+				var keyboardHandler = new ICadeKeyboard();
+		ICadeKeyboard.instance = keyboardHandler;
+		#if (windows || win)
+		{
+			if (XBox360Controller.isControllerConnected(0))
+			{
+			ICadeKeyboard.instance.setXboxControllerMode(true);
+			}	
+			}
+			#end
 			//	ICadeKeyboard.instance.setXboxControllerMode(true);
 			}
 			
