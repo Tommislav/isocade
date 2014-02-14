@@ -6,3 +6,9 @@ Export
 out
 game/pushaguyoffacliff/._.DS_Store
 game/pushaguyoffacliff/Assets/Thumbs.db
+server/pi_server/server_LCD.py
+server/pi_server/server.py
+server/pi_server/Adafruit_I2C.pyc
+server/pi_server/Adafruit_I2C.py
+server/pi_server/Adafruit_CharLCDPlate.pyc
+server/pi_server/Adafruit_CharLCDPlate.py
