@@ -1,7 +1,10 @@
 package se.isotop.cliffpusher.screens;
 
+import com.furusystems.openfl.input.xinput.Xbox360Button;
 import com.haxepunk.graphics.atlas.AtlasData;
+import flash.events.Event;
 import flash.geom.Rectangle;
+import flash.Lib;
 import se.isotop.cliffpusher.model.PlayerModel;
 import flash.events.MouseEvent;
 import com.haxepunk.graphics.Image;
@@ -17,7 +20,8 @@ import se.isotop.cliffpusher.model.Socket;
 import se.isotop.cliffpusher.screens.HelpScreen;
 import com.haxepunk.utils.Touch;
 import flash.events.KeyboardEvent;
-
+import se.salomonsson.icade.ICadeKeyboard;
+import se.salomonsson.icade.ICadeKeyCode;
 class StartScreen extends Scene {
 
 	var mine:Mine;
@@ -35,18 +39,25 @@ class StartScreen extends Scene {
 	
 	private var _startButtonState:Int = 0; // 0="connect", 1&2="connecting", 3="start"
 	private var _connAnimationCounter:Int;
-
+	
 
     public function new() {
         super();
-
-    }
-
+	
+			#if (win || windows)
+			{
+			trace("set controller");
+			//	ICadeKeyboard.instance.setXboxControllerMode(true);
+			}
+			
+		#end
+    }	
+	
+	
     override public function begin() {
         HXP.screen.color = 0x332222;
 
         trace("HXP screen" + HXP.width);
-		
 		mine = new Mine(50, 50);
 		add(mine);
 		
@@ -100,7 +111,24 @@ class StartScreen extends Scene {
 		
 		var isConnected:Bool = Socket.instance.isConnected;	// Check if we are connected yet!!
 		
-		
+		if (ICadeKeyboard.instance.getKeyIsDown(ICadeKeyCode.BUTTON_START))
+		{
+					if (_startButtonState == 0) {
+					// start connecting...
+					Socket.instance.connectToServer();
+					
+					_connAnimationCounter = 0;
+					_startButtonState = 1;
+					if (errorText != null) {
+						remove(errorText);
+					}
+				}
+				if (_startButtonState == 3) { // connected
+					HXP.scene = new GameScene();
+				}
+		//		HXP.scene = new GameScene();
+		}
+			
 		if (Input.check(Key.X)) {
             HXP.screen.color = 0x222233;
             HXP.scene = new GameScene();
@@ -128,7 +156,7 @@ class StartScreen extends Scene {
             trace(scores);
             HXP.scene = new EndScreen(scores);
         }
-
+		
         if (Input.mouseReleased) {
             if (this.collidePoint("start_button", Input.mouseX, Input.mouseY) != null) {
 				
