@@ -51,7 +51,8 @@ class Pickup extends Eventity
 			var coll = this.collide(Player.NAME, this.x, this.y);
 			if (coll != null) {
 				var pl = cast(coll, Player);
-				var newType:ExtraWeaponType = ExtraWeaponType.LONGER_SHOTS; // make random
+				
+				var newType:ExtraWeaponType = (Math.random() < 0.5) ? ExtraWeaponType.LONGER_SHOTS : ExtraWeaponType.POWER_JUMP;
 				var numberOfWpns = 10;
 				
 				pl.setExtraWeapon(pl.id, newType, numberOfWpns);

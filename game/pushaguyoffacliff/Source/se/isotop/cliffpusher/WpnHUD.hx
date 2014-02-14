@@ -32,7 +32,7 @@ class WpnHUD extends Eventity
 		options.color = 0x000000;
 		options.size = 20;
 		
-		_num = new Text("", 4, 42, 32, 32, options);
+		_num = new Text("", 4, 42, 64, 32, options);
 		
 		var gList:Graphiclist = new Graphiclist();
 		gList.add(new Image(GraphicsFactory.instance.getHudFrame()));
@@ -88,7 +88,7 @@ class WpnHUD extends Eventity
 	
 	public function setNumber(v:Int) {
 		if (v >= 0) {
-			_num.text = "x" + v;
+			_num.text = v + " s";
 		} else {
 			_num.text = "";
 		}

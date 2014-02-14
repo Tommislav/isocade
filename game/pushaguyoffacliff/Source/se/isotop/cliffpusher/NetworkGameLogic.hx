@@ -92,7 +92,7 @@ class NetworkGameLogic extends Entity
             input.disable();
         }
 
-        var xPos = _playerSpawnPoint.x + (id * 32);
+        var xPos = _playerSpawnPoint.x + ((id * 32) % 4);
         var yPos = _playerSpawnPoint.y;
 
 		var pInfo:PlayerInfo = playerModel.getPlayer(id);

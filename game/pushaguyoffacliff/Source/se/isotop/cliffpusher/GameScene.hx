@@ -4,6 +4,7 @@ import com.haxepunk.Scene;
 import flash.display.BitmapData;
 import flash.ui.Keyboard;
 import openfl.Assets;
+import se.isotop.cliffpusher.factories.BulletFactory;
 import se.isotop.cliffpusher.factories.GraphicsFactory;
 import se.salomonsson.icade.ICadeKeyboard;
 import se.salomonsson.icade.IReadInput;

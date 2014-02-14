@@ -22,9 +22,8 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="tools=1.2.9&#xA;lime_native&#xA;no-compilation&#xA;display&#xA;windows&#xA;desktop&#xA;no-compilation" />
+    <option directives="tools=1.2.8&#xA;lime_native&#xA;no-compilation&#xA;display&#xA;windows&#xA;desktop&#xA;no-compilation" />
     <option flashStrict="False" />
-    <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
     <option additional="--no-output&#xA;--macro allowPackage(&quot;flash&quot;)&#xA;--macro keep(&quot;Main&quot;)" />
