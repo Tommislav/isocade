@@ -42,6 +42,11 @@ class PlayerGraphics extends Graphiclist
 		this.add(_eyes);
 		this.add(_eyes2);
 		this.add(_shield);
+        setEyesAreOpen(true);
+        setShowShied(false);
+        setIsShooting(false);
+        setIsWalking(false);
+        setIsJumping(false);
 	}
 	
 	public function setEyesAreOpen(open:Bool) {
@@ -57,7 +62,6 @@ class PlayerGraphics extends Graphiclist
 			_eyes.flipped = _eyes2.flipped = false;
 			_shield.x = SHIELD_X_R;
 		}
-		
 	}
 	
 	public function setShowShied(val:Bool) {

@@ -11,6 +11,7 @@ import se.isotop.gamesocket.GamePacket;
 import se.isotop.gamesocket.GameSocket;
 import se.isotop.gamesocket.GameSocketEvent;
 import se.salomonsson.icade.ICadeKeyboard;
+import se.isotop.cliffpusher.screens.EndScreen;
 /**
  * ...
  * @author Tommislav
@@ -166,8 +167,11 @@ class NetworkGameLogic extends Entity
 	{
 		super.update();
         if (objectiveReached())
-            HXP.scene = new StartScreen();
+        {
+            var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
 
+            HXP.scene = new EndScreen(gameScore.getSortedPlayerScores());
+        }
         var players = new Array<Player>();
         this.scene.getClass(Player, players);
 
