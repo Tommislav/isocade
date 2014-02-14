@@ -93,8 +93,8 @@ class StartScreen extends Scene {
         splashText.color = 0xBB3377;
         splashText.size = 56;
         var splashTextEntity:Entity = new Entity(0,0,splashText);
-        splashTextEntity.x = (HXP.width/2)-(splashText.width/2);
-        splashTextEntity.y = (HXP.height/3)-(splashText.height/2);
+        splashTextEntity.x = (HXP.screen.width/2)-(splashText.width/2);
+        splashTextEntity.y = (HXP.screen.height/3)-(splashText.height/2);
         add(splashTextEntity);
 		
 		//onConnectionError();	 // TODO -> Implement error callback from socket - call onConnectionError();
