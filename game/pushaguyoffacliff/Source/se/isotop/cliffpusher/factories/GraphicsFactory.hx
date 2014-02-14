@@ -25,6 +25,9 @@ class GraphicsFactory
 	private var _scoreRegion:AtlasRegion;
 	private var _pickupRegion:AtlasRegion;
 	
+	private var _bulletRegion:AtlasRegion;
+	private var _bulletBigRegion:AtlasRegion;
+	
 	private var _hudFrame:AtlasRegion;
 	private var _hudPowerJump:AtlasRegion;
 	private var _hudMine:AtlasRegion;
@@ -62,6 +65,7 @@ class GraphicsFactory
 		_eyes2Region = _atlas.createRegion(new Rectangle(64, 0, 32, 32), new Point(0, 0));
 		_shadeRegion = _atlas.createRegion(new Rectangle(0, 0, 32, 64), new Point(0, 0));
 		
+		
 		// pickup box
 		_pickupRegion = _atlas.createRegion(new Rectangle(32, 64, 32, 32), new Point());
 		
@@ -76,6 +80,9 @@ class GraphicsFactory
 		_explosionSheet = explosion.createRegion(new Rectangle(0, 0, explosion.width, explosion.height), new Point());
 		
 		_particle = _atlas.createRegion(new Rectangle(96, 64, 32, 32), new Point());
+		
+		_bulletRegion = _atlas.createRegion(new Rectangle(472, 0, 50, 23), new Point(25, 11));
+		_bulletBigRegion = _atlas.createRegion(new Rectangle(472,23, 50, 23), new Point(25,11));
 		
 	}
 	
@@ -113,6 +120,9 @@ class GraphicsFactory
 	public function getPickupRegion():AtlasRegion {
 		return _pickupRegion;
 	}
+	
+	public function getBulletRegion():AtlasRegion { return _bulletRegion; }
+	public function getBulletBigRegion():AtlasRegion { return _bulletBigRegion; }
 	
 	public function getHudFrame():AtlasRegion { return _hudFrame; }
 	public function getHudPowerJump():AtlasRegion { return _hudPowerJump; }

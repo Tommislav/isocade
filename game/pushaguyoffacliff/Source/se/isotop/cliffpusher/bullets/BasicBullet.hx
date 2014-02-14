@@ -38,13 +38,8 @@ class BasicBullet extends Entity implements IBullet
 		var halfH:Int = 7;
 		
 		super(x, y, graphic, mask);
-        var img:Image = new Image("assets/bullet.png");
-		//var img:Image = Image.createRect(width, height, getBulletColor());
-		img.originX = halfW;
-		img.originY = halfH;
-		//img.centerOO();
+        var img = setBulletGraphics();		
 		this.graphic = img;
-		
 		
 		_playerId = playerId;
 		_life = 30;
@@ -84,8 +79,8 @@ class BasicBullet extends Entity implements IBullet
 		this.type = "bullet";
 	}
 	
-	public function getBulletColor():Int {
-		return 0xff0000;
+	public function setBulletGraphics():Image {
+		return new Image(GraphicsFactory.instance.getBulletRegion());
 	}
 	
 	public function setBulletLife(life:Int):Void {

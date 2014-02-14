@@ -51,6 +51,7 @@ class PlayerGraphics extends Graphiclist
         setIsShooting(false);
         setIsWalking(false);
         setIsJumping(false);
+		setDir(1);
 	}
 	
 	public function setEyesAreOpen(open:Bool) {

@@ -1,6 +1,8 @@
 package se.isotop.cliffpusher.bullets;
 import com.haxepunk.Graphic;
+import com.haxepunk.graphics.Image;
 import com.haxepunk.Mask;
+import se.isotop.cliffpusher.factories.GraphicsFactory;
 import se.isotop.cliffpusher.Level;
 
 /**
@@ -16,7 +18,7 @@ class LongLivedBullet extends BasicBullet
 		setBulletLife(50);
 	}
 	
-	override public function getBulletColor():Int {
-		return 0xc00000;
+	override public function setBulletGraphics():Image {
+		return new Image(GraphicsFactory.instance.getBulletBigRegion());
 	}
 }
