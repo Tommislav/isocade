@@ -91,7 +91,7 @@ class NetworkGameLogic extends Entity
     private function newPlayer(id:Int, isItMe:Bool):Void {
         _playerUpdates.set(id, null);
         var playerModel = PlayerModel.instance;
-        var input = ICadeKeyboard.instance;
+        var input = (isItMe) ? ICadeKeyboard.instance : new ICadeKeyboard();
 
 		
         #if (windows)
