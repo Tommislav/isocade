@@ -8,6 +8,7 @@ import flash.display.BitmapData;
 import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.ui.Keyboard;
+import se.isotop.cliffpusher.enums.BulletType;
 import se.isotop.cliffpusher.enums.ExtraWeaponType;
 import se.isotop.cliffpusher.enums.SoundId;
 import se.isotop.cliffpusher.events.ExtraWeaponEvent;
@@ -56,7 +57,7 @@ class Player extends Eventity
 	private var _jumpCnt:Int;
 	private var _freezeInteractionCnt:Int = 0;
 	
-	private var _currentBulletType:String = "bullet";
+	private var _currentBulletType:BulletType;
 	private var _extraWeaponType:ExtraWeaponType;
 	private var _shootDelay:Int;
 	private var _shieldDelay:Int;
@@ -96,6 +97,9 @@ class Player extends Eventity
 		_startY = y;
 		
 		_extraWeaponType = ExtraWeaponType.NONE;
+		_currentBulletType = BulletType.DEFAULT;
+		this.visible = true;
+		
 		_playerGfx = new PlayerGraphics(_colorId);
 		graphic = _playerGfx;
 		
@@ -218,7 +222,7 @@ class Player extends Eventity
 		if (!this.keyInput.getKeyIsDown(SHOOT_BUTTON)) { 
 			_shooting = false;
 			_bulletCount = 55; 
-			}
+		}
 		
 		// Shield (Button C)
 		if (this.keyInput.getKeyIsDown(SHIELD_BUTTON) && --_shieldDelay <= 0) { // shield
@@ -227,18 +231,20 @@ class Player extends Eventity
 			_shielding = false;
 		}
 		
-		
-		// Extra Weapon (Button 1) - if any
-		//if (_extraWeaponType != ExtraWeaponType.NONE) {
-			//if (this.keyInput.getKeyIsDown(EXTRA_BUTTON) && --_extraWeaponDelay <= 0) {
-				//dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.FIRE, this, _extraWeaponType, 0));
-			//}
-		//}
 		updateExtraWeaponStatus();
 		
-		if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
-			mX = mY = 0;
+		var isInvincible:Bool = _extraWeaponType == ExtraWeaponType.INVINCIBLE;
+		
+		if (isInvincible) {
+			this.visible = !this.visible;
 		}
+		
+		if (!isInvincible) {
+			if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
+				mX = mY = 0;
+			}
+		}
+		
 		
 		
 		
@@ -281,6 +287,10 @@ class Player extends Eventity
 				dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, this, type, 0, num));
 				_extraWeaponType = type;
 				
+				// Back to defaults first!
+				_jumpStr = _defaultJumpStr;
+				_currentBulletType = BulletType.DEFAULT;
+				
 				if (type != ExtraWeaponType.NONE) {
 					_powerupStartTime = Lib.getTimer();
 					_powerupEndTime = _powerupStartTime + (num * 1000);
@@ -289,9 +299,9 @@ class Player extends Eventity
 				switch (_extraWeaponType) {
 					case ExtraWeaponType.POWER_JUMP:
 						_jumpStr = _defaultJumpStr + 6;
+					case ExtraWeaponType.LONGER_SHOTS:
+						_currentBulletType = BulletType.LONGER_SHOT;
 					
-					case ExtraWeaponType.NONE:
-						_jumpStr = _defaultJumpStr;
 					default:
 						// do nothing
 				}

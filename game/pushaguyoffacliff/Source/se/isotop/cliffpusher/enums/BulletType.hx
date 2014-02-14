@@ -4,10 +4,8 @@ package se.isotop.cliffpusher.enums;
  * ...
  * @author Tommislav
  */
-enum ExtraWeaponType
+enum BulletType
 {
-	NONE;
-	POWER_JUMP;
-	LONGER_SHOTS;
-	INVINCIBLE;
+	DEFAULT;
+	LONGER_SHOT;
 }

@@ -51,8 +51,20 @@ class Pickup extends Eventity
 			var coll = this.collide(Player.NAME, this.x, this.y);
 			if (coll != null) {
 				var pl = cast(coll, Player);
-				var newType:ExtraWeaponType = ExtraWeaponType.POWER_JUMP; // make random
+				
+				var r:Float = Math.random();
+				var newType:ExtraWeaponType;
 				var numberOfWpns = 10;
+				if (r < 0.3) {
+					newType = ExtraWeaponType.LONGER_SHOTS;
+				} else if (r < 0.6) {
+					newType = ExtraWeaponType.INVINCIBLE;
+					numberOfWpns = 7;
+				} else {
+					newType = ExtraWeaponType.POWER_JUMP;
+				}
+				
+				
 				
 				pl.setExtraWeapon(pl.id, newType, numberOfWpns);
 				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_PICKUP_GET));

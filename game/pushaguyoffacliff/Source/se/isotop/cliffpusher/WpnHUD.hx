@@ -16,8 +16,9 @@ import se.isotop.haxepunk.Eventity;
  */
 class WpnHUD extends Eventity
 {
-	private var _hudMine:Image;
+	private var _hudBullet:Image;
 	private var _hudPowerjump:Image;
+	private var _hudInvincible:Image;
 	private var _num:Text;
 	
 	public function new() 
@@ -25,19 +26,21 @@ class WpnHUD extends Eventity
 		var centerX = HXP.screen.width / 2 - 32;
 		super(centerX, 16);
 		
-		_hudMine = new Image(GraphicsFactory.instance.getHudMine());
+		_hudBullet = new Image(GraphicsFactory.instance.getHudMine());
 		_hudPowerjump = new Image(GraphicsFactory.instance.getHudPowerJump());
+		_hudInvincible = new Image(GraphicsFactory.instance.getEyes());
 		
 		var options:TextOptions = {};
 		options.color = 0x000000;
 		options.size = 20;
 		
-		_num = new Text("", 4, 42, 32, 32, options);
+		_num = new Text("", 4, 42, 64, 32, options);
 		
 		var gList:Graphiclist = new Graphiclist();
 		gList.add(new Image(GraphicsFactory.instance.getHudFrame()));
-		gList.add(_hudMine);
+		gList.add(_hudBullet);
 		gList.add(_hudPowerjump);
+		gList.add(_hudInvincible);
 		gList.add(_num);
 		
 		followCamera = true;
@@ -71,10 +74,8 @@ class WpnHUD extends Eventity
 		switch(e.extraWeaponType) {
 			case ExtraWeaponType.NONE:
 				nothing();
-			case ExtraWeaponType.MINE:
-				mine();
-			case ExtraWeaponType.DECOY:
-				mine();
+			case ExtraWeaponType.INVINCIBLE:
+				invincible();
 			case ExtraWeaponType.POWER_JUMP:
 				powerjump();
 			case ExtraWeaponType.LONGER_SHOTS:
@@ -88,7 +89,7 @@ class WpnHUD extends Eventity
 	
 	public function setNumber(v:Int) {
 		if (v >= 0) {
-			_num.text = "x" + v;
+			_num.text = v + " s";
 		} else {
 			_num.text = "";
 		}
@@ -97,16 +98,21 @@ class WpnHUD extends Eventity
 	}
 	
 	public function nothing() {
-		_hudMine.visible = _hudPowerjump.visible = false;
+		_hudBullet.visible = _hudPowerjump.visible = _hudInvincible.visible = false;
 	}
 	
 	public function mine() {
 		nothing();
-		_hudMine.visible = true;
+		_hudBullet.visible = true;
 	}
 	
 	public function powerjump() {
 		nothing();
 		_hudPowerjump.visible = true;
+	}
+	
+	public function invincible() {
+		nothing();
+		_hudInvincible.visible = true;
 	}
 }
