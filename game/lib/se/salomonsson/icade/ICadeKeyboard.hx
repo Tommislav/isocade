@@ -78,9 +78,9 @@ class ICadeKeyboard implements ISerializeableReadInput
 		mapXboxButton(Xbox360ButtonType.DpadRIGHT, ICadeKeyCode.RIGHT);
 		mapXboxButton(Xbox360ButtonType.DpadUP, ICadeKeyCode.UP);
 		mapXboxButton(Xbox360ButtonType.DpadDOWN, ICadeKeyCode.DOWN);
-		mapXboxButton(Xbox360ButtonType.X, ICadeKeyCode.BUTTON_A);
-		mapXboxButton(Xbox360ButtonType.A, ICadeKeyCode.BUTTON_B);
-		mapXboxButton(Xbox360ButtonType.B, ICadeKeyCode.BUTTON_C);
+		mapXboxButton(Xbox360ButtonType.X, ICadeKeyCode.BUTTON_1);
+		mapXboxButton(Xbox360ButtonType.A, ICadeKeyCode.BUTTON_A);
+		mapXboxButton(Xbox360ButtonType.B, ICadeKeyCode.BUTTON_B);
 		mapXboxButton(Xbox360ButtonType.Back, ICadeKeyCode.BUTTON_BACK);
 		mapXboxButton(Xbox360ButtonType.Start, ICadeKeyCode.BUTTON_START);
 		#end

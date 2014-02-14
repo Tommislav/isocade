@@ -94,13 +94,17 @@ class NetworkGameLogic extends Entity
         var input = ICadeKeyboard.instance;
 
 		
-        #if (windows || mac)
+        #if (windows)
 			if (!XBox360Controller.isControllerConnected(0))
 			{
 				input.setKeyboardMode(true);
 			}
 		#end
-
+		#if (mac)
+		{
+			input.setKeyboardMode(true);
+		}
+		#end
         if (isItMe) {
             playerModel.addMyself(id);
         } else {
