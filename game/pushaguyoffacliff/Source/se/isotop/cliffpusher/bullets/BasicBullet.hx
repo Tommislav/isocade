@@ -38,7 +38,8 @@ class BasicBullet extends Entity implements IBullet
 		var halfH:Int = 7;
 		
 		super(x, y, graphic, mask);
-		var img:Image = Image.createRect(width, height, getBulletColor());
+        var img:Image = new Image("assets/bullet.png");
+		//var img:Image = Image.createRect(width, height, getBulletColor());
 		img.originX = halfW;
 		img.originY = halfH;
 		//img.centerOO();
