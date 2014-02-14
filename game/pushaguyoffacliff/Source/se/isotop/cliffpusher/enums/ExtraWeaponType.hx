@@ -7,6 +7,8 @@ package se.isotop.cliffpusher.enums;
 enum ExtraWeaponType
 {
 	NONE;
+	POWER_JUMP;
+	LONGER_SHOTS;
 	MINE;
 	DECOY;
 }

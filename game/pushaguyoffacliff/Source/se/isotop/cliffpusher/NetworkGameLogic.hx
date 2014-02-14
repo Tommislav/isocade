@@ -11,6 +11,7 @@ import se.isotop.gamesocket.GamePacket;
 import se.isotop.gamesocket.GameSocket;
 import se.isotop.gamesocket.GameSocketEvent;
 import se.salomonsson.icade.ICadeKeyboard;
+import se.isotop.cliffpusher.screens.EndScreen;
 /**
  * ...
  * @author Tommislav
@@ -19,7 +20,7 @@ class NetworkGameLogic extends Entity
 {
 	public static inline var NAME:String = "GameLogic";
     public static inline var MAX_SCORE:Int = 100;
-	
+
 	public static inline var SOCKET_TYPE_PLAYER_INFO:Int = 20;
 	public static inline var SOCKET_TYPE_PLAYER_SCORE:Int = 21;
 
@@ -44,6 +45,8 @@ class NetworkGameLogic extends Entity
         _playerModel = PlayerModel.instance;
 
         _gameSocket.addEventListener(GameSocketEvent.GS_DATA, onSocketData);
+        _gameSocket.addEventListener(GameSocketEvent.GS_CLOSED, onGameSocketDisconnected);
+        _gameSocket.addEventListener(GameSocketEvent.GS_PLAYER_DISCONNECTED, onPlayerDisconnected);
 	}
 	
 	override public function added():Void 
@@ -67,7 +70,10 @@ class NetworkGameLogic extends Entity
 	override public function removed():Void 
 	{
 		super.removed();
-		_gameSocket.removeEventListener(GameSocketEvent.GS_DATA, onSocketData);
+        trace('Removed');
+        _gameSocket.removeEventListener(GameSocketEvent.GS_DATA, onSocketData);
+        _gameSocket.removeEventListener(GameSocketEvent.GS_CLOSED, onGameSocketDisconnected);
+        _gameSocket.removeEventListener(GameSocketEvent.GS_PLAYER_DISCONNECTED, onPlayerDisconnected);
 	}
 
     private function newPlayer(id:Int, isItMe:Bool):Void {
@@ -112,6 +118,25 @@ class NetworkGameLogic extends Entity
         p.y = y;
         scene.add(p);
     }
+
+    private function onPlayerDisconnected(e:GameSocketEvent):Void
+    {
+        var id = e.packet.id;
+
+        var players = new Array<Player>();
+        this.scene.getClass(Player, players);
+        for(pl in players) {
+            if (pl.id == id)
+                this.scene.remove(pl);
+        }
+
+        var gameScore:GameScore = cast(this.scene.typeFirst(GameScore.TYPE), GameScore);
+        gameScore.removePlayerScore(id);
+    }
+
+    private function onGameSocketDisconnected(e:GameSocketEvent):Void {
+        HXP.scene = new StartScreen();
+    }
 	
 	private function onSocketData(e:GameSocketEvent):Void 
 	{
@@ -142,8 +167,11 @@ class NetworkGameLogic extends Entity
 	{
 		super.update();
         if (objectiveReached())
-            HXP.scene = new StartScreen();
+        {
+            var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
 
+            HXP.scene = new EndScreen(gameScore.getSortedPlayerScores());
+        }
         var players = new Array<Player>();
         this.scene.getClass(Player, players);
 

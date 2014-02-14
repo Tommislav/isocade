@@ -26,7 +26,7 @@ class GraphicsFactory
 	private var _pickupRegion:AtlasRegion;
 	
 	private var _hudFrame:AtlasRegion;
-	private var _hudDecoy:AtlasRegion;
+	private var _hudPowerJump:AtlasRegion;
 	private var _hudMine:AtlasRegion;
 	
 	private var _particle:AtlasRegion;
@@ -69,7 +69,7 @@ class GraphicsFactory
 		_scoreRegion = _atlas.createRegion(new Rectangle(64, 64, 32, 32), new Point());
 		
 		_hudFrame = _atlas.createRegion(new Rectangle(128, 64, 64, 64), new Point());
-		_hudDecoy = _atlas.createRegion(new Rectangle(192, 64, 64, 64), new Point());
+		_hudPowerJump = _atlas.createRegion(new Rectangle(192, 64, 64, 64), new Point());
 		_hudMine = _atlas.createRegion(new Rectangle(256, 64, 64, 64), new Point());
 		
 		var explosion:AtlasData = AtlasData.getAtlasDataByName("assets/explosion.png", true);
@@ -115,7 +115,7 @@ class GraphicsFactory
 	}
 	
 	public function getHudFrame():AtlasRegion { return _hudFrame; }
-	public function getHudDecoy():AtlasRegion { return _hudDecoy; }
+	public function getHudPowerJump():AtlasRegion { return _hudPowerJump; }
 	public function getHudMine():AtlasRegion { return _hudMine; }
 	
 	//public function getMineTileAtlas():TileAtlas {

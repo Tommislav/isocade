@@ -108,6 +108,16 @@ class StartScreen extends Scene {
         if (Input.check(Key.H)) {
             HXP.scene = new HelpScreen();
         }
+        if (Input.check(Key.E)) {
+
+            var scores = new Array<Score>();
+            scores.push(new Score(2, 100));
+            scores.push(new Score(1,85));
+            scores.push(new Score(3,50));
+            scores.push(new Score(0,30));
+            trace(scores);
+            HXP.scene = new EndScreen(scores);
+        }
 
         if (Input.mouseReleased) {
             if (this.collidePoint("start_button", Input.mouseX, Input.mouseY) != null) {
@@ -125,9 +135,7 @@ class StartScreen extends Scene {
 				if (_startButtonState == 3) { // connected
 					HXP.scene = new GameScene();
 				}
-				
             }
-
 			
             if(this.collidePoint("help_button",Input.mouseX,Input.mouseY)!= null ) {
                 HXP.scene = new HelpScreen();

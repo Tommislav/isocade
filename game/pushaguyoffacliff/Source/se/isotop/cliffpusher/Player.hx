@@ -41,6 +41,7 @@ class Player extends Eventity
 	private var _isItMe:Bool;
 	
 	private var _dir:Int = 1;
+	private var _defaultJumpStr:Float = 12;
 	private var _jumpStr:Float = 12;
 	private var _maxFall:Float = 16;
 	private var _gravity:Float = 1;
@@ -80,6 +81,9 @@ class Player extends Eventity
 	
 	public var score:Int;
 	private var _scoreCnt:Int;
+	
+	private var _powerupStartTime:Int;
+	private var _powerupEndTime:Int;
 
 	public function new(id:Int, color:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
@@ -118,7 +122,10 @@ class Player extends Eventity
 				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_DIE));
 				if (_extraWeaponType != ExtraWeaponType.NONE) {
 					dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.CHANGE, this, ExtraWeaponType.NONE, 0, -1));
+					_extraWeaponType = ExtraWeaponType.NONE;
 				}
+				
+				
 			}
 			
 		}
@@ -177,7 +184,7 @@ class Player extends Eventity
 			
 			if (_jumping && ++_jumpCnt < 15) {
 				vY = -_jumpStr;
-			} 
+			}
 		}
 		
 		if (_onGround) {
@@ -222,11 +229,12 @@ class Player extends Eventity
 		
 		
 		// Extra Weapon (Button 1) - if any
-		if (_extraWeaponType != ExtraWeaponType.NONE) {
-			if (this.keyInput.getKeyIsDown(EXTRA_BUTTON) && --_extraWeaponDelay <= 0) {
-				dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.FIRE, this, _extraWeaponType, 0));
-			}
-		}
+		//if (_extraWeaponType != ExtraWeaponType.NONE) {
+			//if (this.keyInput.getKeyIsDown(EXTRA_BUTTON) && --_extraWeaponDelay <= 0) {
+				//dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.FIRE, this, _extraWeaponType, 0));
+			//}
+		//}
+		updateExtraWeaponStatus();
 		
 		if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
 			mX = mY = 0;
@@ -267,17 +275,48 @@ class Player extends Eventity
 	
 	public function setExtraWeapon(playerId:Int, type:ExtraWeaponType, num:Int) 
 	{
-		trace("Set extra weapon on player with id: " + playerId + ", my id is: " + this.id );
-		if (playerId == this.id) {
-			_extraWeaponType = type;
-			dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, this, type, 0, num));
+		if (_isItMe) {
+			trace("Set extra weapon on player with id: " + playerId + ", my id is: " + this.id );
+			if (playerId == this.id) {
+				dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, this, type, 0, num));
+				_extraWeaponType = type;
+				
+				if (type != ExtraWeaponType.NONE) {
+					_powerupStartTime = Lib.getTimer();
+					_powerupEndTime = _powerupStartTime + (num * 1000);
+				}
+				
+				switch (_extraWeaponType) {
+					case ExtraWeaponType.POWER_JUMP:
+						_jumpStr = _defaultJumpStr + 6;
+					
+					case ExtraWeaponType.NONE:
+						_jumpStr = _defaultJumpStr;
+					default:
+						// do nothing
+				}
+			}
 		}
 	}
 	
+	function updateExtraWeaponStatus() {
+		if (_extraWeaponType != ExtraWeaponType.NONE) {
+			var now = Lib.getTimer();
+			var time:Int = Math.round((_powerupEndTime - (now)) / 1000);
+			dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.NUM_CHANGE, this, _extraWeaponType, 0, time));
+			
+			
+			if (now >= _powerupEndTime) {
+				setExtraWeapon(this.id, ExtraWeaponType.NONE, -1);
+			}
+		}
+	}
 	
 	function checkForAdditionalScore() 
 	{
 		if (++_scoreCnt % 30 == 0) {
+			this.score++;
+			
 			// Only top-most player gets score
 			var players = new Array<Player>();
 			this.scene.getClass(Player, players);
