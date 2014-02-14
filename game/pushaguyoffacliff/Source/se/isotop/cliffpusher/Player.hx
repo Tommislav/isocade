@@ -98,6 +98,8 @@ class Player extends Eventity
 		
 		_extraWeaponType = ExtraWeaponType.NONE;
 		_currentBulletType = BulletType.DEFAULT;
+		this.visible = true;
+		
 		_playerGfx = new PlayerGraphics(_colorId);
 		graphic = _playerGfx;
 		
@@ -231,9 +233,18 @@ class Player extends Eventity
 		
 		updateExtraWeaponStatus();
 		
-		if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
-			mX = mY = 0;
+		var isInvincible:Bool = _extraWeaponType == ExtraWeaponType.INVINCIBLE;
+		
+		if (isInvincible) {
+			this.visible = !this.visible;
 		}
+		
+		if (!isInvincible) {
+			if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
+				mX = mY = 0;
+			}
+		}
+		
 		
 		
 		
