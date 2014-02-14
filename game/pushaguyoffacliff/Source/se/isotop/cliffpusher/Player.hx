@@ -105,7 +105,7 @@ class Player extends Eventity
 		
 		this.score = 0;
 		
-		setHitbox(32, 64);
+		setHitbox(40, 64, -10, 0);
 		type = NAME;
 		
 	}

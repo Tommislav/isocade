@@ -17,8 +17,12 @@ class PlayerGraphics extends Graphiclist
 	var _shield:Image;
 	var _shade:Image;
 	
-	private static inline var SHIELD_X_R = 34;
+	private static inline var SHIELD_X_R = 64;
 	private static inline var SHIELD_X_L = -6;
+	
+	private static inline var EYES_X_R = 20;
+	private static inline var EYES_X_L = 0;
+	
 	
 
 	public function new(playerId:Int) 
@@ -57,10 +61,13 @@ class PlayerGraphics extends Graphiclist
 	public function setDir(dir:Int) {
 		if (dir < 0) {
 			_eyes.flipped = _eyes2.flipped = true;
+			_eyes.x = _eyes2.x = EYES_X_L;
+			
 			_shield.x = SHIELD_X_L;
 			_body.flipped = true;
 		} else {
 			_eyes.flipped = _eyes2.flipped = false;
+			_eyes.x = _eyes2.x = EYES_X_R;
 			_shield.x = SHIELD_X_R;
 			_body.flipped = false;
 		}
