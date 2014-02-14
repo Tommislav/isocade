@@ -1,4 +1,5 @@
 package se.isotop.cliffpusher;
+import se.isotop.cliffpusher.model.PlayerModel;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.atlas.TileAtlas;
 import com.haxepunk.graphics.Tilemap;
@@ -39,8 +40,7 @@ class Level extends Entity
 		super();
 		name = NAME;
 		type = "solid";
-		
-		
+
 		var level:BitmapData = Assets.getBitmapData("assets/level0.png");
 		
 		levelWidthTiles = level.width;

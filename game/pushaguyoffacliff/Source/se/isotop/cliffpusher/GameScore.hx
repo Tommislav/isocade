@@ -47,6 +47,22 @@ class GameScore extends Entity {
         return false;
     }
 
+    public function removePlayerScore(id:Int):Void {
+        var score = getPlayerScore(id);
+        if (score != null) {
+            _playerScores.remove(score);
+        }
+    }
+
+    public function getPlayerScore(id:Int):Score {
+        for(score in _playerScores) {
+            if (score.playerId == id) {
+                return score;
+            }
+        }
+        return null;
+    }
+
     public function getSortedPlayerScores():Array<Score> {
         var playerScoresCopy = new Array<Score>();
         for(score in _playerScores) {
@@ -68,11 +84,5 @@ class GameScore extends Entity {
             return 0;
 
         return scores[0].score;
-    }
-
-    private function traceDebug(msg:String):Void {
-        #if (debug)
-            trace(msg);
-        #end
     }
 }
