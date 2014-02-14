@@ -17,7 +17,7 @@ import se.isotop.haxepunk.Eventity;
 class WpnHUD extends Eventity
 {
 	private var _hudMine:Image;
-	private var _hudDecoy:Image;
+	private var _hudPowerjump:Image;
 	private var _num:Text;
 	
 	public function new() 
@@ -26,7 +26,7 @@ class WpnHUD extends Eventity
 		super(centerX, 16);
 		
 		_hudMine = new Image(GraphicsFactory.instance.getHudMine());
-		_hudDecoy = new Image(GraphicsFactory.instance.getHudDecoy());
+		_hudPowerjump = new Image(GraphicsFactory.instance.getHudPowerJump());
 		
 		var options:TextOptions = {};
 		options.color = 0x000000;
@@ -37,7 +37,7 @@ class WpnHUD extends Eventity
 		var gList:Graphiclist = new Graphiclist();
 		gList.add(new Image(GraphicsFactory.instance.getHudFrame()));
 		gList.add(_hudMine);
-		gList.add(_hudDecoy);
+		gList.add(_hudPowerjump);
 		gList.add(_num);
 		
 		followCamera = true;
@@ -74,15 +74,17 @@ class WpnHUD extends Eventity
 			case ExtraWeaponType.MINE:
 				mine();
 			case ExtraWeaponType.DECOY:
-				decoy();
-			case ExtraWeaponType.POWER_JUMP:
 				mine();
+			case ExtraWeaponType.POWER_JUMP:
+				powerjump();
 			case ExtraWeaponType.LONGER_SHOTS:
 				mine();
 		}
 		
 		setNumber(e.num);
 	}
+	
+	
 	
 	public function setNumber(v:Int) {
 		if (v >= 0) {
@@ -95,7 +97,7 @@ class WpnHUD extends Eventity
 	}
 	
 	public function nothing() {
-		_hudMine.visible = _hudDecoy.visible = false;
+		_hudMine.visible = _hudPowerjump.visible = false;
 	}
 	
 	public function mine() {
@@ -103,8 +105,8 @@ class WpnHUD extends Eventity
 		_hudMine.visible = true;
 	}
 	
-	public function decoy() {
+	public function powerjump() {
 		nothing();
-		_hudDecoy.visible = true;
+		_hudPowerjump.visible = true;
 	}
 }
