@@ -67,13 +67,15 @@ class NetworkGameLogic extends Entity
 		newPlayer(_socket.getMyServerId(), true);
     }
 	
-	override public function removed():Void 
+	override public function removed():Void
 	{
-		super.removed();
-        trace('Removed');
+        trace('removed run');
+
         _gameSocket.removeEventListener(GameSocketEvent.GS_DATA, onSocketData);
         _gameSocket.removeEventListener(GameSocketEvent.GS_CLOSED, onGameSocketDisconnected);
         _gameSocket.removeEventListener(GameSocketEvent.GS_PLAYER_DISCONNECTED, onPlayerDisconnected);
+
+        super.removed();
 	}
 
     private function newPlayer(id:Int, isItMe:Bool):Void {
@@ -135,6 +137,7 @@ class NetworkGameLogic extends Entity
     }
 
     private function onGameSocketDisconnected(e:GameSocketEvent):Void {
+        this.scene.remove(this);
         HXP.scene = new StartScreen();
     }
 	
@@ -167,11 +170,8 @@ class NetworkGameLogic extends Entity
 	{
 		super.update();
         if (objectiveReached())
-        {
-            var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
+            gameOver();
 
-            HXP.scene = new EndScreen(gameScore.getSortedPlayerScores());
-        }
         var players = new Array<Player>();
         this.scene.getClass(Player, players);
 
@@ -187,6 +187,12 @@ class NetworkGameLogic extends Entity
             }
         }
 	}
+
+    private function gameOver():Void {
+        var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
+        this.scene.remove(this);
+        HXP.scene = new EndScreen(gameScore.getSortedPlayerScores());
+    }
 
     private function objectiveReached() {
         var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
