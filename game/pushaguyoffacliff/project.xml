@@ -15,5 +15,4 @@
 	<icon path="Assets/openfl.svg" />
 	
 	<window orientation="portrait" width="768" height="1024" fps="60" />
-	
 </project>

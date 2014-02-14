@@ -142,7 +142,11 @@ class NetworkGameLogic extends Entity
 		var input = new ICadeKeyboard();
 		
 		#if (cpp)
-			input.setKeyboardMode(true);
+			if (isItMe)
+			{
+			input.setXboxControllerMode(true);
+			
+			}
 		#end
 		
 		if (!isItMe)
