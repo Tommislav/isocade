@@ -1,5 +1,6 @@
 package se.isotop.cliffpusher;
 
+import se.isotop.cliffpusher.model.PlayerModel;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.HXP;
@@ -39,8 +40,12 @@ class ScoreHUD extends Entity
 
         var score = "";
 
+        var model = PlayerModel.instance;
+
         for (playerScore in scores.getSortedPlayerScores()) {
-            score += playerScore.playerName + ": " + playerScore.score + "\n";
+            var playerInfo = model.getPlayer(playerScore.playerId);
+            if (playerInfo != null)
+                score += playerInfo.name + ": " + playerScore.score + "\n";
         }
         _score.text = score;
     }
