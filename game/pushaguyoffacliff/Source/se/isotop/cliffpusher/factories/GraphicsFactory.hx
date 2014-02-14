@@ -44,12 +44,12 @@ class GraphicsFactory
 		
 		_bodys = new Array<AtlasRegion>();
 		_shields = new Array<AtlasRegion>();
-		
-		_bodys.push(_atlas.createRegion(new Rectangle(128,0,32,64), new Point(0, 0)));
-		_bodys.push(_atlas.createRegion(new Rectangle(160,0,32,64), new Point(0, 0)));
-		_bodys.push(_atlas.createRegion(new Rectangle(192,0,32,64), new Point(0, 0)));
-		_bodys.push(_atlas.createRegion(new Rectangle(224,0,32,64), new Point(0, 0)));
-		_bodys.push(_atlas.createRegion(new Rectangle(256,0,32,64), new Point(0, 0)));
+
+		_bodys.push(_atlas.createRegion(new Rectangle(0,230,60,70), new Point(0, 0)));
+		_bodys.push(_atlas.createRegion(new Rectangle(60,230,60,70), new Point(0, 0)));
+		_bodys.push(_atlas.createRegion(new Rectangle(120,230,60,70), new Point(0, 0)));
+		_bodys.push(_atlas.createRegion(new Rectangle(180,230,60,70), new Point(0, 0)));
+		_bodys.push(_atlas.createRegion(new Rectangle(240,230,60,70), new Point(0, 0)));
 		
 		_shields.push(_atlas.createRegion(new Rectangle(128,0,4,64), new Point(0, 0)));
 		_shields.push(_atlas.createRegion(new Rectangle(160,0,4,64), new Point(0, 0)));

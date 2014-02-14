@@ -27,7 +27,7 @@ class PlayerGraphics extends Graphiclist
 		
 		_playerId = playerId;
 		_gfxFactory = new GraphicsFactory();
-		_body = new Image(_gfxFactory.getBody(_playerId));
+		_body = new Image(_gfxFactory.getBody(_playerId), null, "body");
 		
 		_eyes = new Image(_gfxFactory.getEyes(), null, "eyes");
 		_eyes2 = new Image(_gfxFactory.getClosedEyes(), null, "eyesClosed");
@@ -38,7 +38,7 @@ class PlayerGraphics extends Graphiclist
 		_shade = new Image(_gfxFactory.getShade());
 		
 		this.add(_body);
-		this.add(_shade);
+		//this.add(_shade);
 		this.add(_eyes);
 		this.add(_eyes2);
 		this.add(_shield);
@@ -58,9 +58,11 @@ class PlayerGraphics extends Graphiclist
 		if (dir < 0) {
 			_eyes.flipped = _eyes2.flipped = true;
 			_shield.x = SHIELD_X_L;
+			_body.flipped = true;
 		} else {
 			_eyes.flipped = _eyes2.flipped = false;
 			_shield.x = SHIELD_X_R;
+			_body.flipped = false;
 		}
 	}
 	
