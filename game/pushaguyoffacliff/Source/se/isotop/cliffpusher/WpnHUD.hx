@@ -22,7 +22,7 @@ class WpnHUD extends Eventity
 	
 	public function new() 
 	{
-		var centerX = Lib.current.stage.stageWidth / 2 - 32;
+		var centerX = HXP.screen.width / 2 - 32;
 		super(centerX, 16);
 		
 		_hudMine = new Image(GraphicsFactory.instance.getHudMine());
