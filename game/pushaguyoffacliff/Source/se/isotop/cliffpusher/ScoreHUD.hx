@@ -32,7 +32,7 @@ class ScoreHUD extends Entity
 	}
 
     private function updateScore():Void {
-        var scores:GameScore = cast(scene.typeFirst(GameScore.NAME), GameScore);
+        var scores:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
 
         if (scores == null)
             return;

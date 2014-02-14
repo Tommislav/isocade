@@ -1,19 +1,17 @@
 package se.isotop.cliffpusher;
 
-import flash.geom.Rectangle;
 import com.haxepunk.Scene;
 import com.haxepunk.Entity;
 
 class GameScore extends Entity {
-    private static inline var MAX_SCORE = 1000;
     private var _playerScores:Array<Score>;
 
-    public static inline var NAME  = "score";
+    public static inline var TYPE  = "score";
 
     public function new() {
         super();
         _playerScores = new Array<Score>();
-        type = NAME;
+        type = TYPE;
     }
 
     override public function update():Void {
@@ -65,9 +63,12 @@ class GameScore extends Entity {
         return playerScoresCopy;
     }
 
-    public function getLeaderScore():Score {
+    public function getLeaderScore():Int {
         var scores = getSortedPlayerScores();
-        return scores[0];
+        if (scores.length == 0)
+            return 0;
+
+        return scores[0].score;
     }
 
     private function traceDebug(msg:String):Void {
