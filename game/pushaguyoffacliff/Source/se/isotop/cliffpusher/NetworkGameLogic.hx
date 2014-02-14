@@ -12,6 +12,10 @@ import se.isotop.gamesocket.GameSocket;
 import se.isotop.gamesocket.GameSocketEvent;
 import se.salomonsson.icade.ICadeKeyboard;
 import se.isotop.cliffpusher.screens.EndScreen;
+#if(win || windows)
+import com.furusystems.openfl.input.xinput.XBox360Controller;
+#end
+
 /**
  * ...
  * @author Tommislav
@@ -83,6 +87,15 @@ class NetworkGameLogic extends Entity
         var playerModel = PlayerModel.instance;
         var input = new ICadeKeyboard();
 
+		#if (win || windows)
+		{
+			if (XBox360Controller.isControllerConnected(0))
+			{
+				input.setXboxControllerMode(true);
+			}
+		}
+		#end
+		
         #if (windows || mac)
 			input.setKeyboardMode(true);
 		#end

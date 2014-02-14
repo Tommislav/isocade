@@ -1,5 +1,5 @@
 package se.salomonsson.icade;
-#if (win)
+#if (win || windows)
 import com.furusystems.openfl.input.xinput.Xbox360Button;
 import com.furusystems.openfl.input.xinput.XBox360Controller;
 import com.furusystems.openfl.input.xinput.Xbox360ButtonType;
@@ -40,7 +40,7 @@ class ICadeKeyboard implements ISerializeableReadInput
 	private var _debugToggleKey:Int = -1;
 
 
-    #if (win)
+    #if (win || windows)
     private var _xboxToIcadeMap:Map<Xbox360ButtonType,Int>;
 	private var _xboxController:XBox360Controller;
 	#end
@@ -49,7 +49,7 @@ class ICadeKeyboard implements ISerializeableReadInput
 	{
 		_eventDispatcher = new EventDispatcher();
 
-        #if (win)
+        #if (win || windows)
 		_xboxToIcadeMap = new Map<Xbox360ButtonType,Int>();
 		#end
 		
@@ -69,14 +69,14 @@ class ICadeKeyboard implements ISerializeableReadInput
 		mapIcadeButton(ICadeKeyCode.BUTTON_START, 79, 71);
 		mapIcadeButton(ICadeKeyCode.BUTTON_BACK, 76, 86);
 
-        #if (win)
+        #if (win || windows)
 		mapXboxButton(Xbox360ButtonType.DpadLEFT, ICadeKeyCode.LEFT);
 		mapXboxButton(Xbox360ButtonType.DpadRIGHT, ICadeKeyCode.RIGHT);
 		mapXboxButton(Xbox360ButtonType.DpadUP, ICadeKeyCode.UP);
 		mapXboxButton(Xbox360ButtonType.DpadDOWN, ICadeKeyCode.DOWN);
 		mapXboxButton(Xbox360ButtonType.B, ICadeKeyCode.BUTTON_A);
-		mapXboxButton(Xbox360ButtonType.A, ICadeKeyCode.BUTTON_B);
-		mapXboxButton(Xbox360ButtonType.X, ICadeKeyCode.BUTTON_C);
+		mapXboxButton(Xbox360ButtonType.X, ICadeKeyCode.BUTTON_B);
+		mapXboxButton(Xbox360ButtonType.A, ICadeKeyCode.BUTTON_C);
 		mapXboxButton(Xbox360ButtonType.Back, ICadeKeyCode.BUTTON_BACK);
 		mapXboxButton(Xbox360ButtonType.Start, ICadeKeyCode.BUTTON_START);
 		#end
@@ -87,7 +87,7 @@ class ICadeKeyboard implements ISerializeableReadInput
 		enable();
 	}
 
-    #if (win)
+    #if (win || windows)
 	//xbox methods
 	public function onButtonPressed(btn:Xbox360Button):Void
 	{
@@ -108,7 +108,7 @@ class ICadeKeyboard implements ISerializeableReadInput
 		_debugToggleKey = toggleKey;
 	}
 	
-	#if (win)
+	#if (win || windows)
 	private function mapXboxButton(btn:Xbox360ButtonType, iCadeButton:Int)
 	{
 		_xboxToIcadeMap.set(btn, iCadeButton);
@@ -141,7 +141,7 @@ class ICadeKeyboard implements ISerializeableReadInput
 		_useController = false;
 	}
 
-    #if (win)
+    #if (win || windows)
 	public function setXboxControllerMode(flag:Bool) {
 		_buttonsPressed = new IntMap<Bool>(); // reset pressed state
 		_useController = flag;
