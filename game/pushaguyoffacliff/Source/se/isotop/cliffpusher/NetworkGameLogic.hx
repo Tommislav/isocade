@@ -1,5 +1,6 @@
 package se.isotop.cliffpusher;
 
+import se.isotop.cliffpusher.enums.ExtraWeaponType;
 import se.isotop.cliffpusher.model.PlayerInfo;
 import se.isotop.cliffpusher.screens.StartScreen;
 import com.haxepunk.HXP;
@@ -27,6 +28,11 @@ class NetworkGameLogic extends Entity
 
 	public static inline var SOCKET_TYPE_PLAYER_INFO:Int = 20;
 	public static inline var SOCKET_TYPE_PLAYER_SCORE:Int = 21;
+
+    private static inline var EW_NONE = 0;
+    private static inline var EW_JUMP = 1;
+    private static inline var EW_SHOOT = 2;
+    private static inline var EW_INVICIBLE = 3;
 
 	private var _colors:Array<Int>;
 
@@ -221,6 +227,7 @@ class NetworkGameLogic extends Entity
         myInfo.values.push(Std.string(Math.round(player.x)));
         myInfo.values.push(Std.string(Math.round(player.y)));
         myInfo.values.push(Std.string(player.keyInput.serialize()));
+        myInfo.values.push(Std.string(extraWeaponTypeToInt(player.getExtraWeaponType())));
 
         packets.push(myInfo);
 
@@ -255,11 +262,32 @@ class NetworkGameLogic extends Entity
 
             var parsedInput:Int = Std.parseInt(gp.values[2]);
             player.keyInput.deserialize(parsedInput);
+
+            var extraWeapon = Std.parseInt(gp.values[3]);
+            player.setExtraWeaponType(extraWeaponIntToType(extraWeapon));
         }
 
         gp = _playerScores.get(player.id);
         if (gp != null) {
             player.score = Std.parseInt(gp.values[0]);
+        }
+    }
+
+    private function extraWeaponTypeToInt(extraWeapon:ExtraWeaponType):Int {
+        switch (extraWeapon) {
+            case ExtraWeaponType.POWER_JUMP: return EW_JUMP;
+            case ExtraWeaponType.LONGER_SHOTS: return EW_SHOOT;
+            case ExtraWeaponType.INVINCIBLE: return EW_INVICIBLE;
+            default: return EW_NONE;
+        }
+    }
+
+    private function extraWeaponIntToType(int:Int):ExtraWeaponType {
+        switch (int) {
+            case EW_JUMP: return ExtraWeaponType.POWER_JUMP;
+            case EW_SHOOT: return ExtraWeaponType.LONGER_SHOTS;
+            case EW_INVICIBLE: return ExtraWeaponType.INVINCIBLE;
+            default: return ExtraWeaponType.NONE;
         }
     }
 

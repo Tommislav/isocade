@@ -56,9 +56,9 @@ class Player extends Eventity
 	private var _canJump:Bool;
 	private var _jumpCnt:Int;
 	private var _freezeInteractionCnt:Int = 0;
-	
+
+    private var _extraWeaponType:ExtraWeaponType;
 	private var _currentBulletType:BulletType;
-	private var _extraWeaponType:ExtraWeaponType;
 	private var _shootDelay:Int;
 	private var _shieldDelay:Int;
 	private var _extraWeaponDelay:Int;
@@ -125,8 +125,7 @@ class Player extends Eventity
 				
 				dispatchEvent(new SoundEvent(SoundEvent.PLAY_SOUND, SoundId.SND_DIE));
 				if (_extraWeaponType != ExtraWeaponType.NONE) {
-					dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.CHANGE, this, ExtraWeaponType.NONE, 0, -1));
-					_extraWeaponType = ExtraWeaponType.NONE;
+                    setExtraWeapon(this.id, ExtraWeaponType.NONE, -1);
 				}
 				
 				
@@ -232,22 +231,15 @@ class Player extends Eventity
 		}
 		
 		updateExtraWeaponStatus();
-		
-		var isInvincible:Bool = _extraWeaponType == ExtraWeaponType.INVINCIBLE;
-		
-		if (isInvincible) {
-			this.visible = !this.visible;
-		}
-		
+        setExtraWeaponEffect();
+
+        var isInvincible:Bool = _extraWeaponType == ExtraWeaponType.INVINCIBLE;
 		if (!isInvincible) {
 			if (checkForBulletCollision(x+vX+mX, y+vY+mY)) {
 				mX = mY = 0;
 			}
 		}
-		
-		
-		
-		
+
 		// Add push force to movement x
 		mX += _pushForceX;
 		_pushForceX *= 0.9;
@@ -285,37 +277,57 @@ class Player extends Eventity
 			trace("Set extra weapon on player with id: " + playerId + ", my id is: " + this.id );
 			if (playerId == this.id) {
 				dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, this, type, 0, num));
-				_extraWeaponType = type;
-				
-				// Back to defaults first!
-				_jumpStr = _defaultJumpStr;
-				_currentBulletType = BulletType.DEFAULT;
-				
+				setExtraWeaponType(type);
+
 				if (type != ExtraWeaponType.NONE) {
 					_powerupStartTime = Lib.getTimer();
 					_powerupEndTime = _powerupStartTime + (num * 1000);
 				}
-				
-				switch (_extraWeaponType) {
-					case ExtraWeaponType.POWER_JUMP:
-						_jumpStr = _defaultJumpStr + 6;
-					case ExtraWeaponType.LONGER_SHOTS:
-						_currentBulletType = BulletType.LONGER_SHOT;
-					
-					default:
-						// do nothing
-				}
+
+                setExtraWeaponEffect();
 			}
 		}
 	}
+
+    public function setExtraWeaponType(type:ExtraWeaponType):Void {
+        if (_extraWeaponType != type) {
+           resetExtraWeaponType();
+        }
+        _extraWeaponType = type;
+    }
+
+    public function getExtraWeaponType():ExtraWeaponType {
+        return _extraWeaponType;
+    }
+
+    function setExtraWeaponEffect():Void {
+        switch (_extraWeaponType) {
+            case ExtraWeaponType.POWER_JUMP:
+                _jumpStr = _defaultJumpStr + 6;
+            case ExtraWeaponType.LONGER_SHOTS:
+                _currentBulletType = BulletType.LONGER_SHOT;
+            case ExtraWeaponType.INVINCIBLE:
+                this.visible = !this.visible;
+            default:
+                resetExtraWeaponType();
+        }
+    }
+
+    function resetExtraWeaponType():Void {
+        _jumpStr = _defaultJumpStr;
+        _currentBulletType = BulletType.DEFAULT;
+        visible = true;
+    }
 	
 	function updateExtraWeaponStatus() {
 		if (_extraWeaponType != ExtraWeaponType.NONE) {
 			var now = Lib.getTimer();
 			var time:Int = Math.round((_powerupEndTime - (now)) / 1000);
-			dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.NUM_CHANGE, this, _extraWeaponType, 0, time));
-			
-			
+
+            if (_isItMe) {
+                dispatchEvent(new ExtraWeaponEvent(ExtraWeaponEvent.NUM_CHANGE, this, _extraWeaponType, 0, time));
+            }
+
 			if (now >= _powerupEndTime) {
 				setExtraWeapon(this.id, ExtraWeaponType.NONE, -1);
 			}

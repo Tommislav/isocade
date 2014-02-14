@@ -1,5 +1,9 @@
 package se.isotop.cliffpusher.screens;
 
+import flash.events.MouseEvent;
+import openfl.Assets;
+import flash.display.Bitmap;
+import flash.display.Sprite;
 import se.isotop.cliffpusher.model.PlayerModel;
 import se.isotop.cliffpusher.model.PlayerInfo;
 import se.isotop.gamesocket.GamePacket;
@@ -26,7 +30,7 @@ class EndScreen extends Scene
     private var _scores:Array<Score>;
     private var _playerModel:PlayerModel;
 
-    private var _restartButton:Entity;
+    private var _restartButton:Sprite;
 
 	public function new(scores:Array<Score>)
 	{
@@ -102,15 +106,15 @@ class EndScreen extends Scene
 
         //addGraphic(gfx);
 
-        var buttonImage:Image = new Image("assets/restart_button.png");
-        _restartButton = new Entity((HXP.width / 2) - (buttonImage.width / 2), (HXP.height) - (buttonImage.height)*2);
-        _restartButton.graphic = buttonImage;
-        _restartButton.setHitbox(buttonImage.width, buttonImage.height);
-        _restartButton.type = "restart_button";
-        add(_restartButton);
+        var bRestart = new Bitmap(Assets.getBitmapData("assets/restart_button.png"));
+        _restartButton = new Sprite();
+        _restartButton.addChild(bRestart);
+        _restartButton.x = HXP.screen.width/2 - _restartButton.width/2;
+        _restartButton.y = HXP.height - _restartButton.height -100;
+        _restartButton.addEventListener(MouseEvent.CLICK, onRestartClicked);
+        HXP.stage.addChild(_restartButton);
+        
     }
-
-
 
     override public function update()
     {
@@ -129,6 +133,21 @@ class EndScreen extends Scene
             }
         }
     }
+    
+    override public function end()
+    {
+        super.end();
 
+        _restartButton.removeEventListener(MouseEvent.CLICK, onRestartClicked);
+
+        HXP.stage.removeChild(_restartButton);
+
+
+        removeAll();
+    }
+
+    private function onRestartClicked(event:MouseEvent) {
+        HXP.scene = new StartScreen();
+    }
 
 }

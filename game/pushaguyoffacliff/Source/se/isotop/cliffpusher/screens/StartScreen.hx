@@ -1,6 +1,8 @@
 package se.isotop.cliffpusher.screens;
 
-import com.furusystems.openfl.input.xinput.Xbox360Button;
+import openfl.Assets;
+import flash.display.Bitmap;
+import flash.display.Sprite;
 import com.haxepunk.graphics.atlas.AtlasData;
 import flash.events.Event;
 import flash.geom.Rectangle;
@@ -28,7 +30,7 @@ class StartScreen extends Scene {
 
     private var startButton:Entity;
     private var helpButton:Entity;
-	private var settingsButton:Entity;
+	private var _settingsButton:Sprite;
 	private var errorText:Entity;
 	
 	private var _imgConnect:Image;
@@ -77,11 +79,15 @@ class StartScreen extends Scene {
         startButton.setHitbox(btnW, btnH);
 		startButton.type = "start_button";
         add(startButton);
-		
-		settingsButton = new Entity(HXP.width - btnW - 50, HXP.height - btnH - 50, _imgSettings);
-		settingsButton.setHitbox(btnW, btnH);
-		settingsButton.type = "settings_button";
-		add(settingsButton);
+
+        var bSettings = new Bitmap(Assets.getBitmapData("assets/settings_button.png"));
+        _settingsButton = new Sprite();
+        _settingsButton.addChild(bSettings);
+        _settingsButton.x = HXP.width - btnW - 50;
+        _settingsButton.y = HXP.height - btnH - 50;
+        _settingsButton.addEventListener(MouseEvent.CLICK, onSettingsClicked);
+
+        HXP.stage.addChild(_settingsButton);
 		
         var splashText:Text = new Text("IsoCade adventures");
         splashText.color = 0xBB3377;
@@ -179,9 +185,6 @@ class StartScreen extends Scene {
                 HXP.scene = new HelpScreen();
             }
 			
-			if (this.collidePoint("settings_button", Input.mouseX, Input.mouseY) != null) {
-				HXP.scene = new SettingsScreen();
-			}
         }
 		
 		if (isConnected) {
@@ -200,6 +203,22 @@ class StartScreen extends Scene {
 		mine.update();
 		super.update();
 
+    }
+
+    override public function end()
+    {
+        super.end();
+
+        _settingsButton.removeEventListener(MouseEvent.CLICK, onSettingsClicked);
+
+        HXP.stage.removeChild(_settingsButton);
+
+
+        removeAll();
+    }
+
+    private function onSettingsClicked(event:MouseEvent) {
+        HXP.scene = new SettingsScreen();
     }
 
 
