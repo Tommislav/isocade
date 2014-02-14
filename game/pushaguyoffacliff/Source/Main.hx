@@ -10,7 +10,10 @@ import flash.ui.Keyboard;
 import openfl.display.DI;
 import se.isotop.cliffpusher.GameScene;
 import se.isotop.cliffpusher.screens.StartScreen;
-
+import se.salomonsson.icade.ICadeKeyboard;
+#if(windows || win)
+import com.furusystems.openfl.input.xinput.XBox360Controller;
+#end
 
 class Main extends Engine {
 	
@@ -36,9 +39,17 @@ class Main extends Engine {
 			HXP.console.toggleKey = Keyboard.NUMBER_0;
 		#end
 
-		//HXP.scene = new GameScene();
-
-        HXP.scene = new StartScreen();
+		var keyboardHandler = new ICadeKeyboard();
+		ICadeKeyboard.instance = keyboardHandler;
+		#if (windows || win)
+		{
+			if (XBox360Controller.isControllerConnected(0))
+			{
+			ICadeKeyboard.instance.setXboxControllerMode(true);
+			}	
+			}
+			#end
+	    HXP.scene = new StartScreen();
 	}
 	
 	public function setScale(scale:Float) {

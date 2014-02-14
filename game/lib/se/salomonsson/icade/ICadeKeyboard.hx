@@ -3,6 +3,8 @@ package se.salomonsson.icade;
 import com.furusystems.openfl.input.xinput.Xbox360Button;
 import com.furusystems.openfl.input.xinput.XBox360Controller;
 import com.furusystems.openfl.input.xinput.Xbox360ButtonType;
+import com.haxepunk.HXP;
+import se.isotop.cliffpusher.GameScene;
 #end
 import flash.events.Event;
 import flash.events.EventDispatcher;
@@ -29,6 +31,8 @@ import haxe.ds.IntMap.IntMap;
  */
 class ICadeKeyboard implements ISerializeableReadInput
 {
+	public static var instance:ICadeKeyboard;
+	
 	private var _eventDispatcher:EventDispatcher;
 	private var _enabled:Bool;
 	private var _useKeyboard:Bool;
@@ -42,7 +46,7 @@ class ICadeKeyboard implements ISerializeableReadInput
 
     #if (win || windows)
     private var _xboxToIcadeMap:Map<Xbox360ButtonType,Int>;
-	private var _xboxController:XBox360Controller;
+	public var _xboxController:XBox360Controller;
 	#end
 	
 	public function new() 
@@ -74,9 +78,9 @@ class ICadeKeyboard implements ISerializeableReadInput
 		mapXboxButton(Xbox360ButtonType.DpadRIGHT, ICadeKeyCode.RIGHT);
 		mapXboxButton(Xbox360ButtonType.DpadUP, ICadeKeyCode.UP);
 		mapXboxButton(Xbox360ButtonType.DpadDOWN, ICadeKeyCode.DOWN);
-		mapXboxButton(Xbox360ButtonType.B, ICadeKeyCode.BUTTON_A);
-		mapXboxButton(Xbox360ButtonType.X, ICadeKeyCode.BUTTON_B);
-		mapXboxButton(Xbox360ButtonType.A, ICadeKeyCode.BUTTON_C);
+		mapXboxButton(Xbox360ButtonType.X, ICadeKeyCode.BUTTON_1);
+		mapXboxButton(Xbox360ButtonType.A, ICadeKeyCode.BUTTON_A);
+		mapXboxButton(Xbox360ButtonType.B, ICadeKeyCode.BUTTON_B);
 		mapXboxButton(Xbox360ButtonType.Back, ICadeKeyCode.BUTTON_BACK);
 		mapXboxButton(Xbox360ButtonType.Start, ICadeKeyCode.BUTTON_START);
 		#end
@@ -91,7 +95,6 @@ class ICadeKeyboard implements ISerializeableReadInput
 	//xbox methods
 	public function onButtonPressed(btn:Xbox360Button):Void
 	{
-		trace(btn.buttonType);
 		_buttonsPressed.set(_xboxToIcadeMap.get(btn.buttonType), true);
 			//onKeyDown(new KeyboardEvent(KeyboardEvent.KEY_DOWN, false, false, 0, ICadeKeyCode.RIGHT));
 	}
@@ -143,6 +146,7 @@ class ICadeKeyboard implements ISerializeableReadInput
 
     #if (win || windows)
 	public function setXboxControllerMode(flag:Bool) {
+		trace("setting xboxmode");
 		_buttonsPressed = new IntMap<Bool>(); // reset pressed state
 		_useController = flag;
 		_useKeyboard = false;
@@ -217,7 +221,6 @@ class ICadeKeyboard implements ISerializeableReadInput
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void {
-		
 		if (_useController) {
 			_buttonsPressed.set(e.keyCode, false);
 			dispatch(e);

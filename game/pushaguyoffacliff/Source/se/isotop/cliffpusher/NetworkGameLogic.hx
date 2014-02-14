@@ -91,21 +91,20 @@ class NetworkGameLogic extends Entity
     private function newPlayer(id:Int, isItMe:Bool):Void {
         _playerUpdates.set(id, null);
         var playerModel = PlayerModel.instance;
-        var input = new ICadeKeyboard();
+        var input = ICadeKeyboard.instance;
 
-		#if (win || windows)
-		{
-			if (XBox360Controller.isControllerConnected(0))
+		
+        #if (windows)
+			if (!XBox360Controller.isControllerConnected(0))
 			{
-				input.setXboxControllerMode(true);
+				input.setKeyboardMode(true);
 			}
+		#end
+		#if (mac)
+		{
+			input.setKeyboardMode(true);
 		}
 		#end
-		
-        #if (windows || mac)
-			input.setKeyboardMode(true);
-		#end
-
         if (isItMe) {
             playerModel.addMyself(id);
         } else {
