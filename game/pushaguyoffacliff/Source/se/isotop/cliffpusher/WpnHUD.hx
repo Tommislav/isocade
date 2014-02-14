@@ -62,6 +62,10 @@ class WpnHUD extends Eventity
 				mine();
 			case ExtraWeaponType.DECOY:
 				decoy();
+			case ExtraWeaponType.POWER_JUMP:
+				mine();
+			case ExtraWeaponType.LONGER_SHOTS:
+				mine();
 		}
 		
 		setNumber(e.num);

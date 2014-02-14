@@ -80,6 +80,8 @@ class Player extends Eventity
 	
 	public var score:Int;
 	private var _scoreCnt:Int;
+	
+	private var _powerupCounter:Int;
 
 	public function new(id:Int, color:Int, x:Float, y:Float, keyInput:ISerializeableReadInput, isItMe:Bool) 
 	{
@@ -267,10 +269,12 @@ class Player extends Eventity
 	
 	public function setExtraWeapon(playerId:Int, type:ExtraWeaponType, num:Int) 
 	{
-		trace("Set extra weapon on player with id: " + playerId + ", my id is: " + this.id );
-		if (playerId == this.id) {
-			_extraWeaponType = type;
-			dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, this, type, 0, num));
+		if (_isItMe) {
+			trace("Set extra weapon on player with id: " + playerId + ", my id is: " + this.id );
+			if (playerId == this.id) {
+				_extraWeaponType = type;
+				dispatchEvent(new ExtraWeaponEvent( ExtraWeaponEvent.CHANGE, this, type, 0, num));
+			}
 		}
 	}
 	
