@@ -22,7 +22,7 @@ class Main extends Engine {
 		#elseif ios
 		    super(640,1136);
 		#elseif android
-		    super(800,1280);
+		    super();
 		#else
 			super ();
 		#end
