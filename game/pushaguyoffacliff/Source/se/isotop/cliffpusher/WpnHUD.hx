@@ -51,6 +51,19 @@ class WpnHUD extends Eventity
 		setNumber(-1);
 		
 		addEventListener(ExtraWeaponEvent.CHANGE, onNewExtraWeapon);
+		addEventListener(ExtraWeaponEvent.NUM_CHANGE, onNumChange);
+	}
+	
+	override public function removed():Void 
+	{
+		super.removed();
+		removeEventListener(ExtraWeaponEvent.CHANGE, onNewExtraWeapon);
+		removeEventListener(ExtraWeaponEvent.NUM_CHANGE, onNumChange);
+	}
+	
+	private function onNumChange(e:ExtraWeaponEvent):Void 
+	{
+		setNumber(e.num);
 	}
 	
 	private function onNewExtraWeapon(e:ExtraWeaponEvent):Void 

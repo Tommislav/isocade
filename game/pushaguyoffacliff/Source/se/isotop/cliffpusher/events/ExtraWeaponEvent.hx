@@ -13,6 +13,7 @@ class ExtraWeaponEvent extends Event
 
 	public static inline var CHANGE:String = "ExtraWeaponEvent::CHANGE";
 	public static inline var FIRE:String = "ExtraWeaponEvent::FIRE";
+	public static inline var NUM_CHANGE:String = "ExtraWeaponEvent::NUM_CHANGE";
 	
 	public var from:Entity;
 	public var extraWeaponType:ExtraWeaponType;
