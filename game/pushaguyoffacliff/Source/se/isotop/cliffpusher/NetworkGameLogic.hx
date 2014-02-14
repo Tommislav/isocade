@@ -80,7 +80,7 @@ class NetworkGameLogic extends Entity
         var playerModel = PlayerModel.instance;
         var input = new ICadeKeyboard();
 
-        #if (cpp)
+        #if (windows || mac)
 			input.setKeyboardMode(true);
 		#end
 
