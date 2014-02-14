@@ -35,7 +35,6 @@ class GameScore extends Entity {
 					}
 				}
             }
-        
     }
 
     public function setPlayerScore(id:Int, score:Int):Bool {

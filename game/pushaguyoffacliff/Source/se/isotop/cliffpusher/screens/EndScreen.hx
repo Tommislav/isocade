@@ -1,5 +1,6 @@
 package se.isotop.cliffpusher.screens;
 
+import se.isotop.gamesocket.GamePacket;
 import com.haxepunk.Scene;
 
 /**
@@ -9,7 +10,7 @@ import com.haxepunk.Scene;
 class EndScreen extends Scene
 {
 
-	public function new() 
+	public function new()
 	{
 		
 	}

@@ -54,4 +54,9 @@ class PlayerModel {
     public function getMyself():PlayerInfo {
         return this.getPlayer(_myId);
     }
+
+    public function isItMe(id:Int):Bool {
+        var me = getMyself();
+        return me.id == id;
+    }
 }

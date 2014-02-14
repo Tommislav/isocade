@@ -18,15 +18,14 @@ import se.salomonsson.icade.ICadeKeyboard;
 class NetworkGameLogic extends Entity
 {
 	public static inline var NAME:String = "GameLogic";
-    public static inline var MAX_SCORE:Int = 10;
+    public static inline var MAX_SCORE:Int = 100;
 	
 	public static inline var SOCKET_TYPE_PLAYER_INFO:Int = 20;
 	public static inline var SOCKET_TYPE_PLAYER_SCORE:Int = 21;
 
 	private var _colors:Array<Int>;
-	
-	private var _playerId:Int = -1;
 
+    private var _playerModel:PlayerModel;
     private var _socket:Socket;
 	private var _gameSocket:GameSocket;
 	private var _playerUpdates:Map<Int, GamePacket>;
@@ -42,7 +41,8 @@ class NetworkGameLogic extends Entity
 		
         _socket = Socket.instance;
         _gameSocket = _socket.gameSocket;
-		_playerId = _socket.getMyServerId();
+        _playerModel = PlayerModel.instance;
+
         _gameSocket.addEventListener(GameSocketEvent.GS_DATA, onSocketData);
 	}
 	
@@ -150,7 +150,7 @@ class NetworkGameLogic extends Entity
         for (pl in players) {
 			
             var id = pl.id;
-            if (id == _playerId) { /* this is me */
+            if (_playerModel.isItMe(id)) { /* this is me */
                 sendMyPlayerInfo(pl);
             } else {
 				if (pl.id >= 0) {
@@ -172,7 +172,7 @@ class NetworkGameLogic extends Entity
         var packets = new Array<GamePacket>();
         var myInfo:GamePacket = new GamePacket();
 
-        myInfo.id = _playerId;
+        myInfo.id = _playerModel.getMyself().id;
         myInfo.type = SOCKET_TYPE_PLAYER_INFO;
         myInfo.values = new Array<String>();
 
@@ -184,11 +184,11 @@ class NetworkGameLogic extends Entity
 
         var myScore:GamePacket = new GamePacket();
 
-        myScore.id = _playerId;
+        myScore.id = _playerModel.getMyself().id;
         myScore.type = SOCKET_TYPE_PLAYER_SCORE;
         myScore.values = new Array<String>();
 
-        var gp:GamePacket = _playerScores.get(_playerId);
+        var gp:GamePacket = _playerScores.get(_playerModel.getMyself().id);
         var currentServerSideScore = gp != null ? Std.parseInt(gp.values[0]) : 0;
 
         if (currentServerSideScore != player.score) {
