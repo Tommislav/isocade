@@ -278,6 +278,8 @@ class Player extends Eventity
 	function checkForAdditionalScore() 
 	{
 		if (++_scoreCnt % 30 == 0) {
+			this.score++;
+			
 			// Only top-most player gets score
 			var players = new Array<Player>();
 			this.scene.getClass(Player, players);
