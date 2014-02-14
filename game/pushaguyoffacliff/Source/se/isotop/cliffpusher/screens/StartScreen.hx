@@ -115,6 +115,16 @@ class StartScreen extends Scene {
             scores.push(new Score(1,85));
             scores.push(new Score(3,50));
             scores.push(new Score(0,30));
+
+            scores.push(new Score(5,20));
+            scores.push(new Score(4,10));
+            PlayerModel.instance.addPlayer(0);
+            PlayerModel.instance.addPlayer(1);
+            PlayerModel.instance.addPlayer(2);
+            PlayerModel.instance.addPlayer(3);
+            PlayerModel.instance.addPlayer(4);
+            PlayerModel.instance.addPlayer(5);
+
             trace(scores);
             HXP.scene = new EndScreen(scores);
         }

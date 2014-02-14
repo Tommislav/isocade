@@ -1,5 +1,7 @@
 package se.isotop.cliffpusher.screens;
 
+import se.isotop.cliffpusher.model.PlayerModel;
+import se.isotop.cliffpusher.model.PlayerInfo;
 import se.isotop.gamesocket.GamePacket;
 import com.haxepunk.Graphic;
 import com.haxepunk.HXP;
@@ -10,6 +12,8 @@ import com.haxepunk.graphics.Image;
 import com.haxepunk.Scene;
 import se.isotop.cliffpusher.PlayerGraphics;
 import se.isotop.cliffpusher.Score;
+import com.haxepunk.utils.Input;
+import com.haxepunk.utils.Key;
 
 
 /**
@@ -20,15 +24,16 @@ class EndScreen extends Scene
 {
 
     private var _scores:Array<Score>;
+    private var _playerModel:PlayerModel;
+
+    private var _restartButton:Entity;
 
 	public function new(scores:Array<Score>)
 	{
 		super();
-
         _scores = scores;
-
+        _playerModel = PlayerModel.instance;
         trace(scores.length);
-
 	}
 
 
@@ -59,32 +64,71 @@ class EndScreen extends Scene
         add(bgEntity);
 
         if (_scores.length > 0) {
-            var player1:Graphic = new PlayerGraphics(_scores[0].playerId);
+
+            var info:PlayerInfo = _playerModel.getPlayer(_scores[0].playerId);
+            var player1:Graphic = new PlayerGraphics(info.color);
             addGraphic(player1,0,HXP.width/2-20,420);
         }
         if (_scores.length > 1) {
-            var player1:Graphic = new PlayerGraphics(_scores[1].playerId);
+            var info:PlayerInfo = _playerModel.getPlayer(_scores[1].playerId);
+            var player1:Graphic = new PlayerGraphics(info.color);
             addGraphic(player1,0,HXP.width/2-200,470);
         }
 
         if (_scores.length > 2) {
-            var player1:Graphic = new PlayerGraphics(_scores[2].playerId);
+            var info:PlayerInfo = _playerModel.getPlayer(_scores[2].playerId);
+            var player1:Graphic = new PlayerGraphics(info.color);
             addGraphic(player1,0,HXP.width/2+170,470);
         }
 
         if (_scores.length > 3) {
-            var player1:Graphic = new PlayerGraphics(_scores[3].playerId);
+            var info:PlayerInfo = _playerModel.getPlayer(_scores[3].playerId);
+            var player1:Graphic = new PlayerGraphics(info.color);
             addGraphic(player1,0,HXP.width/2-100,720);
         }
 
+        if (_scores.length > 4) {
+            var info:PlayerInfo = _playerModel.getPlayer(_scores[4].playerId);
+            var player1:Graphic = new PlayerGraphics(info.color);
+            addGraphic(player1,0,HXP.width/2-10,720);
+        }
 
+        if (_scores.length > 5) {
+            var info:PlayerInfo = _playerModel.getPlayer(_scores[5].playerId);
+            var player1:Graphic = new PlayerGraphics(info.color);
+            addGraphic(player1,0,HXP.width/2+80,720);
+        }
         //addGraphic(backgroundImage,-1,HXP.width/2,450);
 
         //addGraphic(gfx);
 
+        var buttonImage:Image = new Image("assets/restart_button.png");
+        _restartButton = new Entity((HXP.width / 2) - (buttonImage.width / 2), (HXP.height) - (buttonImage.height)*2);
+        _restartButton.graphic = buttonImage;
+        _restartButton.setHitbox(buttonImage.width, buttonImage.height);
+        _restartButton.type = "restart_button";
+        add(_restartButton);
     }
 
 
+
+    override public function update()
+    {
+        super.update();
+
+        if (Input.check(Key.S)) {
+            HXP.scene = new StartScreen();
+        }
+
+
+        if (Input.mouseReleased) {
+
+            if (this.collidePoint("restart_button", Input.mouseX, Input.mouseY) != null) {
+
+                HXP.scene = new StartScreen();
+            }
+        }
+    }
 
 
 }
