@@ -67,7 +67,7 @@ class GraphicsFactory
 		
 		
 		// pickup box
-		_pickupRegion = _atlas.createRegion(new Rectangle(32, 64, 32, 32), new Point());
+		_pickupRegion = _atlas.createRegion(new Rectangle(33, 64, 32, 32), new Point());
 		
 		// score limit
 		_scoreRegion = _atlas.createRegion(new Rectangle(64, 64, 32, 32), new Point());
