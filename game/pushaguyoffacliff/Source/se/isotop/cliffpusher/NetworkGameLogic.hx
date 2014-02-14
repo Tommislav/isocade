@@ -1,11 +1,8 @@
 package se.isotop.cliffpusher;
 
-<<<<<<< HEAD
 import se.isotop.cliffpusher.model.PlayerInfo;
-=======
 import se.isotop.cliffpusher.screens.StartScreen;
 import com.haxepunk.HXP;
->>>>>>> Winning condition added (fails)
 import se.isotop.cliffpusher.model.Socket;
 import se.isotop.cliffpusher.model.PlayerModel;
 import com.haxepunk.Entity;
