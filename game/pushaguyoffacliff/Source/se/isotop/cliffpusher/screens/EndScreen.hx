@@ -49,18 +49,27 @@ class EndScreen extends Scene
         textEntity.x = (HXP.width/2)-(titleText.width/2);
         textEntity.y = 100;
         add(textEntity);
+        var colors:Array<Int> = [0xF75CB5, 0x76FF65 ,0x6579F9, 0xD64A4F, 0xA37437];
+
         var st:String = "";
+        var n = 0;
+
         for (s in _scores) {
-            st = st + "Player: " +s.playerId + ": " + s.score + "\n";
+            var info:PlayerInfo = _playerModel.getPlayer(_scores[n].playerId);
+            var color:Int = colors[info.color];
+            var scoreText:Text = new Text(st);
+            scoreText.size = n==0 ? 48:28 ;
+            scoreText.color = color;
+            scoreText.text = info.name + ": " + s.score + "p\n";
+
+            var scoreTextEntity:Entity = new Entity(0,0,scoreText);
+            scoreTextEntity.x = (HXP.width/2)-(scoreText.width/2);
+            scoreTextEntity.y = 180+n*30+(n>0?30:0);
+            add(scoreTextEntity);
+            n++;
         }
-        trace(st);
-        var scoreText:Text = new Text(st);
-        scoreText.color = 0xFF22BB;
-        scoreText.size = 24;
-        var scoreTextEntity:Entity = new Entity(0,0,scoreText);
-        scoreTextEntity.x = (HXP.width/2)-(scoreText.width/2);
-        scoreTextEntity.y = 200;
-        add(scoreTextEntity);
+
+
 
         var bgImage:Image = new Image("assets/podium.png");
 
