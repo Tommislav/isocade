@@ -48,25 +48,16 @@ class StartScreen extends Scene {
 
     public function new() {
         super();
-	
-			#if (win || windows)
-			{
+			
 			trace("set controller");
-			
-				var keyboardHandler = new ICadeKeyboard();
-		ICadeKeyboard.instance = keyboardHandler;
-		#if (windows || win)
-		{
-			if (XBox360Controller.isControllerConnected(0))
-			{
-			ICadeKeyboard.instance.setXboxControllerMode(true);
-			}	
-			}
+			var keyboardHandler = new ICadeKeyboard();
+			ICadeKeyboard.instance = keyboardHandler;
+			#if (windows || win)
+				if (XBox360Controller.isControllerConnected(0))
+				{
+					ICadeKeyboard.instance.setXboxControllerMode(true);
+				}	
 			#end
-			//	ICadeKeyboard.instance.setXboxControllerMode(true);
-			}
-			
-		#end
     }	
 	
 	
