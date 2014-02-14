@@ -19,6 +19,10 @@ class Main extends Engine {
 		
 		#if retina
 			super (768, 1024);
+		#elseif ios
+		    super(640,1136);
+		#elseif android
+		    super(800,1280);
 		#else
 			super ();
 		#end

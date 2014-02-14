@@ -14,7 +14,9 @@
 	
 	<icon path="Assets/openfl.svg" />
 	
-	<window orientation="portrait" width="768" height="1024" fps="60" unless="retina" />
+	<window orientation="portrait" width="768" height="1024" fps="60" unless="retina || ios || android"/>
 	<window orientation="portrait" width="0" height="0" fps="60" if="retina" />
+    <window orientation="portrait" width="640" height="1136" fps="60" if="ios" />
+    <window orientation="portrait" width="800" height="1280" fps="60" if="android" />
 	
 </project>
