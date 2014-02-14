@@ -1,7 +1,9 @@
 package se.salomonsson.icade;
+#if (win)
 import com.furusystems.openfl.input.xinput.Xbox360Button;
 import com.furusystems.openfl.input.xinput.XBox360Controller;
 import com.furusystems.openfl.input.xinput.Xbox360ButtonType;
+#end
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.KeyboardEvent;
@@ -36,15 +38,20 @@ class ICadeKeyboard implements ISerializeableReadInput
 	private var _iCadeButton_up:Map<Int,Int>;
 	private var _buttonsPressed:Map<Int,Bool>;
 	private var _debugToggleKey:Int = -1;
-	private var _xboxToIcadeMap:Map<Xbox360ButtonType,Int>;
-	
+
+
+    #if (win)
+    private var _xboxToIcadeMap:Map<Xbox360ButtonType,Int>;
 	private var _xboxController:XBox360Controller;
+	#end
 	
 	public function new() 
 	{
 		_eventDispatcher = new EventDispatcher();
+
+        #if (win)
 		_xboxToIcadeMap = new Map<Xbox360ButtonType,Int>();
-		
+		#end
 		
 		_iCadeButton_down = new Map<Int,Int>();
 		_iCadeButton_up = new Map<Int,Int>();
@@ -61,7 +68,8 @@ class ICadeKeyboard implements ISerializeableReadInput
 		mapIcadeButton(ICadeKeyCode.BUTTON_3, 75, 80);
 		mapIcadeButton(ICadeKeyCode.BUTTON_START, 79, 71);
 		mapIcadeButton(ICadeKeyCode.BUTTON_BACK, 76, 86);
-		
+
+        #if (win)
 		mapXboxButton(Xbox360ButtonType.DpadLEFT, ICadeKeyCode.LEFT);
 		mapXboxButton(Xbox360ButtonType.DpadRIGHT, ICadeKeyCode.RIGHT);
 		mapXboxButton(Xbox360ButtonType.DpadUP, ICadeKeyCode.UP);
@@ -71,14 +79,15 @@ class ICadeKeyboard implements ISerializeableReadInput
 		mapXboxButton(Xbox360ButtonType.X, ICadeKeyCode.BUTTON_C);
 		mapXboxButton(Xbox360ButtonType.Back, ICadeKeyCode.BUTTON_BACK);
 		mapXboxButton(Xbox360ButtonType.Start, ICadeKeyCode.BUTTON_START);
-		
+		#end
 
 		//trace("Isconnected" +_xboxController.isConnected());
 	
 			
 		enable();
 	}
-	
+
+    #if (win)
 	//xbox methods
 	public function onButtonPressed(btn:Xbox360Button):Void
 	{
@@ -93,18 +102,18 @@ class ICadeKeyboard implements ISerializeableReadInput
 			_buttonsPressed.set(_xboxToIcadeMap.get(btn.buttonType), false);
 	//onKeyUp(new KeyboardEvent(KeyboardEvent.KEY_UP, false, false, 0, ICadeKeyCode.RIGHT));
 	}
-
+    #end
 	
 	public function setDebugToggleKey(toggleKey:Int) {
 		_debugToggleKey = toggleKey;
 	}
 	
-	
+	#if (win)
 	private function mapXboxButton(btn:Xbox360ButtonType, iCadeButton:Int)
 	{
 		_xboxToIcadeMap.set(btn, iCadeButton);
 	}
-	
+	#end
 	
 	
 	
@@ -131,7 +140,8 @@ class ICadeKeyboard implements ISerializeableReadInput
 		_useKeyboard = flag;
 		_useController = false;
 	}
-	
+
+    #if (win)
 	public function setXboxControllerMode(flag:Bool) {
 		_buttonsPressed = new IntMap<Bool>(); // reset pressed state
 		_useController = flag;
@@ -145,10 +155,12 @@ class ICadeKeyboard implements ISerializeableReadInput
 			Lib.current.stage.removeEventListener(Event.ENTER_FRAME, pollXboxController);
 		}
 	}
+
 	
 	private function pollXboxController(event) {
 		_xboxController.poll();
 	}
+	#end
 	
 	public function getKeyboardMode():Bool {
 		return _useKeyboard;
