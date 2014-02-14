@@ -73,7 +73,7 @@ class Pickup extends Eventity
 	{
 		_emitter = new Emitter(GraphicsFactory.instance.getExplosionSheetRegion(), 64, 64);
 		_emitter.newType("one", [3]);
-		_emitter.setMotion("one", 0, 1, 0.8, 360, 64);
+		_emitter.setMotion("one", 90, 5, 0.8, 10, 20);
 		graphic = _emitter;
 	}
 }

@@ -53,6 +53,7 @@ class DefaultServer extends Server
 {
 	public function new() 
 	{
-		super("127.0.0.1", 8888);
+		//super("127.0.0.1", 8888);
+		super("192.168.8.87", 8888);
 	}	
 }

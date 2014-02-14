@@ -45,7 +45,7 @@ class Socket extends EventDispatcher {
 
         _serverData = SharedObject.getLocal(SERVER_STORAGE);
 		var hasData:Bool = (_serverData.data.serverIp != null);
-		#if (windows || mac)
+		#if (windows || mac || newip)
 			hasData = false;
 		#end
 		
