@@ -16,7 +16,7 @@ class Main extends Engine {
 	
 	
 	public function new () {
-		super ();
+		super (768, 1024);
 	}
 	
 	override public function init() 

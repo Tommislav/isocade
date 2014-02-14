@@ -1,16 +1,17 @@
 package se.isotop.cliffpusher;
 
-import com.haxepunk.Entity;
+import se.isotop.cliffpusher.model.PlayerInfo;
+import se.isotop.cliffpusher.screens.StartScreen;
 import com.haxepunk.HXP;
-import flash.events.KeyboardEvent;
+import se.isotop.cliffpusher.model.Socket;
+import se.isotop.cliffpusher.model.PlayerModel;
+import com.haxepunk.Entity;
 import flash.geom.Point;
-import flash.Lib;
-import flash.net.SharedObject;
-import flash.ui.Keyboard;
 import se.isotop.gamesocket.GamePacket;
 import se.isotop.gamesocket.GameSocket;
 import se.isotop.gamesocket.GameSocketEvent;
 import se.salomonsson.icade.ICadeKeyboard;
+import se.isotop.cliffpusher.screens.EndScreen;
 /**
  * ...
  * @author Tommislav
@@ -18,198 +19,240 @@ import se.salomonsson.icade.ICadeKeyboard;
 class NetworkGameLogic extends Entity
 {
 	public static inline var NAME:String = "GameLogic";
-	
+    public static inline var MAX_SCORE:Int = 100;
+
 	public static inline var SOCKET_TYPE_PLAYER_INFO:Int = 20;
 	public static inline var SOCKET_TYPE_PLAYER_SCORE:Int = 21;
-	
-	
-	private var _colors:Array<Int>;
-	
-	private var _playerId:Int = -1;
-	private var _players:Array<Player>;
 
+	private var _colors:Array<Int>;
+
+    private var _playerModel:PlayerModel;
+    private var _socket:Socket;
 	private var _gameSocket:GameSocket;
-	private var _connected:Bool;
 	private var _playerUpdates:Map<Int, GamePacket>;
+    private var _playerScores:Map<Int, GamePacket>;
 	private var _playerSpawnPoint:Point;
-	private var _serverData:SharedObject;
 	
-	public function new(shouldConnect:Bool = true) 
+	public function new() 
 	{
 		super(0, 0, null, null);
 		this.name = NAME;
 		_playerUpdates = new Map<Int, GamePacket>(); // store the last recieved update for each player id
-	
-		this._serverData = SharedObject.getLocal("serverConnection");
+        _playerScores = new Map<Int, GamePacket>();
 		
-		if (_serverData.data.server == null)
-			SaveServerFile(new Server("127.0.0.1",8888));
-		
-		if (shouldConnect)
-			ConnectToServer();
-	}
-		public function UpdateServerConnection(serverIP:String, port:Int)
-	{
-		
-	}
-	
-	public function GetServerInformation() : Server
-	{
-		if (this._serverData.data.server  == null)
-		{
-			this._serverData.data.server = new Array();
-		}
-		
-		trace("GETSERVERINFORMATION: " + this._serverData.data);
-		
-		return this._serverData.data.server[0];
-	}
-	
-	public function SaveServerFile(serverInformation:Server) : Void
-	{
-		this._serverData.clear();
+        _socket = Socket.instance;
+        _gameSocket = _socket.gameSocket;
+        _playerModel = PlayerModel.instance;
 
-		this._serverData.data.server = new Array();	
-		this._serverData.data.server.push(serverInformation);
-		this._serverData.flush();
+        _gameSocket.addEventListener(GameSocketEvent.GS_DATA, onSocketData);
+        _gameSocket.addEventListener(GameSocketEvent.GS_CLOSED, onGameSocketDisconnected);
+        _gameSocket.addEventListener(GameSocketEvent.GS_PLAYER_DISCONNECTED, onPlayerDisconnected);
 	}
 	
-	private function ConnectToServer() : Void
+	override public function added():Void 
 	{
-		//trace("connecting...");
-		_gameSocket = new GameSocket();
-		_gameSocket.addEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
-		var server:Server = GetServerInformation();
+		super.added();
 		
-		_gameSocket.connect(server._serverIP, server._port);
+        var ld:Level = cast(scene.getInstance(Level.NAME), Level);
+        var enemies:Array<Point> = ld.enemyPositionList;
+        for (e in enemies) {
+            newFakePlayer(e.x, e.y);
+        }
+        var pickups:Array<Point> = ld.pickupSpawnPointList;
+        for (p in pickups) {
+            newPickup(p.x, p.y);
+        }
+		
+        _playerSpawnPoint = ld.playerSpawnPoint;
+		newPlayer(_socket.getMyServerId(), true);
+    }
 	
-	}
-	
-	
-	
-	private function onSocketConnected(e:GameSocketEvent):Void 
+	override public function removed():Void
 	{
-		_gameSocket.removeEventListener(GameSocketEvent.GS_CONNECTION_HANDSHAKE, onSocketConnected);
-		_playerId = e.packet.id;
-		
-		
-		var ld:Level = cast(scene.getInstance(Level.NAME), Level);
-		var enemies:Array<Point> = ld.enemyPositionList;
-		for (e in enemies) {
-			newFakePlayer(e.x, e.y);
-		}
-		var pickups:Array<Point> = ld.pickupSpawnPointList;
-		for (p in pickups) {
-			newPickup(p.x, p.y);
-		}
-		
-		_playerSpawnPoint = ld.playerSpawnPoint;
-		
-		
-		
-		newPlayer(_playerId, true);
-		
-		
-		trace("Connected with id: " + _playerId);
-		_gameSocket.addEventListener(GameSocketEvent.GS_DATA, onSocketData);
-		
-		_connected = true;
+        trace('removed run');
+
+        _gameSocket.removeEventListener(GameSocketEvent.GS_DATA, onSocketData);
+        _gameSocket.removeEventListener(GameSocketEvent.GS_CLOSED, onGameSocketDisconnected);
+        _gameSocket.removeEventListener(GameSocketEvent.GS_PLAYER_DISCONNECTED, onPlayerDisconnected);
+
+        super.removed();
 	}
+
+    private function newPlayer(id:Int, isItMe:Bool):Void {
+        _playerUpdates.set(id, null);
+        var playerModel = PlayerModel.instance;
+        var input = new ICadeKeyboard();
+
+        #if (windows || mac)
+			input.setKeyboardMode(true);
+		#end
+
+        if (isItMe) {
+            playerModel.addMyself(id);
+        } else {
+            playerModel.addPlayer(id);
+            input.disable();
+        }
+
+        var xPos = _playerSpawnPoint.x + (id * 32);
+        var yPos = _playerSpawnPoint.y;
+
+		var pInfo:PlayerInfo = playerModel.getPlayer(id);
+        var p:Player = new Player(id, pInfo.color, xPos, yPos, input, isItMe);
+        scene.add(p);
+    }
+
+    private function newFakePlayer(x, y) {
+        var fakeId = -1;
+		var fakeColor = 4;
+        _playerUpdates.set(fakeId, null);
+
+        var input = new ICadeKeyboard();
+        input.disable();
+
+        var p:FakePlayer = new FakePlayer(fakeId, fakeColor, x, y, input, false);
+        scene.add(p);
+    }
+
+    private function newPickup(x, y) {
+        var p:Pickup = new Pickup();
+        p.x = x;
+        p.y = y;
+        scene.add(p);
+    }
+
+    private function onPlayerDisconnected(e:GameSocketEvent):Void
+    {
+        var id = e.packet.id;
+
+        var players = new Array<Player>();
+        this.scene.getClass(Player, players);
+        for(pl in players) {
+            if (pl.id == id)
+                this.scene.remove(pl);
+        }
+
+        var gameScore:GameScore = cast(this.scene.typeFirst(GameScore.TYPE), GameScore);
+        gameScore.removePlayerScore(id);
+    }
+
+    private function onGameSocketDisconnected(e:GameSocketEvent):Void {
+        this.scene.remove(this);
+        HXP.scene = new StartScreen();
+    }
 	
 	private function onSocketData(e:GameSocketEvent):Void 
 	{
-		var id = e.packet.id;
 		var type:Int = e.packet.type;
-		
-		if (!_playerUpdates.exists(id)) {
-			trace("we have a new player with id " + id);
-			newPlayer(id, false);
-		}
-		
 		switch (type) {
 			case SOCKET_TYPE_PLAYER_INFO:
-				_playerUpdates.set(id, e.packet);
+				handlePlayerPacket(e.packet);
 			case SOCKET_TYPE_PLAYER_SCORE:
-				
+				handleScorePacket(e.packet);
 		}
-		
-		
 	}
-	
-	private function newPlayer(id:Int, isItMe:Bool):Player {
-		_playerUpdates.set(id, null);
-		
-		var input = new ICadeKeyboard();
-		
-		#if (cpp)
-			if (isItMe)
-			{
-			input.setXboxControllerMode(true);
-			
-			}
-		#end
-		
-		if (!isItMe)
-			input.disable();
-		
-		var xPos = _playerSpawnPoint.x + (id * 32);
-		var yPos = _playerSpawnPoint.y;
-		
-		var p:Player = new Player(id, xPos, yPos, input, isItMe);
-		scene.add(p);
-		return p;
-	}
-	
-	private function newFakePlayer(x, y) {
-		var fakeId = 4;
-		_playerUpdates.set(fakeId, null);
-		
-		var input = new ICadeKeyboard();
-		input.disable();
-		
-		var p:FakePlayer = new FakePlayer(fakeId, x, y, input, false);
-		scene.add(p);
-	}
-	
-	private function newPickup(x, y) {
-		var p:Pickup = new Pickup();
-		p.x = x;
-		p.y = y;
-		scene.add(p);
-	}
-	
+
+    private function handlePlayerPacket(packet:GamePacket):Void {
+        var id = packet.id;
+        if (!_playerUpdates.exists(id)) {
+            trace("we have a new player with id " + id);
+            newPlayer(id, false);
+        }
+        _playerUpdates.set(id, packet);
+    }
+
+    private function handleScorePacket(packet:GamePacket):Void {
+        var id = packet.id;
+        _playerScores.set(id, packet);
+    }
+
 	override public function update():Void 
 	{
 		super.update();
-		
-		var myInfo:GamePacket = new GamePacket();
-		_players = new Array<Player>();
-		this.scene.getClass(Player, _players);
-		
-		for (pl in _players) {
-			var id = pl.id;
+        if (objectiveReached())
+            gameOver();
+
+        var players = new Array<Player>();
+        this.scene.getClass(Player, players);
+
+        for (pl in players) {
 			
-			if (id == _playerId) { /* this is me */
-				myInfo.id = _playerId;
-				myInfo.type = SOCKET_TYPE_PLAYER_INFO;
-				myInfo.values = new Array<String>();
-				myInfo.values.push(Std.string(Math.round(pl.x)));
-				myInfo.values.push(Std.string(Math.round(pl.y)));
-				myInfo.values.push(Std.string(pl.keyInput.serialize()));
-				continue;
-			}
-			
-			var gp = _playerUpdates.get(id);
-			if (gp != null) {
-				pl.x = Std.parseFloat(gp.values[0]);
-				pl.y = Std.parseFloat(gp.values[1]);
-				
-				var parsedInput:Int = Std.parseInt(gp.values[2]);
-				pl.keyInput.deserialize(parsedInput);
-			}
-		}
-		
-		if (_connected)
-			_gameSocket.send(myInfo.serialize());
+            var id = pl.id;
+            if (_playerModel.isItMe(id)) { /* this is me */
+                sendMyPlayerInfo(pl);
+            } else {
+				if (pl.id >= 0) {
+					updateOtherPlayer(pl);
+				}
+            }
+        }
 	}
+
+    private function gameOver():Void {
+        var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
+        this.scene.remove(this);
+        HXP.scene = new EndScreen(gameScore.getSortedPlayerScores());
+    }
+
+    private function objectiveReached() {
+        var gameScore:GameScore = cast(scene.typeFirst(GameScore.TYPE), GameScore);
+        if (gameScore == null)
+            return false;
+
+        return gameScore.getLeaderScore() >= MAX_SCORE;
+    }
+
+    private function sendMyPlayerInfo(player:Player):Void {
+        var packets = new Array<GamePacket>();
+        var myInfo:GamePacket = new GamePacket();
+
+        myInfo.id = _playerModel.getMyself().id;
+        myInfo.type = SOCKET_TYPE_PLAYER_INFO;
+        myInfo.values = new Array<String>();
+
+        myInfo.values.push(Std.string(Math.round(player.x)));
+        myInfo.values.push(Std.string(Math.round(player.y)));
+        myInfo.values.push(Std.string(player.keyInput.serialize()));
+
+        packets.push(myInfo);
+
+        var myScore:GamePacket = new GamePacket();
+
+        myScore.id = _playerModel.getMyself().id;
+        myScore.type = SOCKET_TYPE_PLAYER_SCORE;
+        myScore.values = new Array<String>();
+
+        var gp:GamePacket = _playerScores.get(_playerModel.getMyself().id);
+        var currentServerSideScore = gp != null ? Std.parseInt(gp.values[0]) : 0;
+
+        if (currentServerSideScore != player.score) {
+            myScore.values.push(Std.string(player.score));
+            packets.push(myScore);
+        }
+
+        sendPackets(packets);
+    }
+
+    private function sendPackets(packets:Array<GamePacket>):Void {
+		for(gp in packets) {
+			_gameSocket.send(gp.serialize());
+		}
+    }
+
+    private function updateOtherPlayer(player:Player):Void {
+        var gp:GamePacket = _playerUpdates.get(player.id);
+        if (gp != null) {
+            player.x = Std.parseFloat(gp.values[0]);
+            player.y = Std.parseFloat(gp.values[1]);
+
+            var parsedInput:Int = Std.parseInt(gp.values[2]);
+            player.keyInput.deserialize(parsedInput);
+        }
+
+        gp = _playerScores.get(player.id);
+        if (gp != null) {
+            player.score = Std.parseInt(gp.values[0]);
+        }
+    }
+
 }

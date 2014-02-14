@@ -28,13 +28,14 @@ class GameScene extends Scene
 		
 		add(new SoundPlayer());
 		add(new BulletFactory());
-		
+
 		var ld:Level = new Level();
 		add(ld);
-		
+
+        add(new GameScore());
+        add(new ScoreHUD());
 		add(new WpnHUD());
-		add(new ScoreHUD());
-		
+
 		_networkHandler = new NetworkGameLogic();
 		add(_networkHandler);
 	}

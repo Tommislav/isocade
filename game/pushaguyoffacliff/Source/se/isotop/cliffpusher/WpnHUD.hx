@@ -17,16 +17,16 @@ import se.isotop.haxepunk.Eventity;
 class WpnHUD extends Eventity
 {
 	private var _hudMine:Image;
-	private var _hudDecoy:Image;
+	private var _hudPowerjump:Image;
 	private var _num:Text;
 	
 	public function new() 
 	{
-		var centerX = Lib.current.stage.stageWidth / 2 - 32;
+		var centerX = HXP.screen.width / 2 - 32;
 		super(centerX, 16);
 		
 		_hudMine = new Image(GraphicsFactory.instance.getHudMine());
-		_hudDecoy = new Image(GraphicsFactory.instance.getHudDecoy());
+		_hudPowerjump = new Image(GraphicsFactory.instance.getHudPowerJump());
 		
 		var options:TextOptions = {};
 		options.color = 0x000000;
@@ -37,7 +37,7 @@ class WpnHUD extends Eventity
 		var gList:Graphiclist = new Graphiclist();
 		gList.add(new Image(GraphicsFactory.instance.getHudFrame()));
 		gList.add(_hudMine);
-		gList.add(_hudDecoy);
+		gList.add(_hudPowerjump);
 		gList.add(_num);
 		
 		followCamera = true;
@@ -51,6 +51,19 @@ class WpnHUD extends Eventity
 		setNumber(-1);
 		
 		addEventListener(ExtraWeaponEvent.CHANGE, onNewExtraWeapon);
+		addEventListener(ExtraWeaponEvent.NUM_CHANGE, onNumChange);
+	}
+	
+	override public function removed():Void 
+	{
+		super.removed();
+		removeEventListener(ExtraWeaponEvent.CHANGE, onNewExtraWeapon);
+		removeEventListener(ExtraWeaponEvent.NUM_CHANGE, onNumChange);
+	}
+	
+	private function onNumChange(e:ExtraWeaponEvent):Void 
+	{
+		setNumber(e.num);
 	}
 	
 	private function onNewExtraWeapon(e:ExtraWeaponEvent):Void 
@@ -61,11 +74,17 @@ class WpnHUD extends Eventity
 			case ExtraWeaponType.MINE:
 				mine();
 			case ExtraWeaponType.DECOY:
-				decoy();
+				mine();
+			case ExtraWeaponType.POWER_JUMP:
+				powerjump();
+			case ExtraWeaponType.LONGER_SHOTS:
+				mine();
 		}
 		
 		setNumber(e.num);
 	}
+	
+	
 	
 	public function setNumber(v:Int) {
 		if (v >= 0) {
@@ -78,7 +97,7 @@ class WpnHUD extends Eventity
 	}
 	
 	public function nothing() {
-		_hudMine.visible = _hudDecoy.visible = false;
+		_hudMine.visible = _hudPowerjump.visible = false;
 	}
 	
 	public function mine() {
@@ -86,8 +105,8 @@ class WpnHUD extends Eventity
 		_hudMine.visible = true;
 	}
 	
-	public function decoy() {
+	public function powerjump() {
 		nothing();
-		_hudDecoy.visible = true;
+		_hudPowerjump.visible = true;
 	}
 }
