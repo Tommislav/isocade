@@ -83,6 +83,10 @@ class BasicBullet extends Entity implements IBullet
 		this.type = "bullet";
 	}
 	
+	public function setBulletLife(life:Int):Void {
+		_life = life;
+	}
+	
 	override public function update():Void 
 	{
 		this.x += _speedX;

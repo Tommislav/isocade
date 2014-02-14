@@ -49,7 +49,12 @@ class BulletFactory extends Eventity
 			_level = cast(scene.getInstance(Level.NAME), Level);
 		}
 		
-		var bullet:Entity = new BasicBullet(playerId, x, y, angle, _level );
+		var bullet:BasicBullet = new BasicBullet(playerId, x, y, angle, _level );
+		
+		if (bulletType == "extra") {
+			bullet.setBulletLife(50);
+		}
+		
 		scene.add(bullet);
 		
 		return 4;
