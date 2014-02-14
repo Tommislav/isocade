@@ -30,9 +30,9 @@ class Player extends Eventity
 	
 	
 	
-	private static inline var SHOOT_BUTTON = ICadeKeyCode.BUTTON_B;
-	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_A;
-	private static inline var JUMP_BUTTON = ICadeKeyCode.BUTTON_C;
+	private static inline var SHOOT_BUTTON = ICadeKeyCode.BUTTON_A;
+	private static inline var SHIELD_BUTTON = ICadeKeyCode.BUTTON_C;
+	private static inline var JUMP_BUTTON = ICadeKeyCode.BUTTON_B;
 	private static inline var EXTRA_BUTTON = ICadeKeyCode.BUTTON_1;
 	
 	private var _bulletCount:Int;
